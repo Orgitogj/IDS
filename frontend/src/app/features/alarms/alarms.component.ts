@@ -1,4 +1,4 @@
-﻿import { Component, OnDestroy, OnInit, effect, inject, signal } from '@angular/core';
+﻿import { Component, OnDestroy, OnInit, effect, inject, signal, computed } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { AlarmService } from '../../core/services/alarm.service';
 import { WebSocketService } from '../../core/services/websocket.service';
@@ -24,11 +24,17 @@ export class AlarmsComponent implements OnInit, OnDestroy {
 
   wsConnected = this.ws.connected;
 
+  severityCounts = computed(() => {
+    const counts = { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 };
+    for (const a of this.alarms()) counts[a.severity]++;
+    return counts;
+  });
+
   constructor() {
     effect(() => {
       const live = this.ws.liveAlarms();
       if (live.length === 0) return;
-      const [newest, ...rest] = live;
+      const [newest] = live;
       this.alarms.update((current) => {
         if (current.some((a) => a.id === newest.id)) return current;
         return [newest, ...current];
@@ -38,7 +44,7 @@ export class AlarmsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.alarmService.getAll().subscribe((alarms) => {
-      this.alarms.set(alarms);
+      this.alarms.set(alarms.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)));
       this.loading.set(false);
     });
     this.ws.connect();
@@ -67,17 +73,17 @@ export class AlarmsComponent implements OnInit, OnDestroy {
 
   updateStatus(alarm: Alarm, status: AlarmStatus): void {
     this.alarmService.updateStatus(alarm.id, status).subscribe((updated) => {
-      this.alarms.update((current) =>
-        current.map((a) => (a.id === updated.id ? updated : a))
-      );
+      this.alarms.update((current) => current.map((a) => (a.id === updated.id ? updated : a)));
     });
   }
 
   severityClass(severity: string): string {
     const map: Record<string, string> = {
-      CRITICAL: 'bg-[var(--color-critical)]/15 text-[var(--color-critical)] border-[var(--color-critical)]/30',
+      CRITICAL:
+        'bg-[var(--color-critical)]/15 text-[var(--color-critical)] border-[var(--color-critical)]/30',
       HIGH: 'bg-[var(--color-high)]/15 text-[var(--color-high)] border-[var(--color-high)]/30',
-      MEDIUM: 'bg-[var(--color-medium)]/15 text-[var(--color-medium)] border-[var(--color-medium)]/30',
+      MEDIUM:
+        'bg-[var(--color-medium)]/15 text-[var(--color-medium)] border-[var(--color-medium)]/30',
       LOW: 'bg-[var(--color-low)]/15 text-[var(--color-low)] border-[var(--color-low)]/30',
     };
     return map[severity] ?? '';

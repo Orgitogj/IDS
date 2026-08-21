@@ -6,6 +6,8 @@ import { ExperimentService } from '../../core/services/experiment.service';
 import { ExperimentResult } from '../../core/models/experiment-result.model';
 
 const FEATURE_COUNT_PATTERN = /^top_(\d+)_features$/;
+const AXIS_COLOR = '#8b93b8';
+const GRID_COLOR = '#1d2440';
 
 @Component({
   selector: 'app-experiments',
@@ -19,6 +21,15 @@ export class ExperimentsComponent implements OnInit {
 
   results = signal<ExperimentResult[]>([]);
   loading = signal(true);
+
+  bestF1 = computed(() => {
+    const r = this.results();
+    return r.length ? Math.max(...r.map((e) => e.f1Score)) : 0;
+  });
+  fastestLatency = computed(() => {
+    const r = this.results().filter((e) => e.avgLatencyMs != null);
+    return r.length ? Math.min(...r.map((e) => e.avgLatencyMs!)) : 0;
+  });
 
   private rq3Subset = computed(() => {
     return this.results()
@@ -66,28 +77,70 @@ export class ExperimentsComponent implements OnInit {
     plugins: {
       legend: {
         position: 'top',
-        labels: { color: '#8b93b8', font: { size: 11 }, usePointStyle: true },
+        labels: { color: AXIS_COLOR, font: { size: 10 }, usePointStyle: true },
       },
     },
     scales: {
       x: {
-        title: { display: true, text: 'Numri i Features', color: '#8b93b8' },
-        ticks: { color: '#8b93b8' },
-        grid: { color: '#232b4d' },
+        title: { display: true, text: 'Numri i Features', color: AXIS_COLOR, font: { size: 10 } },
+        ticks: { color: AXIS_COLOR },
+        grid: { color: GRID_COLOR },
       },
       y: {
         type: 'linear',
         position: 'left',
-        title: { display: true, text: 'F1-score (%)', color: '#6366f1' },
-        ticks: { color: '#8b93b8' },
-        grid: { color: '#232b4d' },
+        title: { display: true, text: 'F1 (%)', color: '#6366f1', font: { size: 10 } },
+        ticks: { color: AXIS_COLOR },
+        grid: { color: GRID_COLOR },
       },
       y1: {
         type: 'linear',
         position: 'right',
-        title: { display: true, text: 'Latency (ms)', color: '#f97316' },
-        ticks: { color: '#8b93b8' },
+        title: { display: true, text: 'Latency (ms)', color: '#f97316', font: { size: 10 } },
+        ticks: { color: AXIS_COLOR },
         grid: { display: false },
+      },
+    },
+  };
+
+  scatterChartData = computed<ChartConfiguration<'scatter'>['data']>(() => {
+    const byAlgo = new Map<string, ExperimentResult[]>();
+    for (const r of this.results()) {
+      const algo = r.mlModelName.split('-')[0];
+      if (!byAlgo.has(algo)) byAlgo.set(algo, []);
+      byAlgo.get(algo)!.push(r);
+    }
+    const colors: Record<string, string> = { xgb: '#6366f1', rf: '#f97316' };
+    return {
+      datasets: [...byAlgo.entries()].map(([algo, items]) => ({
+        label: algo.toUpperCase(),
+        data: items.map((r) => ({ x: r.avgLatencyMs ?? 0, y: +(r.f1Score * 100).toFixed(2) })),
+        backgroundColor: colors[algo] ?? '#8b93b8',
+        pointRadius: 6,
+        pointHoverRadius: 8,
+      })),
+    };
+  });
+
+  scatterChartOptions: ChartConfiguration<'scatter'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { color: AXIS_COLOR, font: { size: 10 }, usePointStyle: true },
+      },
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'Latency (ms)', color: AXIS_COLOR, font: { size: 10 } },
+        ticks: { color: AXIS_COLOR },
+        grid: { color: GRID_COLOR },
+      },
+      y: {
+        title: { display: true, text: 'F1-score (%)', color: AXIS_COLOR, font: { size: 10 } },
+        ticks: { color: AXIS_COLOR },
+        grid: { color: GRID_COLOR },
       },
     },
   };
@@ -102,7 +155,7 @@ export class ExperimentsComponent implements OnInit {
           data: sorted.map((r) => +(r.f1Score * 100).toFixed(2)),
           backgroundColor: '#6366f1',
           borderRadius: 6,
-          maxBarThickness: 24,
+          maxBarThickness: 20,
         },
       ],
     };
@@ -117,13 +170,10 @@ export class ExperimentsComponent implements OnInit {
       x: {
         min: 0,
         max: 100,
-        ticks: { color: '#8b93b8', callback: (v) => v + '%' },
-        grid: { color: '#232b4d' },
+        ticks: { color: AXIS_COLOR, callback: (v) => v + '%' },
+        grid: { color: GRID_COLOR },
       },
-      y: {
-        ticks: { color: '#e6e9f5', font: { size: 10 } },
-        grid: { display: false },
-      },
+      y: { ticks: { color: '#e6e9f5', font: { size: 10 } }, grid: { display: false } },
     },
   };
 
