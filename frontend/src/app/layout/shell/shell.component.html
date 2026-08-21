@@ -1,0 +1,40 @@
+﻿<div class="flex h-screen bg-[var(--color-bg)]">
+  <aside class="w-60 shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col">
+    <div class="px-5 py-6">
+      <h1 class="text-lg font-semibold tracking-tight text-white">IDS Dashboard</h1>
+      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">ML + LLM Explainability</p>
+    </div>
+
+    <nav class="flex-1 px-3 space-y-1">
+      <a
+        routerLink="/overview"
+        routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
+      >
+        <span>Overview</span>
+      </a>
+      <a
+        routerLink="/alarms"
+        routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
+      >
+        <span>Alarms</span>
+      </a>
+      <a
+        routerLink="/experiments"
+        routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
+      >
+        <span>Experiments</span>
+      </a>
+    </nav>
+
+    <div class="px-5 py-4 border-t border-[var(--color-border)]">
+      <p class="text-xs text-[var(--color-text-muted)]">IDS ML + LLM Thesis</p>
+    </div>
+  </aside>
+
+  <main class="flex-1 overflow-y-auto">
+    <router-outlet></router-outlet>
+  </main>
+</div>

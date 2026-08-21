@@ -1,0 +1,40 @@
+# ===== Backend (Java/Maven) =====
+backend/target/
+!backend/.mvn/wrapper/maven-wrapper.jar
+backend/.idea/
+backend/*.iws
+backend/*.iml
+backend/*.ipr
+
+# ===== ML Service (Python) =====
+ml-service/__pycache__/
+ml-service/**/__pycache__/
+ml-service/*.py[cod]
+ml-service/.venv/
+ml-service/.venv2/
+ml-service/venv/
+ml-service/.env
+ml-service/models/*.pkl
+ml-service/models/*.joblib
+ml-service/datasets/*.csv
+ml-service/datasets/**/*.csv
+ml-service/datasets/*.parquet
+ml-service/mlruns/
+ml-service/mlartifacts/
+ml-service/.ipynb_checkpoints/
+ml-service/notebooks/session_checkpoint.pkl
+
+# ===== Frontend (Angular/Node) =====
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/npm-debug.log
+frontend/.vscode/
+
+# ===== IDE (rrenja) =====
+.idea/
+.vscode/
+
+# ===== OS =====
+.DS_Store
+Thumbs.db

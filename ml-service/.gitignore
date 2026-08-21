@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+.env
+
+# Modele te trajnuara dhe dataset (te medha, s'shkojne ne git)
+models/*.pkl
+models/*.joblib
+datasets/*.csv
+
+# MLflow lokale
+mlruns/
+mlartifacts/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

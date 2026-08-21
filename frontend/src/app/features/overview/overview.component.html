@@ -1,0 +1,61 @@
+﻿<div class="p-8">
+  <h2 class="text-2xl font-semibold text-white mb-1">Overview</h2>
+  <p class="text-sm text-[var(--color-text-muted)] mb-8">Statistika e pergjithshme e sistemit</p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5">
+      <p class="text-xs text-[var(--color-text-muted)] font-medium uppercase tracking-wide">Flows Totale</p>
+      <p class="text-3xl font-semibold text-white mt-2">{{ totalFlows() }}</p>
+    </div>
+
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5">
+      <p class="text-xs text-[var(--color-text-muted)] font-medium uppercase tracking-wide">Alarme Totale</p>
+      <p class="text-3xl font-semibold text-white mt-2">{{ totalAlarms() }}</p>
+    </div>
+
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5">
+      <p class="text-xs text-[var(--color-text-muted)] font-medium uppercase tracking-wide">Alarme te Reja</p>
+      <p class="text-3xl font-semibold mt-2" [class.text-[var(--color-critical)]]="newAlarms() > 0" [class.text-white]="newAlarms() === 0">
+        {{ newAlarms() }}
+      </p>
+    </div>
+
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5">
+      <p class="text-xs text-[var(--color-text-muted)] font-medium uppercase tracking-wide">Modeli Aktiv</p>
+      @if (activeModel(); as model) {
+        <p class="text-lg font-semibold text-white mt-2 truncate">{{ model.name }}</p>
+        <p class="text-xs text-[var(--color-text-muted)] mt-1">{{ model.algorithm }}</p>
+      } @else {
+        <p class="text-sm text-[var(--color-text-muted)] mt-2">Asnje model aktiv</p>
+      }
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+    <div class="lg:col-span-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5">
+      <h3 class="text-sm font-semibold text-white mb-1">Shperndarja e Severity-t</h3>
+      <p class="text-xs text-[var(--color-text-muted)] mb-4">Alarme sipas nivelit te rrezikshmerise</p>
+      <div class="h-64">
+        <canvas
+          baseChart
+          [data]="severityChartData()"
+          [options]="severityChartOptions"
+          type="doughnut"
+        ></canvas>
+      </div>
+    </div>
+
+    <div class="lg:col-span-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5">
+      <h3 class="text-sm font-semibold text-white mb-1">Top 5 Modele (F1-score)</h3>
+      <p class="text-xs text-[var(--color-text-muted)] mb-4">Krahasimi i modeleve me te mira te trajnuara</p>
+      <div class="h-64">
+        <canvas
+          baseChart
+          [data]="topModelsChartData()"
+          [options]="topModelsChartOptions"
+          type="bar"
+        ></canvas>
+      </div>
+    </div>
+  </div>
+</div>

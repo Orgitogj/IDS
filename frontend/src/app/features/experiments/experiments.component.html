@@ -1,0 +1,66 @@
+<div class="p-8">
+  <h2 class="text-2xl font-semibold text-white mb-1">Experiments</h2>
+  <p class="text-sm text-[var(--color-text-muted)] mb-8">Krahasimi i modeleve ML (renditur sipas F1-score)</p>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+    @if (hasRq3Data()) {
+      <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5">
+        <h3 class="text-sm font-semibold text-white mb-1">RQ3 - Feature Selection</h3>
+        <p class="text-xs text-[var(--color-text-muted)] mb-4">Performance vs Latency ne varesi te numrit te features</p>
+        <div class="h-64">
+          <canvas baseChart [data]="rq3ChartData()" [options]="rq3ChartOptions" type="line"></canvas>
+        </div>
+      </div>
+    }
+
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5">
+      <h3 class="text-sm font-semibold text-white mb-1">Krahasimi i Plote i Modeleve</h3>
+      <p class="text-xs text-[var(--color-text-muted)] mb-4">F1-score per te gjitha eksperimentet</p>
+      <div class="h-64">
+        <canvas baseChart [data]="comparisonChartData()" [options]="comparisonChartOptions" type="bar"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl overflow-hidden">
+    <table class="w-full text-sm">
+      <thead>
+      <tr class="border-b border-[var(--color-border)] text-left text-xs text-[var(--color-text-muted)] uppercase tracking-wide">
+        <th class="px-5 py-3 font-medium">Modeli</th>
+        <th class="px-5 py-3 font-medium">Dataset</th>
+        <th class="px-5 py-3 font-medium text-right">Accuracy</th>
+        <th class="px-5 py-3 font-medium text-right">Precision</th>
+        <th class="px-5 py-3 font-medium text-right">Recall</th>
+        <th class="px-5 py-3 font-medium text-right">F1-score</th>
+        <th class="px-5 py-3 font-medium text-right">Latency (ms)</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (result of results(); track result.id; let i = $index) {
+          <tr class="border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-surface-elevated)]/50">
+            <td class="px-5 py-3.5">
+              <div class="flex items-center gap-2">
+                @if (i === 0) {
+                  <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-low)]"></span>
+                }
+                <span class="text-white font-medium">{{ result.mlModelName }}</span>
+              </div>
+            </td>
+            <td class="px-5 py-3.5 text-[var(--color-text-muted)]">{{ result.testedOnDataset }}</td>
+            <td class="px-5 py-3.5 text-right text-[var(--color-text)]">{{ formatPercent(result.accuracy) }}</td>
+            <td class="px-5 py-3.5 text-right text-[var(--color-text)]">{{ formatPercent(result.precisionScore) }}</td>
+            <td class="px-5 py-3.5 text-right text-[var(--color-text)]">{{ formatPercent(result.recall) }}</td>
+            <td class="px-5 py-3.5 text-right font-semibold text-white">{{ formatPercent(result.f1Score) }}</td>
+            <td class="px-5 py-3.5 text-right text-[var(--color-text-muted)]">
+              {{ result.avgLatencyMs ? (result.avgLatencyMs | number: '1.4-4') : '—' }}
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="px-5 py-8 text-center text-[var(--color-text-muted)]">Ende s'ka eksperimente.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

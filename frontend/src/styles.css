@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #0a0e17;
+  --color-surface: #12172a;
+  --color-surface-elevated: #1a2140;
+  --color-border: #232b4d;
+  --color-text: #e6e9f5;
+  --color-text-muted: #8b93b8;
+  --color-primary: #6366f1;
+  --color-critical: #ef4444;
+  --color-high: #f97316;
+  --color-medium: #eab308;
+  --color-low: #22c55e;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
