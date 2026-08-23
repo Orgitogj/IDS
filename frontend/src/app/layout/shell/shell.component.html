@@ -60,7 +60,17 @@
           {{ wsConnected() ? 'Live - i lidhur' : 'Offline' }}
         </span>
       </div>
-      <p class="text-xs text-[var(--color-text-muted)]">IDS ML + LLM Thesis</p>
+      @if (username(); as user) {
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs text-[var(--color-text)] truncate">{{ user }}</span>
+          <button
+            (click)="logout()"
+            class="text-[10px] px-2 py-0.5 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text-muted)] hover:text-white shrink-0"
+          >
+            Dil
+          </button>
+        </div>
+      }
     </div>
   </aside>
 

@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit, effect, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { WebSocketService } from '../../core/services/websocket.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../core/services/toast.service';
 import { ToastContainerComponent } from '../../shared/toast/toast-container.component';
 
@@ -14,8 +15,15 @@ import { ToastContainerComponent } from '../../shared/toast/toast-container.comp
 export class ShellComponent implements OnInit {
   private ws = inject(WebSocketService);
   private toast = inject(ToastService);
+  private auth = inject(AuthService);
 
   wsConnected = this.ws.connected;
+  username = this.auth.username;
+
+  logout(): void {
+    this.ws.disconnect();
+    this.auth.logout();
+  }
 
   constructor() {
     effect(() => {
