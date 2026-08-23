@@ -1,0 +1,51 @@
+<div class="min-h-screen flex items-center justify-center bg-[var(--color-bg)] p-6">
+  <div class="w-full max-w-sm">
+    <div class="mb-6 text-center">
+      <h1 class="text-xl font-semibold tracking-tight text-white">IDS Dashboard</h1>
+      <p class="text-xs text-[var(--color-text-muted)] mt-1">ML + LLM Explainability</p>
+    </div>
+
+    <form
+      (ngSubmit)="submit()"
+      class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-5"
+    >
+      <div class="mb-3">
+        <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">
+          Perdoruesi
+        </label>
+        <input
+          type="text"
+          name="username"
+          autocomplete="username"
+          [(ngModel)]="username"
+          class="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">
+          Fjalekalimi
+        </label>
+        <input
+          type="password"
+          name="password"
+          autocomplete="current-password"
+          [(ngModel)]="password"
+          class="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]"
+        />
+      </div>
+
+      @if (errorMessage(); as message) {
+        <p class="text-[11px] text-[var(--color-critical)] mb-3">{{ message }}</p>
+      }
+
+      <button
+        type="submit"
+        [disabled]="submitting()"
+        class="w-full text-xs font-medium px-3 py-2 rounded-lg bg-[var(--color-primary)]/20 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/30 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        {{ submitting() ? 'Duke hyre...' : 'Hyr' }}
+      </button>
+    </form>
+  </div>
+</div>
