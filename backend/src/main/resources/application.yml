@@ -22,3 +22,12 @@ server:
 logging:
   level:
     com.diploma.idsml: DEBUG
+ids:
+  security:
+    jwt-secret: ${IDS_JWT_SECRET:ZGV2LW9ubHktc2VjcmV0LWNoYW5nZS1tZS1pbi1wcm9kdWN0aW9uLTI1Ni1iaXQ=}
+    jwt-expiration-minutes: 480
+  bootstrap:
+    admin-username: ${IDS_ADMIN_USERNAME:admin}
+    admin-password: ${IDS_ADMIN_PASSWORD:admin123}
+    service-username: ${IDS_SERVICE_USERNAME:ml-service}
+    service-password: ${IDS_SERVICE_PASSWORD:ml-service-secret}
