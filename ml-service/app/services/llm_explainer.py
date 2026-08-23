@@ -1,3 +1,5 @@
+import time
+
 from anthropic import Anthropic
 from google import genai
 
@@ -61,16 +63,36 @@ def _generate_with_gemini(prompt):
     return response.text, model_name
 
 
-def generate_explanation(predicted_label, confidence, top_shap_features):
-    prompt = _build_prompt(predicted_label, confidence, top_shap_features)
+PROVIDERS = ("claude", "gemini")
 
-    if settings.llm_provider == "claude":
+
+def generate_explanation(predicted_label, confidence, top_shap_features, provider=None):
+    prompt = _build_prompt(predicted_label, confidence, top_shap_features)
+    chosen = provider or settings.llm_provider
+
+    started = time.perf_counter()
+    if chosen == "claude":
         explanation_text, model_name = _generate_with_claude(prompt)
     else:
         explanation_text, model_name = _generate_with_gemini(prompt)
+    latency_ms = (time.perf_counter() - started) * 1000
 
     return {
         "explanation_text": explanation_text,
         "llm_model": model_name,
         "llm_prompt_version": PROMPT_VERSION,
+        "generation_latency_ms": latency_ms,
+        "provider": chosen,
     }
+
+
+def generate_all_explanations(predicted_label, confidence, top_shap_features):
+    results = []
+    for provider in PROVIDERS:
+        try:
+            results.append(
+                generate_explanation(predicted_label, confidence, top_shap_features, provider)
+            )
+        except Exception as error:
+            print(f"Ofruesi {provider} deshtoi: {error}")
+    return results

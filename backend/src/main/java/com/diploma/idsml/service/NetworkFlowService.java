@@ -38,7 +38,9 @@ public class NetworkFlowService {
     @Transactional
     public NetworkFlowResponse processFlowResult(NetworkFlowIngestRequest request) {
         NetworkFlow flow = NetworkFlow.builder()
-                .datasetSource(DatasetSource.LAB_LIVE)
+                .datasetSource(request.datasetSource() != null
+                        ? request.datasetSource()
+                        : DatasetSource.LAB_LIVE)
                 .sourceIp(request.sourceIp())
                 .destinationIp(request.destinationIp())
                 .sourcePort(request.sourcePort())

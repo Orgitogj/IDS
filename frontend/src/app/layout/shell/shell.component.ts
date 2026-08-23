@@ -2,7 +2,7 @@
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { WebSocketService } from '../../core/services/websocket.service';
 import { ToastService } from '../../core/services/toast.service';
-import {ToastContainerComponent} from '../../core/shared/toast/toast-container.component';
+import { ToastContainerComponent } from '../../shared/toast/toast-container.component';
 
 @Component({
   selector: 'app-shell',

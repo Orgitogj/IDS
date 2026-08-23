@@ -24,6 +24,14 @@ export class ToastService {
     setTimeout(() => this.dismiss(toast.id), durationMs);
   }
 
+  backendError(resource: string): void {
+    this.show(
+      `Deshtoi ngarkimi: ${resource}`,
+      'Backend-i nuk pergjigjet. Kontrollo localhost:8080.',
+      'critical',
+    );
+  }
+
   dismiss(id: number): void {
     this.toasts.update((current) => current.filter((t) => t.id !== id));
   }

@@ -4,6 +4,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 import { ExperimentService } from '../../core/services/experiment.service';
 import { ExperimentResult } from '../../core/models/experiment-result.model';
+import { ToastService } from '../../core/services/toast.service';
 
 const FEATURE_COUNT_PATTERN = /^top_(\d+)_features$/;
 const AXIS_COLOR = '#8b93b8';
@@ -18,9 +19,11 @@ const GRID_COLOR = '#1d2440';
 })
 export class ExperimentsComponent implements OnInit {
   private experimentService = inject(ExperimentService);
+  private toast = inject(ToastService);
 
   results = signal<ExperimentResult[]>([]);
   loading = signal(true);
+  loadError = signal(false);
 
   bestF1 = computed(() => {
     const r = this.results();
@@ -178,9 +181,16 @@ export class ExperimentsComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.experimentService.getAll().subscribe((results) => {
-      this.results.set(results.sort((a, b) => b.f1Score - a.f1Score));
-      this.loading.set(false);
+    this.experimentService.getAll().subscribe({
+      next: (results) => {
+        this.results.set(results.sort((a, b) => b.f1Score - a.f1Score));
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+        this.loadError.set(true);
+        this.toast.backendError('experiments');
+      },
     });
   }
 

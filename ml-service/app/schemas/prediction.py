@@ -23,11 +23,17 @@ class PredictionResponse(BaseModel):
 class ExplainRequest(BaseModel):
     alarm_id: str = Field(...)
     feature_vector: dict[str, float] = Field(...)
+    compare: bool = Field(default=False)
+
+
+class GeneratedExplanation(BaseModel):
+    explanation_text: str
+    llm_model: str
+    llm_prompt_version: str
+    generation_latency_ms: float
 
 
 class ExplainResponse(BaseModel):
     predicted_label: str
     confidence: float
-    explanation_text: str
-    llm_model: str
-    llm_prompt_version: str
+    explanations: list[GeneratedExplanation]

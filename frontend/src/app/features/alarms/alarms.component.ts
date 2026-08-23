@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, effect, inject, signal, computed } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
@@ -8,7 +8,8 @@ import { FlowService } from '../../core/services/flow.service';
 import { WebSocketService } from '../../core/services/websocket.service';
 import { PredictionService, ShapContribution } from '../../core/services/prediction.service';
 import { Alarm, AlarmStatus, AlarmSeverity } from '../../core/models/alarm.model';
-import { Explanation } from '../../core/models/explanation.model';
+import { Explanation, ExplanationRating } from '../../core/models/explanation.model';
+import { ToastService } from '../../core/services/toast.service';
 
 const AXIS_COLOR = '#8b93b8';
 const GRID_COLOR = '#1d2440';
@@ -16,7 +17,7 @@ const GRID_COLOR = '#1d2440';
 @Component({
   selector: 'app-alarms',
   standalone: true,
-  imports: [DatePipe, FormsModule, BaseChartDirective],
+  imports: [DatePipe, DecimalPipe, FormsModule, BaseChartDirective],
   templateUrl: './alarms.component.html',
   styleUrl: './alarms.component.css',
 })
@@ -25,12 +26,16 @@ export class AlarmsComponent implements OnInit {
   private flowService = inject(FlowService);
   private predictionService = inject(PredictionService);
   private ws = inject(WebSocketService);
+  private toast = inject(ToastService);
 
   alarms = signal<Alarm[]>([]);
   loading = signal(true);
+  loadError = signal(false);
   selectedAlarmId = signal<string | null>(null);
-  explanation = signal<Explanation | null>(null);
+  explanations = signal<Explanation[]>([]);
   explanationLoading = signal(false);
+  generating = signal(false);
+  selectedFeatureVector = signal<Record<string, number> | null>(null);
   shapFeatures = signal<ShapContribution[] | null>(null);
   shapLoading = signal(false);
 
@@ -101,32 +106,32 @@ export class AlarmsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.alarmService.getAll().subscribe((alarms) => {
-      this.alarms.set(alarms.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)));
-      this.loading.set(false);
+    this.alarmService.getAll().subscribe({
+      next: (alarms) => {
+        this.alarms.set(alarms.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)));
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+        this.loadError.set(true);
+        this.toast.backendError('alarms');
+      },
     });
   }
 
   selectAlarm(alarm: Alarm): void {
     this.selectedAlarmId.set(alarm.id);
-    this.explanation.set(null);
+    this.explanations.set([]);
     this.shapFeatures.set(null);
+    this.selectedFeatureVector.set(null);
     this.explanationLoading.set(true);
     this.shapLoading.set(true);
 
-    this.alarmService.getExplanation(alarm.id).subscribe({
-      next: (exp) => {
-        this.explanation.set(exp);
-        this.explanationLoading.set(false);
-      },
-      error: () => {
-        this.explanation.set(null);
-        this.explanationLoading.set(false);
-      },
-    });
+    this.loadExplanations(alarm.id);
 
     this.flowService.getById(alarm.networkFlowId).subscribe({
       next: (flow) => {
+        this.selectedFeatureVector.set(flow.featureVector);
         this.predictionService.predict(flow.featureVector).subscribe({
           next: (result) => {
             this.shapFeatures.set(result.top_shap_features);
@@ -139,9 +144,85 @@ export class AlarmsComponent implements OnInit {
     });
   }
 
+  private loadExplanations(alarmId: string): void {
+    this.alarmService.getExplanations(alarmId).subscribe({
+      next: (list) => {
+        this.explanations.set(list);
+        this.explanationLoading.set(false);
+      },
+      error: () => {
+        this.explanations.set([]);
+        this.explanationLoading.set(false);
+      },
+    });
+  }
+
+  generateExplanation(compare: boolean): void {
+    const alarmId = this.selectedAlarmId();
+    const featureVector = this.selectedFeatureVector();
+    if (!alarmId || !featureVector || this.generating()) return;
+
+    this.generating.set(true);
+    this.predictionService.explain(alarmId, featureVector, compare).subscribe({
+      next: (result) => {
+        this.generating.set(false);
+        this.loadExplanations(alarmId);
+        this.toast.show(
+          compare ? 'Krahasimi u gjenerua' : 'Shpjegimi u gjenerua',
+          `${result.explanations.length} shpjegim(e) nga LLM.`,
+          'low',
+        );
+      },
+      error: () => {
+        this.generating.set(false);
+        this.toast.show(
+          'Gjenerimi i shpjegimit deshtoi',
+          'Kontrollo nese ml-service eshte i ndezur ne localhost:8000.',
+          'critical',
+        );
+      },
+    });
+  }
+
+  rateExplanation(explanation: Explanation, rating: ExplanationRating): void {
+    const alarmId = this.selectedAlarmId();
+    if (!alarmId) return;
+
+    this.alarmService.rateExplanation(alarmId, explanation.id, rating).subscribe({
+      next: (updated) => {
+        this.explanations.update((current) =>
+          current.map((e) => (e.id === updated.id ? updated : e)),
+        );
+      },
+      error: () => {
+        this.toast.show('Vleresimi deshtoi', 'Provo perseri.', 'critical');
+      },
+    });
+  }
+
+  ratingButtonClass(explanation: Explanation, rating: ExplanationRating): string {
+    const active: Record<ExplanationRating, string> = {
+      HELPFUL: 'bg-[var(--color-low)]/20 text-[var(--color-low)]',
+      UNCLEAR: 'bg-[var(--color-medium)]/20 text-[var(--color-medium)]',
+      INCORRECT: 'bg-[var(--color-critical)]/20 text-[var(--color-critical)]',
+    };
+    return explanation.rating === rating
+      ? active[rating]
+      : 'bg-[var(--color-surface-elevated)] text-[var(--color-text-muted)] hover:text-white';
+  }
+
   updateStatus(alarm: Alarm, status: AlarmStatus): void {
-    this.alarmService.updateStatus(alarm.id, status).subscribe((updated) => {
-      this.alarms.update((current) => current.map((a) => (a.id === updated.id ? updated : a)));
+    this.alarmService.updateStatus(alarm.id, status).subscribe({
+      next: (updated) => {
+        this.alarms.update((current) => current.map((a) => (a.id === updated.id ? updated : a)));
+      },
+      error: () => {
+        this.toast.show(
+          'Ndryshimi i statusit deshtoi',
+          `Alarmi mbeti ne statusin e meparshem.`,
+          'critical',
+        );
+      },
     });
   }
 

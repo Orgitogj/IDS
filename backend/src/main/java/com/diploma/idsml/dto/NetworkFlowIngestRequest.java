@@ -1,5 +1,6 @@
 package com.diploma.idsml.dto;
 
+import com.diploma.idsml.entity.DatasetSource;
 import com.diploma.idsml.entity.FlowLabel;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,6 +34,8 @@ public record NetworkFlowIngestRequest(
         String attackType,
 
         @NotNull
-        Instant flowTimestamp
+        Instant flowTimestamp,
+
+        DatasetSource datasetSource
 ) {
 }

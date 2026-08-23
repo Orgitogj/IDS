@@ -3,6 +3,7 @@ import {FormsModule} from '@angular/forms';
 import { DatePipe,DecimalPipe} from '@angular/common';
 import { FlowService } from '../../core/services/flow.service';
 import { NetworkFlow, FlowLabel } from '../../core/models/network-flow.model';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-flows',
@@ -13,9 +14,11 @@ import { NetworkFlow, FlowLabel } from '../../core/models/network-flow.model';
 })
 export class FlowsComponent implements OnInit {
   private flowService = inject(FlowService);
+  private toast = inject(ToastService);
 
   flows = signal<NetworkFlow[]>([]);
   loading = signal(true);
+  loadError = signal(false);
   selectedFlow = signal<NetworkFlow | null>(null);
 
   searchTerm = signal('');
@@ -37,9 +40,16 @@ export class FlowsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.flowService.getAll().subscribe((flows) => {
-      this.flows.set(flows.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)));
-      this.loading.set(false);
+    this.flowService.getAll().subscribe({
+      next: (flows) => {
+        this.flows.set(flows.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)));
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+        this.loadError.set(true);
+        this.toast.backendError('flows');
+      },
     });
   }
 

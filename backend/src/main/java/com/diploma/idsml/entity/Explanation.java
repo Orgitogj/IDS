@@ -2,9 +2,11 @@ package com.diploma.idsml.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,8 +30,8 @@ public class Explanation {
     @Builder.Default
     private UUID id = UUID.randomUUID();
 
-    @OneToOne
-    @JoinColumn(name = "alarm_id", nullable = false, unique = true)
+    @ManyToOne
+    @JoinColumn(name = "alarm_id", nullable = false)
     private Alarm alarm;
 
     @Column(name = "explanation_text", columnDefinition = "TEXT", nullable = false)
@@ -44,4 +46,14 @@ public class Explanation {
     @Column(name = "generated_at", nullable = false, updatable = false)
     @Builder.Default
     private Instant generatedAt = Instant.now();
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rating")
+    private ExplanationRating rating;
+
+    @Column(name = "rated_at")
+    private Instant ratedAt;
+
+    @Column(name = "generation_latency_ms")
+    private Double generationLatencyMs;
 }

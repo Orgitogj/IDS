@@ -47,13 +47,41 @@ def record_experiment_result(ml_model_id: str, tested_on_dataset: str,
     return response.json()
 
 
+def ingest_flow(source_ip: str, destination_ip: str, source_port: int,
+                destination_port: int, protocol: str, feature_vector: dict,
+                predicted_label: str, prediction_confidence: float,
+                flow_timestamp_iso: str, attack_type: str = None,
+                dataset_source: str = "CICIDS2017_REPLAY",
+                timeout: int = 10) -> dict:
+    url = f"{settings.spring_boot_base_url}/api/alarms/ingest"
+    payload = {
+        "sourceIp": source_ip,
+        "destinationIp": destination_ip,
+        "sourcePort": source_port,
+        "destinationPort": destination_port,
+        "protocol": protocol,
+        "featureVector": feature_vector,
+        "predictedLabel": predicted_label,
+        "predictionConfidence": prediction_confidence,
+        "attackType": attack_type,
+        "flowTimestamp": flow_timestamp_iso,
+        "datasetSource": dataset_source,
+    }
+
+    response = requests.post(url, json=payload, timeout=timeout)
+    response.raise_for_status()
+    return response.json()
+
+
 def create_explanation(alarm_id: str, explanation_text: str,
-                       llm_model: str, llm_prompt_version: str) -> dict:
-    url = f"{settings.spring_boot_base_url}/api/alarms/{alarm_id}/explanation"
+                       llm_model: str, llm_prompt_version: str,
+                       generation_latency_ms: float = None) -> dict:
+    url = f"{settings.spring_boot_base_url}/api/alarms/{alarm_id}/explanations"
     payload = {
         "explanationText": explanation_text,
         "llmModel": llm_model,
         "llmPromptVersion": llm_prompt_version,
+        "generationLatencyMs": generation_latency_ms,
     }
 
     response = requests.post(url, json=payload, timeout=15)

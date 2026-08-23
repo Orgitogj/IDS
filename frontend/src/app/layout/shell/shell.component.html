@@ -21,15 +21,45 @@
         <span>Alarms</span>
       </a>
       <a
+        routerLink="/flows"
+        routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
+      >
+        <span>Flows</span>
+      </a>
+      <a
         routerLink="/experiments"
         routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
       >
         <span>Experiments</span>
       </a>
+      <a
+        routerLink="/models"
+        routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
+      >
+        <span>Models</span>
+      </a>
+      <a
+        routerLink="/settings"
+        routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
+      >
+        <span>Settings</span>
+      </a>
     </nav>
 
     <div class="px-5 py-4 border-t border-[var(--color-border)]">
+      <div class="flex items-center gap-2 mb-2">
+        <span
+          class="w-2 h-2 rounded-full shrink-0"
+          [class]="wsConnected() ? 'bg-[var(--color-low)]' : 'bg-[var(--color-text-muted)]'"
+        ></span>
+        <span class="text-xs text-[var(--color-text-muted)]">
+          {{ wsConnected() ? 'Live - i lidhur' : 'Offline' }}
+        </span>
+      </div>
       <p class="text-xs text-[var(--color-text-muted)]">IDS ML + LLM Thesis</p>
     </div>
   </aside>
@@ -37,4 +67,6 @@
   <main class="flex-1 overflow-y-auto">
     <router-outlet></router-outlet>
   </main>
+
+  <app-toast-container></app-toast-container>
 </div>

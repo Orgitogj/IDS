@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, inject, signal, computed } from '@angular/core';
+﻿import { Component, OnInit, effect, inject, signal, computed } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
@@ -6,10 +6,12 @@ import { AlarmService } from '../../core/services/alarm.service';
 import { FlowService } from '../../core/services/flow.service';
 import { ModelService } from '../../core/services/model.service';
 import { ExperimentService } from '../../core/services/experiment.service';
+import { WebSocketService } from '../../core/services/websocket.service';
 import { Alarm } from '../../core/models/alarm.model';
 import { NetworkFlow } from '../../core/models/network-flow.model';
 import { MLModel } from '../../core/models/ml-model.model';
 import { ExperimentResult } from '../../core/models/experiment-result.model';
+import { ToastService } from '../../core/services/toast.service';
 
 const AXIS_COLOR = '#8b93b8';
 const GRID_COLOR = '#1d2440';
@@ -26,17 +28,21 @@ export class OverviewComponent implements OnInit {
   private flowService = inject(FlowService);
   private modelService = inject(ModelService);
   private experimentService = inject(ExperimentService);
+  private ws = inject(WebSocketService);
+  private toast = inject(ToastService);
 
-  totalFlows = signal(0);
-  totalAlarms = signal(0);
-  newAlarms = signal(0);
-  criticalAlarms = signal(0);
-  activeModel = signal<MLModel | null>(null);
   loading = signal(true);
+  loadError = signal(false);
+  activeModel = signal<MLModel | null>(null);
 
   private alarms = signal<Alarm[]>([]);
   private flows = signal<NetworkFlow[]>([]);
   private experiments = signal<ExperimentResult[]>([]);
+
+  totalFlows = computed(() => this.flows().length);
+  totalAlarms = computed(() => this.alarms().length);
+  newAlarms = computed(() => this.alarms().filter((a) => a.status === 'NEW').length);
+  criticalAlarms = computed(() => this.alarms().filter((a) => a.severity === 'CRITICAL').length);
 
   recentAlarms = computed(() =>
     [...this.alarms()].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)).slice(0, 6),
@@ -182,26 +188,50 @@ export class OverviewComponent implements OnInit {
     },
   };
 
+  constructor() {
+    effect(() => {
+      const live = this.ws.liveAlarms();
+      if (live.length === 0) return;
+      const [newest] = live;
+      this.alarms.update((current) => {
+        if (current.some((a) => a.id === newest.id)) return current;
+        return [newest, ...current];
+      });
+    });
+  }
+
   ngOnInit(): void {
-    this.flowService.getAll().subscribe((flows) => {
-      this.flows.set(flows);
-      this.totalFlows.set(flows.length);
+    this.flowService.getAll().subscribe({
+      next: (flows) => this.flows.set(flows),
+      error: () => this.handleLoadError('flows'),
     });
 
-    this.alarmService.getAll().subscribe((alarms: Alarm[]) => {
-      this.alarms.set(alarms);
-      this.totalAlarms.set(alarms.length);
-      this.newAlarms.set(alarms.filter((a) => a.status === 'NEW').length);
-      this.criticalAlarms.set(alarms.filter((a) => a.severity === 'CRITICAL').length);
+    this.alarmService.getAll().subscribe({
+      next: (alarms: Alarm[]) => {
+        this.alarms.set(alarms);
+        this.loading.set(false);
+      },
+      error: () => this.handleLoadError('alarms'),
     });
 
-    this.modelService.getAll().subscribe((models: MLModel[]) => {
-      const active = models.find((m) => m.active);
-      this.activeModel.set(active ?? null);
-      this.loading.set(false);
+    this.modelService.getAll().subscribe({
+      next: (models: MLModel[]) => {
+        const active = models.find((m) => m.active);
+        this.activeModel.set(active ?? null);
+      },
+      error: () => this.handleLoadError('models'),
     });
 
-    this.experimentService.getAll().subscribe((results) => this.experiments.set(results));
+    this.experimentService.getAll().subscribe({
+      next: (results) => this.experiments.set(results),
+      error: () => this.handleLoadError('experiments'),
+    });
+  }
+
+  private handleLoadError(resource: string): void {
+    this.loading.set(false);
+    this.loadError.set(true);
+    this.toast.backendError(resource);
   }
 
   severityDotClass(severity: string): string {
