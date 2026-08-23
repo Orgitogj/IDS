@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, effect, inject, signal, computed } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 import { AlarmService } from '../../core/services/alarm.service';
@@ -20,7 +20,7 @@ const GRID_COLOR = '#1d2440';
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [BaseChartDirective, DatePipe],
+  imports: [BaseChartDirective, DatePipe, DecimalPipe],
   templateUrl: './overview.component.html',
   styleUrl: './overview.component.css',
 })
@@ -46,6 +46,17 @@ export class OverviewComponent implements OnInit {
   totalAlarms = computed(() => this.alarmStats()?.totalAlarms ?? 0);
   newAlarms = computed(() => this.alarmStats()?.statusCounts?.['NEW'] ?? 0);
   criticalAlarms = computed(() => this.alarmStats()?.severityCounts?.['CRITICAL'] ?? 0);
+  falsePositives = computed(() => this.alarmStats()?.statusCounts?.['FALSE_POSITIVE'] ?? 0);
+
+  reviewedAlarms = computed(() => {
+    const counts = this.alarmStats()?.statusCounts ?? {};
+    return (counts['FALSE_POSITIVE'] ?? 0) + (counts['CONFIRMED'] ?? 0) + (counts['RESOLVED'] ?? 0);
+  });
+
+  falsePositiveRate = computed(() => {
+    const reviewed = this.reviewedAlarms();
+    return reviewed === 0 ? 0 : (this.falsePositives() / reviewed) * 100;
+  });
 
   recentAlarms = computed(() =>
     [...this.alarms()].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)).slice(0, 6),

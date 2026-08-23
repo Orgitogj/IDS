@@ -4,6 +4,79 @@
     <p class="text-xs text-[var(--color-text-muted)] mt-0.5">Konfigurimi i sistemit</p>
   </div>
 
+  @if (loadError()) {
+    <div class="mb-4 rounded-lg border border-[var(--color-critical)]/30 bg-[var(--color-critical)]/10 px-4 py-3">
+      <p class="text-xs font-semibold text-[var(--color-critical)]">Ngarkimi deshtoi</p>
+      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
+        Backend-i nuk pergjigjet. Kontrollo nese Spring Boot eshte i ndezur ne localhost:8080.
+      </p>
+    </div>
+  }
+
+  <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 mb-4">
+    <div class="flex items-center gap-2 mb-1">
+      <span class="w-1 h-3.5 bg-[var(--color-critical)] rounded-full"></span>
+      <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Pragjet e Severity</h3>
+    </div>
+    <p class="text-[11px] text-[var(--color-text-muted)] mb-4">
+      Besueshmeria e parashikimit mbi te cilen nje alarm merr secilin nivel. Prek vetem alarmet e reja.
+    </p>
+
+    @if (loading()) {
+      <p class="text-xs text-[var(--color-text-muted)]">Duke ngarkuar pragjet...</p>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-critical)] mb-1">Critical</label>
+          <input
+            type="number" step="0.01" min="0" max="1"
+            [(ngModel)]="criticalMin"
+            class="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white tabular-nums focus:outline-none focus:border-[var(--color-primary)]"
+          />
+        </div>
+        <div>
+          <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-high)] mb-1">High</label>
+          <input
+            type="number" step="0.01" min="0" max="1"
+            [(ngModel)]="highMin"
+            class="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white tabular-nums focus:outline-none focus:border-[var(--color-primary)]"
+          />
+        </div>
+        <div>
+          <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-medium)] mb-1">Medium</label>
+          <input
+            type="number" step="0.01" min="0" max="1"
+            [(ngModel)]="mediumMin"
+            class="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white tabular-nums focus:outline-none focus:border-[var(--color-primary)]"
+          />
+        </div>
+      </div>
+
+      <p class="text-[11px] text-[var(--color-text-muted)] mt-3">
+        Nen pragun Medium, alarmi merr nivelin Low.
+      </p>
+
+      @if (validationError(); as error) {
+        <p class="text-[11px] text-[var(--color-critical)] mt-2">{{ error }}</p>
+      }
+
+      <div class="flex items-center gap-3 mt-4">
+        <button
+          (click)="save()"
+          [disabled]="!!validationError() || saving()"
+          class="text-[11px] px-3 py-1.5 rounded-md bg-[var(--color-primary)]/20 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/30 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {{ saving() ? 'Duke ruajtur...' : 'Ruaj pragjet' }}
+        </button>
+        @if (updatedAt(); as updated) {
+          <span class="text-[10px] text-[var(--color-text-muted)]">
+            Perditesuar: {{ updated | date: 'dd/MM/yyyy HH:mm' }}
+          </span>
+        }
+      </div>
+    }
+  </div>
+
   <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 mb-4">
     <div class="flex items-center gap-2 mb-3">
       <span class="w-1 h-3.5 bg-[var(--color-primary)] rounded-full"></span>

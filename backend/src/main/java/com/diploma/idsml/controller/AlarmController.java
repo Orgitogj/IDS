@@ -3,6 +3,7 @@ package com.diploma.idsml.controller;
 import com.diploma.idsml.dto.AlarmResponse;
 import com.diploma.idsml.dto.AlarmStatsResponse;
 import com.diploma.idsml.dto.AlarmStatusUpdateRequest;
+import com.diploma.idsml.dto.IncidentResponse;
 import com.diploma.idsml.dto.PageResponse;
 import com.diploma.idsml.entity.AlarmSeverity;
 import com.diploma.idsml.entity.AlarmStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -54,6 +56,12 @@ public class AlarmController {
     @GetMapping("/stats")
     public AlarmStatsResponse getStats() {
         return alarmService.getStats();
+    }
+
+    @GetMapping("/incidents")
+    public List<IncidentResponse> getIncidents(
+            @RequestParam(defaultValue = "50") int limit) {
+        return alarmService.getIncidents(Math.min(Math.max(limit, 1), MAX_PAGE_SIZE));
     }
 
     @GetMapping("/{id}")

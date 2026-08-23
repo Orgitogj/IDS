@@ -9,6 +9,7 @@ import { WebSocketService } from '../../core/services/websocket.service';
 import { PredictionService, ShapContribution } from '../../core/services/prediction.service';
 import { Alarm, AlarmStatus, AlarmSeverity } from '../../core/models/alarm.model';
 import { AlarmStats } from '../../core/models/alarm-stats.model';
+import { Incident } from '../../core/models/incident.model';
 import { Explanation, ExplanationRating } from '../../core/models/explanation.model';
 import { ToastService } from '../../core/services/toast.service';
 
@@ -49,6 +50,10 @@ export class AlarmsComponent implements OnInit {
   wsConnected = this.ws.connected;
 
   stats = signal<AlarmStats | null>(null);
+
+  incidents = signal<Incident[]>([]);
+  incidentsLoading = signal(false);
+  showIncidents = signal(false);
 
   page = signal(0);
   size = signal(PAGE_SIZE);
@@ -143,6 +148,28 @@ export class AlarmsComponent implements OnInit {
   ngOnInit(): void {
     this.load();
     this.loadStats();
+  }
+
+  toggleIncidents(): void {
+    const next = !this.showIncidents();
+    this.showIncidents.set(next);
+    if (next && this.incidents().length === 0) {
+      this.loadIncidents();
+    }
+  }
+
+  loadIncidents(): void {
+    this.incidentsLoading.set(true);
+    this.alarmService.getIncidents().subscribe({
+      next: (incidents) => {
+        this.incidents.set(incidents);
+        this.incidentsLoading.set(false);
+      },
+      error: () => {
+        this.incidentsLoading.set(false);
+        this.toast.backendError('incidents');
+      },
+    });
   }
 
   private hasActiveFilters(): boolean {

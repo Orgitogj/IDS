@@ -3,6 +3,7 @@ package com.diploma.idsml.service;
 import com.diploma.idsml.dto.AlarmResponse;
 import com.diploma.idsml.dto.AlarmStatsResponse;
 import com.diploma.idsml.dto.HourlyCount;
+import com.diploma.idsml.dto.IncidentResponse;
 import com.diploma.idsml.dto.PageResponse;
 import com.diploma.idsml.entity.Alarm;
 import com.diploma.idsml.entity.AlarmSeverity;
@@ -69,6 +70,28 @@ public class AlarmService {
 
         return new AlarmStatsResponse(alarmRepository.count(), severityCounts, statusCounts,
                 hourlyCounts);
+    }
+
+    public List<IncidentResponse> getIncidents(int limit) {
+        return alarmRepository.findIncidents(limit).stream()
+                .map(row -> new IncidentResponse(
+                        (String) row[0],
+                        (String) row[1],
+                        ((Number) row[2]).longValue(),
+                        severityFromRank(((Number) row[3]).intValue()),
+                        (String) row[4],
+                        (String) row[5]
+                ))
+                .collect(Collectors.toList());
+    }
+
+    private String severityFromRank(int rank) {
+        return switch (rank) {
+            case 1 -> AlarmSeverity.CRITICAL.name();
+            case 2 -> AlarmSeverity.HIGH.name();
+            case 3 -> AlarmSeverity.MEDIUM.name();
+            default -> AlarmSeverity.LOW.name();
+        };
     }
 
     private Specification<Alarm> buildFilter(AlarmSeverity severity, AlarmStatus status,

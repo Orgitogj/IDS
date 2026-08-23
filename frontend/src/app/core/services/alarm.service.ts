@@ -1,9 +1,10 @@
-﻿import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Alarm, AlarmStatus, AlarmSeverity } from '../models/alarm.model';
 import { PageResponse } from '../models/page-response.model';
 import { AlarmStats } from '../models/alarm-stats.model';
+import { Incident } from '../models/incident.model';
 import { Explanation, ExplanationRating } from '../models/explanation.model';
 
 const BASE_URL = 'http://localhost:8080/api/alarms';
@@ -36,6 +37,11 @@ export class AlarmService {
 
   getStats(): Observable<AlarmStats> {
     return this.http.get<AlarmStats>(`${BASE_URL}/stats`);
+  }
+
+  getIncidents(limit = 50): Observable<Incident[]> {
+    const params = new HttpParams().set('limit', limit);
+    return this.http.get<Incident[]>(`${BASE_URL}/incidents`, { params });
   }
 
   getById(id: string): Observable<Alarm> {

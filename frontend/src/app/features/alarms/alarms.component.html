@@ -4,6 +4,12 @@
       <h2 class="text-xl font-semibold text-white">Alarms</h2>
       <p class="text-xs text-[var(--color-text-muted)] mt-0.5">{{ rangeStart() }}-{{ rangeEnd() }} nga {{ totalElements() }} alarme</p>
     </div>
+    <button
+      (click)="toggleIncidents()"
+      class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20"
+    >
+      {{ showIncidents() ? 'Fshih incidentet' : 'Grupo ne incidente' }}
+    </button>
   </div>
 
   @if (loading()) {
@@ -14,6 +20,51 @@
       <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
         Backend-i nuk pergjigjet. Kontrollo nese Spring Boot eshte i ndezur ne localhost:8080.
       </p>
+    </div>
+  }
+
+  @if (showIncidents()) {
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg mb-4 overflow-hidden">
+      <div class="flex items-center gap-2 px-4 py-3 border-b border-[var(--color-border)]">
+        <span class="w-1 h-3.5 bg-[var(--color-high)] rounded-full"></span>
+        <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Incidente</h3>
+        <span class="text-[10px] text-[var(--color-text-muted)]">grupuar sipas source IP dhe llojit te sulmit</span>
+      </div>
+
+      @if (incidentsLoading()) {
+        <p class="px-4 py-6 text-xs text-[var(--color-text-muted)]">Duke grupuar alarmet...</p>
+      } @else {
+        <table class="w-full text-xs">
+          <thead>
+            <tr class="border-b border-[var(--color-border)] text-left text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">
+              <th class="px-4 py-2.5 font-semibold">Source IP</th>
+              <th class="px-4 py-2.5 font-semibold">Lloji</th>
+              <th class="px-4 py-2.5 font-semibold text-right">Alarme</th>
+              <th class="px-4 py-2.5 font-semibold">Severity</th>
+              <th class="px-4 py-2.5 font-semibold">Fillimi</th>
+              <th class="px-4 py-2.5 font-semibold">Fundi</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (incident of incidents(); track incident.sourceIp + incident.attackType) {
+              <tr class="border-b border-[var(--color-border)] last:border-0">
+                <td class="px-4 py-2.5 font-mono text-[var(--color-text)]">{{ incident.sourceIp }}</td>
+                <td class="px-4 py-2.5 text-[var(--color-text-muted)]">{{ incident.attackType ?? 'BENIGN' }}</td>
+                <td class="px-4 py-2.5 text-right tabular-nums font-semibold text-white">{{ incident.alarmCount }}</td>
+                <td class="px-4 py-2.5">
+                  <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [class]="severityClass(incident.topSeverity)">
+                    {{ incident.topSeverity }}
+                  </span>
+                </td>
+                <td class="px-4 py-2.5 text-[var(--color-text-muted)]">{{ incident.firstSeen | date: 'dd/MM HH:mm' }}</td>
+                <td class="px-4 py-2.5 text-[var(--color-text-muted)]">{{ incident.lastSeen | date: 'dd/MM HH:mm' }}</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="6" class="px-4 py-8 text-center text-[var(--color-text-muted)]">Asnje incident.</td></tr>
+            }
+          </tbody>
+        </table>
+      }
     </div>
   }
 

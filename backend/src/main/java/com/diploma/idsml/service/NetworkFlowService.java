@@ -7,7 +7,6 @@ import com.diploma.idsml.dto.NetworkFlowIngestRequest;
 import com.diploma.idsml.dto.NetworkFlowResponse;
 import com.diploma.idsml.dto.PageResponse;
 import com.diploma.idsml.entity.Alarm;
-import com.diploma.idsml.entity.AlarmSeverity;
 import com.diploma.idsml.entity.AlarmStatus;
 import com.diploma.idsml.entity.DatasetSource;
 import com.diploma.idsml.entity.FlowLabel;
@@ -34,13 +33,16 @@ public class NetworkFlowService {
     private final NetworkFlowRepository networkFlowRepository;
     private final AlarmRepository alarmRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final SeverityThresholdsService severityThresholdsService;
 
     public NetworkFlowService(NetworkFlowRepository networkFlowRepository,
                               AlarmRepository alarmRepository,
-                              SimpMessagingTemplate messagingTemplate) {
+                              SimpMessagingTemplate messagingTemplate,
+                              SeverityThresholdsService severityThresholdsService) {
         this.networkFlowRepository = networkFlowRepository;
         this.alarmRepository = alarmRepository;
         this.messagingTemplate = messagingTemplate;
+        this.severityThresholdsService = severityThresholdsService;
     }
 
     @Transactional
@@ -67,7 +69,8 @@ public class NetworkFlowService {
         if (request.predictedLabel() == FlowLabel.ATTACK) {
             Alarm alarm = Alarm.builder()
                     .networkFlow(flow)
-                    .severity(resolveSeverity(request.predictionConfidence()))
+                    .severity(severityThresholdsService.resolveSeverity(
+                            request.predictionConfidence()))
                     .status(AlarmStatus.NEW)
                     .build();
             alarm = alarmRepository.save(alarm);
@@ -134,16 +137,6 @@ public class NetworkFlowService {
         NetworkFlow flow = networkFlowRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("NetworkFlow s'u gjet: " + id));
         return toResponse(flow);
-    }
-
-    private AlarmSeverity resolveSeverity(Double confidence) {
-        if (confidence == null) {
-            return AlarmSeverity.MEDIUM;
-        }
-        if (confidence >= 0.95) return AlarmSeverity.CRITICAL;
-        if (confidence >= 0.85) return AlarmSeverity.HIGH;
-        if (confidence >= 0.70) return AlarmSeverity.MEDIUM;
-        return AlarmSeverity.LOW;
     }
 
     private NetworkFlowResponse toResponse(NetworkFlow flow) {
