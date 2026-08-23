@@ -1,19 +1,29 @@
-﻿import { Component, OnDestroy, OnInit, effect, inject, signal, computed } from '@angular/core';
+﻿import { Component, OnInit, effect, inject, signal, computed } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration } from 'chart.js';
 import { AlarmService } from '../../core/services/alarm.service';
+import { FlowService } from '../../core/services/flow.service';
 import { WebSocketService } from '../../core/services/websocket.service';
-import { Alarm, AlarmStatus } from '../../core/models/alarm.model';
+import { PredictionService, ShapContribution } from '../../core/services/prediction.service';
+import { Alarm, AlarmStatus, AlarmSeverity } from '../../core/models/alarm.model';
 import { Explanation } from '../../core/models/explanation.model';
+
+const AXIS_COLOR = '#8b93b8';
+const GRID_COLOR = '#1d2440';
 
 @Component({
   selector: 'app-alarms',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, FormsModule, BaseChartDirective],
   templateUrl: './alarms.component.html',
   styleUrl: './alarms.component.css',
 })
-export class AlarmsComponent implements OnInit, OnDestroy {
+export class AlarmsComponent implements OnInit {
   private alarmService = inject(AlarmService);
+  private flowService = inject(FlowService);
+  private predictionService = inject(PredictionService);
   private ws = inject(WebSocketService);
 
   alarms = signal<Alarm[]>([]);
@@ -21,6 +31,12 @@ export class AlarmsComponent implements OnInit, OnDestroy {
   selectedAlarmId = signal<string | null>(null);
   explanation = signal<Explanation | null>(null);
   explanationLoading = signal(false);
+  shapFeatures = signal<ShapContribution[] | null>(null);
+  shapLoading = signal(false);
+
+  searchTerm = signal('');
+  severityFilter = signal<AlarmSeverity | 'ALL'>('ALL');
+  statusFilter = signal<AlarmStatus | 'ALL'>('ALL');
 
   wsConnected = this.ws.connected;
 
@@ -29,6 +45,48 @@ export class AlarmsComponent implements OnInit, OnDestroy {
     for (const a of this.alarms()) counts[a.severity]++;
     return counts;
   });
+
+  filteredAlarms = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    const severity = this.severityFilter();
+    const status = this.statusFilter();
+    return this.alarms().filter((a) => {
+      const matchesSeverity = severity === 'ALL' || a.severity === severity;
+      const matchesStatus = status === 'ALL' || a.status === status;
+      const matchesSearch = !term || a.id.toLowerCase().includes(term);
+      return matchesSeverity && matchesStatus && matchesSearch;
+    });
+  });
+
+  shapChartData = computed<ChartConfiguration<'bar'>['data']>(() => {
+    const features = this.shapFeatures() ?? [];
+    const sorted = [...features].sort(
+      (a, b) => Math.abs(b.shap_contribution) - Math.abs(a.shap_contribution),
+    );
+    return {
+      labels: sorted.map((f) => f.feature),
+      datasets: [
+        {
+          label: 'SHAP contribution',
+          data: sorted.map((f) => f.shap_contribution),
+          backgroundColor: sorted.map((f) => (f.shap_contribution >= 0 ? '#ef4444' : '#22c55e')),
+          borderRadius: 4,
+          maxBarThickness: 18,
+        },
+      ],
+    };
+  });
+
+  shapChartOptions: ChartConfiguration<'bar'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: AXIS_COLOR, font: { size: 10 } }, grid: { color: GRID_COLOR } },
+      y: { ticks: { color: '#e6e9f5', font: { size: 10 } }, grid: { display: false } },
+    },
+  };
 
   constructor() {
     effect(() => {
@@ -47,17 +105,14 @@ export class AlarmsComponent implements OnInit, OnDestroy {
       this.alarms.set(alarms.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)));
       this.loading.set(false);
     });
-    this.ws.connect();
-  }
-
-  ngOnDestroy(): void {
-    this.ws.disconnect();
   }
 
   selectAlarm(alarm: Alarm): void {
     this.selectedAlarmId.set(alarm.id);
     this.explanation.set(null);
+    this.shapFeatures.set(null);
     this.explanationLoading.set(true);
+    this.shapLoading.set(true);
 
     this.alarmService.getExplanation(alarm.id).subscribe({
       next: (exp) => {
@@ -68,6 +123,19 @@ export class AlarmsComponent implements OnInit, OnDestroy {
         this.explanation.set(null);
         this.explanationLoading.set(false);
       },
+    });
+
+    this.flowService.getById(alarm.networkFlowId).subscribe({
+      next: (flow) => {
+        this.predictionService.predict(flow.featureVector).subscribe({
+          next: (result) => {
+            this.shapFeatures.set(result.top_shap_features);
+            this.shapLoading.set(false);
+          },
+          error: () => this.shapLoading.set(false),
+        });
+      },
+      error: () => this.shapLoading.set(false),
     });
   }
 

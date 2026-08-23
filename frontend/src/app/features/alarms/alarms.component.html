@@ -2,11 +2,7 @@
   <div class="flex items-center justify-between mb-4">
     <div>
       <h2 class="text-xl font-semibold text-white">Alarms</h2>
-      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">Alarme sigurie, live nga sistemi</p>
-    </div>
-    <div class="flex items-center gap-1.5 text-xs">
-      <span class="w-1.5 h-1.5 rounded-full" [class.bg-[var(--color-low)]]="wsConnected()" [class.animate-pulse]="wsConnected()" [class.bg-[var(--color-text-muted)]]="!wsConnected()"></span>
-      <span class="text-[var(--color-text-muted)]">{{ wsConnected() ? 'Live i lidhur' : 'I shkeputur' }}</span>
+      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">{{ filteredAlarms().length }} nga {{ alarms().length }} alarme</p>
     </div>
   </div>
 
@@ -29,9 +25,33 @@
     </div>
   </div>
 
+  <div class="flex flex-wrap gap-2 mb-4">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Kerko sipas ID..."
+      class="flex-1 min-w-[200px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-primary)]"
+    />
+    <select [(ngModel)]="severityFilter" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]">
+      <option value="ALL">Te gjitha severity</option>
+      <option value="CRITICAL">Critical</option>
+      <option value="HIGH">High</option>
+      <option value="MEDIUM">Medium</option>
+      <option value="LOW">Low</option>
+    </select>
+    <select [(ngModel)]="statusFilter" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]">
+      <option value="ALL">Te gjitha status</option>
+      <option value="NEW">New</option>
+      <option value="ACKNOWLEDGED">Acknowledged</option>
+      <option value="CONFIRMED">Confirmed</option>
+      <option value="FALSE_POSITIVE">False Positive</option>
+      <option value="RESOLVED">Resolved</option>
+    </select>
+  </div>
+
   <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
-    <div class="lg:col-span-2 space-y-2 max-h-[calc(100vh-280px)] overflow-y-auto pr-1">
-      @for (alarm of alarms(); track alarm.id) {
+    <div class="lg:col-span-2 space-y-2 max-h-[calc(100vh-320px)] overflow-y-auto pr-1">
+      @for (alarm of filteredAlarms(); track alarm.id) {
         <button
           (click)="selectAlarm(alarm)"
           class="w-full text-left bg-[var(--color-surface)] border rounded-lg p-3.5 transition-colors hover:border-[var(--color-primary)]/50"
@@ -39,20 +59,18 @@
           [class.border-[var(--color-border)]]="selectedAlarmId() !== alarm.id"
         >
           <div class="flex items-center justify-between">
-            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [class]="severityClass(alarm.severity)">
-              {{ alarm.severity }}
-            </span>
+            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [class]="severityClass(alarm.severity)">{{ alarm.severity }}</span>
             <span class="text-[10px] text-[var(--color-text-muted)]">{{ alarm.status }}</span>
           </div>
           <p class="text-xs text-white mt-2 font-mono truncate">{{ alarm.id }}</p>
           <p class="text-[10px] text-[var(--color-text-muted)] mt-1">{{ alarm.createdAt | date: 'short' }}</p>
         </button>
       } @empty {
-        <p class="text-sm text-[var(--color-text-muted)]">Asnje alarm ende.</p>
+        <p class="text-sm text-[var(--color-text-muted)]">Asnje alarm s'perputhet.</p>
       }
     </div>
 
-    <div class="lg:col-span-3">
+    <div class="lg:col-span-3 space-y-4">
       @if (selectedAlarmId(); as id) {
         <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-5">
           <div class="flex items-center justify-between mb-4">
@@ -63,12 +81,8 @@
             <div class="flex gap-2">
               @for (alarm of alarms(); track alarm.id) {
                 @if (alarm.id === id) {
-                  <button (click)="updateStatus(alarm, 'ACKNOWLEDGED')" class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20">
-                    Konfirmo
-                  </button>
-                  <button (click)="updateStatus(alarm, 'FALSE_POSITIVE')" class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-critical)]/20">
-                    False Positive
-                  </button>
+                  <button (click)="updateStatus(alarm, 'ACKNOWLEDGED')" class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20">Konfirmo</button>
+                  <button (click)="updateStatus(alarm, 'FALSE_POSITIVE')" class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-critical)]/20">False Positive</button>
                 }
               }
             </div>
@@ -86,8 +100,25 @@
             <p class="text-sm text-[var(--color-text-muted)]">Ende s'ka shpjegim per kete alarm.</p>
           }
         </div>
+
+        <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-1 h-3.5 bg-[var(--color-high)] rounded-full"></span>
+            <h3 class="text-xs font-semibold text-white uppercase tracking-wide">SHAP - Kontributi i Features</h3>
+          </div>
+          @if (shapLoading()) {
+            <p class="text-sm text-[var(--color-text-muted)]">Duke llogaritur SHAP...</p>
+          } @else if (shapFeatures(); as features) {
+            <div class="h-56">
+              <canvas baseChart [data]="shapChartData()" [options]="shapChartOptions" type="bar"></canvas>
+            </div>
+            <p class="text-[10px] text-[var(--color-text-muted)] mt-2">Kuq = shtyn drejt ATTACK, Jeshil = shtyn drejt BENIGN</p>
+          } @else {
+            <p class="text-sm text-[var(--color-text-muted)]">SHAP s'eshte i disponueshem.</p>
+          }
+        </div>
       } @else {
-        <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-6 flex items-center justify-center h-full">
+        <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-6 flex items-center justify-center h-64">
           <p class="text-sm text-[var(--color-text-muted)]">Zgjidh nje alarm per te pare detajet</p>
         </div>
       }

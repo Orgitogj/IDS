@@ -1,0 +1,99 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h2 class="text-xl font-semibold text-white">Network Flows</h2>
+      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">{{ filteredFlows().length }} nga {{ flows().length }} flows</p>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-2 mb-4">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Kerko sipas ID, IP, ose attack type..."
+      class="flex-1 min-w-[240px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-primary)]"
+    />
+    <select
+      [(ngModel)]="labelFilter"
+      class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]"
+    >
+      <option value="ALL">Te gjitha</option>
+      <option value="ATTACK">ATTACK</option>
+      <option value="BENIGN">BENIGN</option>
+      <option value="UNKNOWN">UNKNOWN</option>
+    </select>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+    <div class="lg:col-span-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden">
+      <table class="w-full text-xs">
+        <thead>
+        <tr class="border-b border-[var(--color-border)] text-left text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">
+          <th class="px-3 py-2.5 font-semibold">Label</th>
+          <th class="px-3 py-2.5 font-semibold">Source IP</th>
+          <th class="px-3 py-2.5 font-semibold">Dest IP</th>
+          <th class="px-3 py-2.5 font-semibold">Port</th>
+          <th class="px-3 py-2.5 font-semibold">Attack Type</th>
+          <th class="px-3 py-2.5 font-semibold text-right">Confidence</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (flow of filteredFlows(); track flow.id) {
+            <tr
+              (click)="selectFlow(flow)"
+              class="border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-surface-elevated)]/50 cursor-pointer"
+              [class.bg-[var(--color-surface-elevated)]]="selectedFlow()?.id === flow.id"
+            >
+              <td class="px-3 py-2.5">
+                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [class]="labelClass(flow.predictedLabel)">
+                  {{ flow.predictedLabel ?? 'UNKNOWN' }}
+                </span>
+              </td>
+              <td class="px-3 py-2.5 font-mono text-[var(--color-text)]">{{ flow.sourceIp ?? '—' }}</td>
+              <td class="px-3 py-2.5 font-mono text-[var(--color-text)]">{{ flow.destinationIp ?? '—' }}</td>
+              <td class="px-3 py-2.5 text-[var(--color-text-muted)]">{{ flow.destinationPort ?? '—' }}</td>
+              <td class="px-3 py-2.5 text-[var(--color-text-muted)]">{{ flow.attackType ?? '—' }}</td>
+              <td class="px-3 py-2.5 text-right tabular-nums text-[var(--color-text)]">
+                {{ flow.predictionConfidence ? (flow.predictionConfidence * 100).toFixed(1) + '%' : '—' }}
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6" class="px-3 py-8 text-center text-[var(--color-text-muted)]">Asnje flow s'perputhet.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="lg:col-span-2">
+      @if (selectedFlow(); as flow) {
+        <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-1 h-3.5 bg-[var(--color-primary)] rounded-full"></span>
+            <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Detajet e Flow-it</h3>
+          </div>
+          <p class="text-[10px] font-mono text-[var(--color-text-muted)] mb-3 break-all">{{ flow.id }}</p>
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between"><span class="text-[var(--color-text-muted)]">Dataset Source</span><span class="text-white">{{ flow.datasetSource }}</span></div>
+            <div class="flex justify-between"><span class="text-[var(--color-text-muted)]">Protocol</span><span class="text-white">{{ flow.protocol ?? '—' }}</span></div>
+            <div class="flex justify-between"><span class="text-[var(--color-text-muted)]">Timestamp</span><span class="text-white">{{ flow.flowTimestamp | date: 'medium' }}</span></div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-[var(--color-border)]">
+            <p class="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider mb-2">Top Features (12)</p>
+            <div class="space-y-1 max-h-64 overflow-y-auto">
+              @for (entry of featureEntries(flow); track entry[0]) {
+                <div class="flex justify-between text-[11px]">
+                  <span class="text-[var(--color-text-muted)] truncate mr-2">{{ entry[0] }}</span>
+                  <span class="text-white font-mono tabular-nums shrink-0">{{ entry[1] | number: '1.0-2' }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-6 flex items-center justify-center h-full">
+          <p class="text-sm text-[var(--color-text-muted)]">Zgjidh nje flow per detaje</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

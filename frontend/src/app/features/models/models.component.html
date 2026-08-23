@@ -1,0 +1,56 @@
+<div class="p-6">
+  <div class="mb-5">
+    <h2 class="text-xl font-semibold text-white">Models Manager</h2>
+    <p class="text-xs text-[var(--color-text-muted)] mt-0.5">{{ models().length }} modele te trajnuara</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    @for (model of models(); track model.id) {
+      <div
+        class="bg-[var(--color-surface)] border rounded-lg p-4 relative overflow-hidden"
+        [class.border-[var(--color-low)]]="model.active"
+        [class.border-[var(--color-border)]]="!model.active"
+      >
+        <div class="absolute top-0 left-0 w-1 h-full" [class]="algorithmColor(model.algorithm)"></div>
+        <div class="pl-2">
+          <div class="flex items-start justify-between">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-white truncate">{{ model.name }}</p>
+              <p class="text-[10px] text-[var(--color-text-muted)] mt-0.5">{{ model.algorithm }}</p>
+            </div>
+            @if (model.active) {
+              <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-[var(--color-low)]/15 text-[var(--color-low)] border border-[var(--color-low)]/30 shrink-0">
+                AKTIV
+              </span>
+            }
+          </div>
+
+          <div class="mt-3 space-y-1 text-[11px]">
+            <div class="flex justify-between"><span class="text-[var(--color-text-muted)]">Dataset</span><span class="text-white">{{ model.trainedOnDataset }}</span></div>
+            <div class="flex justify-between"><span class="text-[var(--color-text-muted)]">Feature Set</span><span class="text-white truncate ml-2">{{ model.featureSet ?? '—' }}</span></div>
+            <div class="flex justify-between"><span class="text-[var(--color-text-muted)]">Trajnuar</span><span class="text-white">{{ model.trainedAt | date: 'short' }}</span></div>
+          </div>
+
+          @if (model.hyperparameters) {
+            <details class="mt-2">
+              <summary class="text-[10px] text-[var(--color-primary)] cursor-pointer">Hiperparametrat</summary>
+              <pre class="text-[10px] text-[var(--color-text-muted)] mt-1 whitespace-pre-wrap break-all">{{ model.hyperparameters }}</pre>
+            </details>
+          }
+
+          @if (!model.active) {
+            <button
+              (click)="activate(model)"
+              [disabled]="activating() === model.id"
+              class="mt-3 w-full text-[10px] font-semibold py-1.5 rounded-md bg-[var(--color-surface-elevated)] text-white hover:bg-[var(--color-primary)]/20 border border-[var(--color-border)] disabled:opacity-50"
+            >
+              {{ activating() === model.id ? 'Duke aktivizuar...' : 'Aktivizo' }}
+            </button>
+          }
+        </div>
+      </div>
+    } @empty {
+      <p class="text-sm text-[var(--color-text-muted)] col-span-full">Asnje model i trajnuar ende.</p>
+    }
+  </div>
+</div>
