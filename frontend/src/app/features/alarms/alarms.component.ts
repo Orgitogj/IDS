@@ -8,9 +8,12 @@ import { FlowService } from '../../core/services/flow.service';
 import { WebSocketService } from '../../core/services/websocket.service';
 import { PredictionService, ShapContribution } from '../../core/services/prediction.service';
 import { Alarm, AlarmStatus, AlarmSeverity } from '../../core/models/alarm.model';
+import { AlarmStats } from '../../core/models/alarm-stats.model';
 import { Explanation, ExplanationRating } from '../../core/models/explanation.model';
 import { ToastService } from '../../core/services/toast.service';
 
+const PAGE_SIZE = 50;
+const SEARCH_DEBOUNCE_MS = 300;
 const AXIS_COLOR = '#8b93b8';
 const GRID_COLOR = '#1d2440';
 
@@ -45,23 +48,29 @@ export class AlarmsComponent implements OnInit {
 
   wsConnected = this.ws.connected;
 
+  stats = signal<AlarmStats | null>(null);
+
+  page = signal(0);
+  size = signal(PAGE_SIZE);
+  totalElements = signal(0);
+  totalPages = signal(0);
+
+  rangeStart = computed(() => (this.totalElements() === 0 ? 0 : this.page() * this.size() + 1));
+  rangeEnd = computed(() => Math.min((this.page() + 1) * this.size(), this.totalElements()));
+  hasPrevious = computed(() => this.page() > 0);
+  hasNext = computed(() => this.page() + 1 < this.totalPages());
+
   severityCounts = computed(() => {
-    const counts = { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 };
-    for (const a of this.alarms()) counts[a.severity]++;
-    return counts;
+    const counts = this.stats()?.severityCounts ?? {};
+    return {
+      CRITICAL: counts['CRITICAL'] ?? 0,
+      HIGH: counts['HIGH'] ?? 0,
+      MEDIUM: counts['MEDIUM'] ?? 0,
+      LOW: counts['LOW'] ?? 0,
+    };
   });
 
-  filteredAlarms = computed(() => {
-    const term = this.searchTerm().toLowerCase().trim();
-    const severity = this.severityFilter();
-    const status = this.statusFilter();
-    return this.alarms().filter((a) => {
-      const matchesSeverity = severity === 'ALL' || a.severity === severity;
-      const matchesStatus = status === 'ALL' || a.status === status;
-      const matchesSearch = !term || a.id.toLowerCase().includes(term);
-      return matchesSeverity && matchesStatus && matchesSearch;
-    });
-  });
+  totalAlarms = computed(() => this.stats()?.totalAlarms ?? 0);
 
   shapChartData = computed<ChartConfiguration<'bar'>['data']>(() => {
     const features = this.shapFeatures() ?? [];
@@ -93,30 +102,103 @@ export class AlarmsComponent implements OnInit {
     },
   };
 
+  private debounceHandle: ReturnType<typeof setTimeout> | undefined;
+  private skipFirstEffect = true;
+
   constructor() {
     effect(() => {
       const live = this.ws.liveAlarms();
       if (live.length === 0) return;
       const [newest] = live;
+
+      this.loadStats();
+
+      if (this.page() !== 0 || this.hasActiveFilters()) return;
+
       this.alarms.update((current) => {
         if (current.some((a) => a.id === newest.id)) return current;
-        return [newest, ...current];
+        return [newest, ...current].slice(0, this.size());
       });
+      this.totalElements.update((current) => current + 1);
+    });
+
+    effect(() => {
+      this.searchTerm();
+      this.severityFilter();
+      this.statusFilter();
+
+      if (this.skipFirstEffect) {
+        this.skipFirstEffect = false;
+        return;
+      }
+
+      clearTimeout(this.debounceHandle);
+      this.debounceHandle = setTimeout(() => {
+        this.page.set(0);
+        this.load();
+      }, SEARCH_DEBOUNCE_MS);
     });
   }
 
   ngOnInit(): void {
-    this.alarmService.getAll().subscribe({
-      next: (alarms) => {
-        this.alarms.set(alarms.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)));
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-        this.loadError.set(true);
-        this.toast.backendError('alarms');
-      },
+    this.load();
+    this.loadStats();
+  }
+
+  private hasActiveFilters(): boolean {
+    return (
+      this.severityFilter() !== 'ALL' ||
+      this.statusFilter() !== 'ALL' ||
+      this.searchTerm().trim() !== ''
+    );
+  }
+
+  load(): void {
+    this.loading.set(true);
+    const severity = this.severityFilter();
+    const status = this.statusFilter();
+
+    this.alarmService
+      .getPage(
+        this.page(),
+        this.size(),
+        severity === 'ALL' ? null : severity,
+        status === 'ALL' ? null : status,
+        this.searchTerm().trim(),
+      )
+      .subscribe({
+        next: (result) => {
+          this.alarms.set(result.content);
+          this.totalElements.set(result.totalElements);
+          this.totalPages.set(result.totalPages);
+          this.loading.set(false);
+          this.loadError.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+          this.loadError.set(true);
+          this.toast.backendError('alarms');
+        },
+      });
+  }
+
+  private loadStats(): void {
+    this.alarmService.getStats().subscribe({
+      next: (stats) => this.stats.set(stats),
+      error: () => undefined,
     });
+  }
+
+  previousPage(): void {
+    if (!this.hasPrevious()) return;
+    this.page.update((current) => current - 1);
+    this.load();
+  }
+
+  nextPage(): void {
+    if (!this.hasNext()) return;
+    this.page.update((current) => current + 1);
+    this.load();
   }
 
   selectAlarm(alarm: Alarm): void {
@@ -215,6 +297,7 @@ export class AlarmsComponent implements OnInit {
     this.alarmService.updateStatus(alarm.id, status).subscribe({
       next: (updated) => {
         this.alarms.update((current) => current.map((a) => (a.id === updated.id ? updated : a)));
+        this.loadStats();
       },
       error: () => {
         this.toast.show(

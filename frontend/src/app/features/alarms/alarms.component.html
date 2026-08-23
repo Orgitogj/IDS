@@ -2,7 +2,7 @@
   <div class="flex items-center justify-between mb-4">
     <div>
       <h2 class="text-xl font-semibold text-white">Alarms</h2>
-      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">{{ filteredAlarms().length }} nga {{ alarms().length }} alarme</p>
+      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">{{ rangeStart() }}-{{ rangeEnd() }} nga {{ totalElements() }} alarme</p>
     </div>
   </div>
 
@@ -62,7 +62,7 @@
 
   <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
     <div class="lg:col-span-2 space-y-2 max-h-[calc(100vh-320px)] overflow-y-auto pr-1">
-      @for (alarm of filteredAlarms(); track alarm.id) {
+      @for (alarm of alarms(); track alarm.id) {
         <button
           (click)="selectAlarm(alarm)"
           class="w-full text-left bg-[var(--color-surface)] border rounded-lg p-3.5 transition-colors hover:border-[var(--color-primary)]/50"
@@ -79,6 +79,28 @@
       } @empty {
         <p class="text-sm text-[var(--color-text-muted)]">Asnje alarm s'perputhet.</p>
       }
+
+      <div class="flex items-center justify-between pt-3 mt-1 border-t border-[var(--color-border)]">
+        <span class="text-[10px] text-[var(--color-text-muted)]">
+          Faqja {{ page() + 1 }} nga {{ totalPages() === 0 ? 1 : totalPages() }}
+        </span>
+        <div class="flex gap-1.5">
+          <button
+            (click)="previousPage()"
+            [disabled]="!hasPrevious() || loading()"
+            class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Para
+          </button>
+          <button
+            (click)="nextPage()"
+            [disabled]="!hasNext() || loading()"
+            class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Pas
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="lg:col-span-3 space-y-4">

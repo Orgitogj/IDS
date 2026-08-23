@@ -8,7 +8,8 @@ import { ModelService } from '../../core/services/model.service';
 import { ExperimentService } from '../../core/services/experiment.service';
 import { WebSocketService } from '../../core/services/websocket.service';
 import { Alarm } from '../../core/models/alarm.model';
-import { NetworkFlow } from '../../core/models/network-flow.model';
+import { FlowStats } from '../../core/models/flow-stats.model';
+import { AlarmStats } from '../../core/models/alarm-stats.model';
 import { MLModel } from '../../core/models/ml-model.model';
 import { ExperimentResult } from '../../core/models/experiment-result.model';
 import { ToastService } from '../../core/services/toast.service';
@@ -36,28 +37,26 @@ export class OverviewComponent implements OnInit {
   activeModel = signal<MLModel | null>(null);
 
   private alarms = signal<Alarm[]>([]);
-  private flows = signal<NetworkFlow[]>([]);
+  private flowStats = signal<FlowStats | null>(null);
   private experiments = signal<ExperimentResult[]>([]);
 
-  totalFlows = computed(() => this.flows().length);
-  totalAlarms = computed(() => this.alarms().length);
-  newAlarms = computed(() => this.alarms().filter((a) => a.status === 'NEW').length);
-  criticalAlarms = computed(() => this.alarms().filter((a) => a.severity === 'CRITICAL').length);
+  totalFlows = computed(() => this.flowStats()?.totalFlows ?? 0);
+  private alarmStats = signal<AlarmStats | null>(null);
+
+  totalAlarms = computed(() => this.alarmStats()?.totalAlarms ?? 0);
+  newAlarms = computed(() => this.alarmStats()?.statusCounts?.['NEW'] ?? 0);
+  criticalAlarms = computed(() => this.alarmStats()?.severityCounts?.['CRITICAL'] ?? 0);
 
   recentAlarms = computed(() =>
     [...this.alarms()].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)).slice(0, 6),
   );
 
   timelineChartData = computed<ChartConfiguration<'line'>['data']>(() => {
-    const buckets = new Map<string, number>();
-    for (const a of this.alarms()) {
-      const d = new Date(a.createdAt);
-      const key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:00`;
-      buckets.set(key, (buckets.get(key) ?? 0) + 1);
-    }
-    const sortedKeys = [...buckets.keys()].sort((a, b) => +new Date(a) - +new Date(b));
+    const hourly = this.alarmStats()?.hourlyCounts ?? [];
+    const sortedKeys = hourly.map((h) => h.hour);
+    const buckets = new Map(hourly.map((h) => [h.hour, h.count]));
     return {
-      labels: sortedKeys.map((k) => k.split(' ')[1]),
+      labels: sortedKeys.map((k) => `${new Date(k).getHours()}:00`),
       datasets: [
         {
           label: 'Alarme',
@@ -88,8 +87,13 @@ export class OverviewComponent implements OnInit {
   };
 
   severityChartData = computed<ChartConfiguration<'doughnut'>['data']>(() => {
-    const counts: Record<string, number> = { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 };
-    for (const a of this.alarms()) counts[a.severity] = (counts[a.severity] ?? 0) + 1;
+    const source = this.alarmStats()?.severityCounts ?? {};
+    const counts: Record<string, number> = {
+      CRITICAL: source['CRITICAL'] ?? 0,
+      HIGH: source['HIGH'] ?? 0,
+      MEDIUM: source['MEDIUM'] ?? 0,
+      LOW: source['LOW'] ?? 0,
+    };
     return {
       labels: ['Critical', 'High', 'Medium', 'Low'],
       datasets: [
@@ -122,17 +126,13 @@ export class OverviewComponent implements OnInit {
   };
 
   attackTypeChartData = computed<ChartConfiguration<'bar'>['data']>(() => {
-    const counts = new Map<string, number>();
-    for (const f of this.flows()) {
-      if (f.attackType) counts.set(f.attackType, (counts.get(f.attackType) ?? 0) + 1);
-    }
-    const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
+    const sorted = (this.flowStats()?.attackTypeCounts ?? []).slice(0, 8);
     return {
-      labels: sorted.map(([k]) => k),
+      labels: sorted.map((c) => c.attackType),
       datasets: [
         {
           label: 'Rastet',
-          data: sorted.map(([, v]) => v),
+          data: sorted.map((c) => c.count),
           backgroundColor: '#f97316',
           borderRadius: 6,
           maxBarThickness: 22,
@@ -201,16 +201,21 @@ export class OverviewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.flowService.getAll().subscribe({
-      next: (flows) => this.flows.set(flows),
+    this.flowService.getStats().subscribe({
+      next: (stats) => this.flowStats.set(stats),
       error: () => this.handleLoadError('flows'),
     });
 
-    this.alarmService.getAll().subscribe({
-      next: (alarms: Alarm[]) => {
-        this.alarms.set(alarms);
+    this.alarmService.getPage(0, 6).subscribe({
+      next: (result) => {
+        this.alarms.set(result.content);
         this.loading.set(false);
       },
+      error: () => this.handleLoadError('alarms'),
+    });
+
+    this.alarmService.getStats().subscribe({
+      next: (stats) => this.alarmStats.set(stats),
       error: () => this.handleLoadError('alarms'),
     });
 

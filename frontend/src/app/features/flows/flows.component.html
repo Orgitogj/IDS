@@ -2,7 +2,7 @@
   <div class="flex items-center justify-between mb-4">
     <div>
       <h2 class="text-xl font-semibold text-white">Network Flows</h2>
-      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">{{ filteredFlows().length }} nga {{ flows().length }} flows</p>
+      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">{{ rangeStart() }}-{{ rangeEnd() }} nga {{ totalElements() }} flows</p>
     </div>
   </div>
 
@@ -49,7 +49,7 @@
         </tr>
         </thead>
         <tbody>
-          @for (flow of filteredFlows(); track flow.id) {
+          @for (flow of flows(); track flow.id) {
             <tr
               (click)="selectFlow(flow)"
               class="border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-surface-elevated)]/50 cursor-pointer"
@@ -73,6 +73,28 @@
           }
         </tbody>
       </table>
+
+      <div class="flex items-center justify-between px-3 py-2.5 border-t border-[var(--color-border)]">
+        <span class="text-[10px] text-[var(--color-text-muted)]">
+          Faqja {{ page() + 1 }} nga {{ totalPages() === 0 ? 1 : totalPages() }}
+        </span>
+        <div class="flex gap-1.5">
+          <button
+            (click)="previousPage()"
+            [disabled]="!hasPrevious() || loading()"
+            class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Para
+          </button>
+          <button
+            (click)="nextPage()"
+            [disabled]="!hasNext() || loading()"
+            class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Pas
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="lg:col-span-2">
