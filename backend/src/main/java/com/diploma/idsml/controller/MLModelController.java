@@ -6,6 +6,7 @@ import com.diploma.idsml.service.MLModelService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,22 +29,26 @@ public class MLModelController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public List<MLModelResponse> getAll() {
         return mlModelService.getAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public MLModelResponse getById(@PathVariable UUID id) {
         return mlModelService.getById(id);
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('SERVICE','ADMIN')")
     public ResponseEntity<MLModelResponse> create(@Valid @RequestBody MLModelCreateRequest request) {
         MLModelResponse response = mlModelService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PatchMapping("/{id}/activate")
+    @PreAuthorize("hasRole('ADMIN')")
     public MLModelResponse setActive(@PathVariable UUID id) {
         return mlModelService.setActive(id);
     }

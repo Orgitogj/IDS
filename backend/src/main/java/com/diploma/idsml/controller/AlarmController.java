@@ -11,6 +11,7 @@ import com.diploma.idsml.service.AlarmService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,7 @@ public class AlarmController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public PageResponse<AlarmResponse> search(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
@@ -54,22 +56,26 @@ public class AlarmController {
     }
 
     @GetMapping("/stats")
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public AlarmStatsResponse getStats() {
         return alarmService.getStats();
     }
 
     @GetMapping("/incidents")
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public List<IncidentResponse> getIncidents(
             @RequestParam(defaultValue = "50") int limit) {
         return alarmService.getIncidents(Math.min(Math.max(limit, 1), MAX_PAGE_SIZE));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public AlarmResponse getById(@PathVariable UUID id) {
         return alarmService.getById(id);
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public AlarmResponse updateStatus(@PathVariable UUID id,
                                        @Valid @RequestBody AlarmStatusUpdateRequest request) {
         return alarmService.updateStatus(id, request.status());

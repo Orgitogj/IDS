@@ -6,6 +6,7 @@ import com.diploma.idsml.service.NetworkFlowService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class AlarmIngestController {
     }
 
     @PostMapping("/ingest")
+    @PreAuthorize("hasAnyRole('SERVICE','ADMIN')")
     public ResponseEntity<NetworkFlowResponse> ingest(@Valid @RequestBody NetworkFlowIngestRequest request) {
         NetworkFlowResponse response = networkFlowService.processFlowResult(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

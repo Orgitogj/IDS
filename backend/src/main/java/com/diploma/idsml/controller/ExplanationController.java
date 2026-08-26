@@ -7,6 +7,7 @@ import com.diploma.idsml.service.ExplanationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class ExplanationController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('SERVICE','ADMIN')")
     public ResponseEntity<ExplanationResponse> create(@PathVariable UUID alarmId,
                                                       @Valid @RequestBody ExplanationCreateRequest request) {
         ExplanationResponse response = explanationService.save(
@@ -42,11 +44,13 @@ public class ExplanationController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public List<ExplanationResponse> getByAlarmId(@PathVariable UUID alarmId) {
         return explanationService.getByAlarmId(alarmId);
     }
 
     @PatchMapping("/{explanationId}/rating")
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public ExplanationResponse rate(@PathVariable UUID alarmId,
                                     @PathVariable UUID explanationId,
                                     @Valid @RequestBody ExplanationRatingRequest request) {

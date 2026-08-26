@@ -7,6 +7,7 @@ import com.diploma.idsml.entity.FlowLabel;
 import com.diploma.idsml.service.NetworkFlowService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ public class NetworkFlowController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public PageResponse<NetworkFlowResponse> search(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
@@ -45,11 +47,13 @@ public class NetworkFlowController {
     }
 
     @GetMapping("/stats")
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public FlowStatsResponse getStats() {
         return networkFlowService.getStats();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public NetworkFlowResponse getById(@PathVariable UUID id) {
         return networkFlowService.getById(id);
     }

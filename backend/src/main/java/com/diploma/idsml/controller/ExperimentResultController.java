@@ -6,6 +6,7 @@ import com.diploma.idsml.service.ExperimentResultService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,7 @@ public class ExperimentResultController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public List<ExperimentResultResponse> getAll(@RequestParam(required = false) UUID modelId) {
         if (modelId != null) {
             return experimentResultService.getByModelId(modelId);
@@ -36,6 +38,7 @@ public class ExperimentResultController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('SERVICE','ADMIN')")
     public ResponseEntity<ExperimentResultResponse> create(@Valid @RequestBody ExperimentResultCreateRequest request) {
         ExperimentResultResponse response = experimentResultService.recordResult(
                 request.mlModelId(),
@@ -53,6 +56,7 @@ public class ExperimentResultController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public ExperimentResultResponse getById(@PathVariable UUID id) {
         return experimentResultService.getById(id);
     }
