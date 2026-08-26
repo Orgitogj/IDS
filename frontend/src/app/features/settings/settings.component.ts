@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { AuthService } from '../../core/services/auth.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { ToastService } from '../../core/services/toast.service';
 
@@ -14,6 +15,8 @@ import { ToastService } from '../../core/services/toast.service';
 export class SettingsComponent implements OnInit {
   private settingsService = inject(SettingsService);
   private toast = inject(ToastService);
+
+  isAdmin = inject(AuthService).isAdmin;
 
   criticalMin = signal(0.95);
   highMin = signal(0.85);
@@ -76,7 +79,7 @@ export class SettingsComponent implements OnInit {
   }
 
   save(): void {
-    if (this.validationError() || this.saving()) return;
+    if (!this.isAdmin() || this.validationError() || this.saving()) return;
 
     this.saving.set(true);
     this.settingsService

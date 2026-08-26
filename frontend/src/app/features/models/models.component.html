@@ -49,7 +49,7 @@
             </details>
           }
 
-          @if (!model.active) {
+          @if (!model.active && isAdmin()) {
             <button
               (click)="activate(model)"
               [disabled]="activating() === model.id"

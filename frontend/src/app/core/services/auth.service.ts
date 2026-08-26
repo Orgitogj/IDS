@@ -19,6 +19,8 @@ export class AuthService {
   token = this.tokenSignal.asReadonly();
   username = this.usernameSignal.asReadonly();
   isAuthenticated = computed(() => this.tokenSignal() !== null);
+  role = computed(() => this.decodeRole(this.tokenSignal()));
+  isAdmin = computed(() => this.role() === 'ADMIN');
 
   login(username: string, password: string): Observable<LoginResponse> {
     return this.http
@@ -45,6 +47,22 @@ export class AuthService {
     this.store(USER_KEY, response.username);
     this.tokenSignal.set(response.token);
     this.usernameSignal.set(response.username);
+  }
+
+  private decodeRole(token: string | null): string | null {
+    if (!token) return null;
+
+    try {
+      const payload = token.split('.')[1];
+      if (!payload) return null;
+
+      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+
+      return JSON.parse(atob(padded)).role ?? null;
+    } catch {
+      return null;
+    }
   }
 
   private readStored(key: string): string | null {

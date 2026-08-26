@@ -19,6 +19,7 @@ export class ShellComponent implements OnInit {
 
   wsConnected = this.ws.connected;
   username = this.auth.username;
+  role = this.auth.role;
 
   logout(): void {
     this.ws.disconnect();

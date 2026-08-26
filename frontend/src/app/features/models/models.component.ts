@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { AuthService } from '../../core/services/auth.service';
 import { ModelService } from '../../core/services/model.service';
 import { MLModel } from '../../core/models/ml-model.model';
 import { ToastService } from '../../core/services/toast.service';
@@ -14,6 +15,8 @@ import { ToastService } from '../../core/services/toast.service';
 export class ModelsComponent implements OnInit {
   private modelService = inject(ModelService);
   private toast = inject(ToastService);
+
+  isAdmin = inject(AuthService).isAdmin;
 
   models = signal<MLModel[]>([]);
   loading = signal(true);
@@ -40,6 +43,8 @@ export class ModelsComponent implements OnInit {
   }
 
   activate(model: MLModel): void {
+    if (!this.isAdmin()) return;
+
     this.activating.set(model.id);
     this.modelService.setActive(model.id).subscribe({
       next: () => {
