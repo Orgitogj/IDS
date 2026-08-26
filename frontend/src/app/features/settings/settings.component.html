@@ -30,7 +30,6 @@
           <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-critical)] mb-1">Critical</label>
           <input
             type="number" step="0.01" min="0" max="1"
-            [disabled]="!isAdmin()"
             [(ngModel)]="criticalMin"
             class="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white tabular-nums focus:outline-none focus:border-[var(--color-primary)]"
           />
@@ -39,7 +38,6 @@
           <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-high)] mb-1">High</label>
           <input
             type="number" step="0.01" min="0" max="1"
-            [disabled]="!isAdmin()"
             [(ngModel)]="highMin"
             class="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white tabular-nums focus:outline-none focus:border-[var(--color-primary)]"
           />
@@ -48,7 +46,6 @@
           <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-medium)] mb-1">Medium</label>
           <input
             type="number" step="0.01" min="0" max="1"
-            [disabled]="!isAdmin()"
             [(ngModel)]="mediumMin"
             class="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white tabular-nums focus:outline-none focus:border-[var(--color-primary)]"
           />
@@ -64,19 +61,13 @@
       }
 
       <div class="flex items-center gap-3 mt-4">
-        @if (isAdmin()) {
-          <button
-            (click)="save()"
-            [disabled]="!!validationError() || saving()"
-            class="text-[11px] px-3 py-1.5 rounded-md bg-[var(--color-primary)]/20 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/30 disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {{ saving() ? 'Duke ruajtur...' : 'Ruaj pragjet' }}
-          </button>
-        } @else {
-          <span class="text-[11px] text-[var(--color-text-muted)]">
-            Vetem nje ADMIN mund t'i ndryshoje pragjet.
-          </span>
-        }
+        <button
+          (click)="save()"
+          [disabled]="!!validationError() || saving()"
+          class="text-[11px] px-3 py-1.5 rounded-md bg-[var(--color-primary)]/20 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/30 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {{ saving() ? 'Duke ruajtur...' : 'Ruaj pragjet' }}
+        </button>
         @if (updatedAt(); as updated) {
           <span class="text-[10px] text-[var(--color-text-muted)]">
             Perditesuar: {{ updated | date: 'dd/MM/yyyy HH:mm' }}
