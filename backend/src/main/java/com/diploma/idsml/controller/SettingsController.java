@@ -4,6 +4,7 @@ import com.diploma.idsml.dto.SeverityThresholdsResponse;
 import com.diploma.idsml.dto.SeverityThresholdsUpdateRequest;
 import com.diploma.idsml.service.SeverityThresholdsService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,11 +22,13 @@ public class SettingsController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public SeverityThresholdsResponse get() {
         return severityThresholdsService.get();
     }
 
     @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public SeverityThresholdsResponse update(
             @Valid @RequestBody SeverityThresholdsUpdateRequest request) {
         return severityThresholdsService.update(

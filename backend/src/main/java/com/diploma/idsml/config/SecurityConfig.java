@@ -4,6 +4,7 @@ import com.diploma.idsml.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -55,6 +57,19 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/alarms/ingest")
+                            .hasAnyRole("SERVICE", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/alarms/*/explanations")
+                            .hasAnyRole("SERVICE", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/models")
+                            .hasAnyRole("SERVICE", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/experiments")
+                            .hasAnyRole("SERVICE", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/models/*/activate")
+                            .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/settings/thresholds")
+                            .hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter,
