@@ -4,18 +4,18 @@ from pathlib import Path
 import joblib
 import numpy as np
 import pandas as pd
-import shap
+import xgboost as xgb
 
 from app.core.config import settings
 
 _model = None
 _label_encoder = None
 _feature_columns = None
-_explainer = None
+_booster = None
 
 
 def load_artifacts():
-    global _model, _label_encoder, _feature_columns, _explainer
+    global _model, _label_encoder, _feature_columns, _booster
 
     models_dir = Path(settings.models_dir)
 
@@ -25,9 +25,18 @@ def load_artifacts():
     with open(models_dir / "feature_columns.json") as f:
         _feature_columns = json.load(f)
 
-    _explainer = shap.TreeExplainer(_model)
+    _booster = _model.get_booster()
 
     print(f"Model, label encoder, dhe {len(_feature_columns)} feature columns u ngarkuan.")
+
+
+def _tree_shap_values(X_row: pd.DataFrame, predicted_idx: int) -> np.ndarray:
+    contribs = _booster.predict(xgb.DMatrix(X_row), pred_contribs=True)
+
+    if contribs.ndim == 3:
+        return contribs[0, predicted_idx, :-1]
+
+    return contribs[0, :-1]
 
 
 def predict(feature_vector: dict, include_shap: bool = True) -> dict:
@@ -49,8 +58,7 @@ def predict(feature_vector: dict, include_shap: bool = True) -> dict:
     }
 
     if include_shap:
-        shap_values = _explainer.shap_values(X_row)
-        shap_for_predicted = shap_values[0, :, predicted_idx]
+        shap_for_predicted = _tree_shap_values(X_row, predicted_idx)
 
         contributions = sorted(
             zip(_feature_columns, X_row.values[0], shap_for_predicted),
