@@ -92,7 +92,7 @@ CICFLOWMETER_TO_CICIDS2017 = {
     "idle_min": "Idle Min",
 }
 
-META_COLUMNS = {"src_ip", "dst_ip", "src_port", "dst_port", "protocol", "timestamp"}
+META_COLUMNS = {"src_ip", "dst_ip", "src_port", "timestamp"}
 
 
 def load_model_artifacts(models_dir: Path, model_filename: str):
@@ -101,9 +101,9 @@ def load_model_artifacts(models_dir: Path, model_filename: str):
     label_encoder = joblib.load(models_dir / "label_encoder_cicids2017.joblib")
 
     if hasattr(model, "feature_names_in_"):
-        feature_columns = list(model.feature_names_in_)
+        feature_columns = [str(c) for c in model.feature_names_in_]
     else:
-        # fallback per modele/versione qe s'e ruajne feature_names_in_
+
         print("[live_agent] KUJDES: modeli s'ka feature_names_in_, "
               "duke perdorur feature_columns.json te plote (78) si fallback",
               file=sys.stderr)
@@ -152,7 +152,19 @@ def predict_flow(model, label_encoder, feature_vector: dict, feature_columns: li
     return label, confidence
 
 
-def ingest_flow(backend_url: str, row: dict, feature_vector: dict, label: str, confidence: float):
+def login_and_get_token(backend_url: str, username: str, password: str) -> str:
+
+    resp = requests.post(f"{backend_url}/api/auth/login",
+                          json={"username": username, "password": password}, timeout=10)
+    resp.raise_for_status()
+    data = resp.json()
+    token = data.get("token") or data.get("accessToken")
+    if not token:
+        raise RuntimeError(f"Login-i u be por s'u gjet token ne pergjigje: {data}")
+    return token
+
+
+def ingest_flow(backend_url: str, token: str, row: dict, feature_vector: dict, label: str, confidence: float):
 
     payload = {
         "sourceIp": row.get("src_ip", "0.0.0.0"),
@@ -166,8 +178,9 @@ def ingest_flow(backend_url: str, row: dict, feature_vector: dict, label: str, c
         "attackType": label,
         "flowTimestamp": datetime.now(timezone.utc).isoformat(),
     }
+    headers = {"Authorization": f"Bearer {token}"}
     try:
-        resp = requests.post(f"{backend_url}/api/alarms/ingest", json=payload, timeout=5)
+        resp = requests.post(f"{backend_url}/api/alarms/ingest", json=payload, headers=headers, timeout=5)
         resp.raise_for_status()
         print(f"[live_agent] Ingested: {label} (conf={confidence:.4f}) "
               f"{payload['sourceIp']}:{payload['sourcePort']} -> "
@@ -182,13 +195,15 @@ def main():
     parser.add_argument("--backend", default="http://192.168.100.3:8080", help="Base URL i backend-it Spring Boot")
     parser.add_argument("--models-dir", default=".", help="Folder me .joblib dhe feature_columns.json")
     parser.add_argument("--model-file", default="xgb_smote_top50features_v1.joblib",
-                        help="Emri i file-it .joblib per t'u ngarkuar (default: top-50 features, "
-                             "me risk me te ulet drift-i sesa modeli me 78 features)")
+                         help="Emri i file-it .joblib per t'u ngarkuar (default: top-50 features, "
+                              "me risk me te ulet drift-i sesa modeli me 78 features)")
     parser.add_argument("--cicflowmeter-path", default="/usr/local/bin/cicflowmeter",
-                        help="Path drejt executable-it cicflowmeter")
+                         help="Path drejt executable-it cicflowmeter")
     parser.add_argument("--csv-out", default="live_flows.csv", help="File i perkohshem per output te cicflowmeter")
     parser.add_argument("--poll-interval", type=float, default=5.0,
-                        help="Sa shpesh (sekonda) te kontrollohet CSV-ja per rreshta te rinj")
+                         help="Sa shpesh (sekonda) te kontrollohet CSV-ja per rreshta te rinj")
+    parser.add_argument("--username", default="ml-service", help="Username per login te backend")
+    parser.add_argument("--password", default="ml-service-secret", help="Password per login te backend")
     args = parser.parse_args()
 
     models_dir = Path(args.models_dir)
@@ -196,6 +211,10 @@ def main():
     model, label_encoder, feature_columns = load_model_artifacts(models_dir, args.model_file)
     print(f"[live_agent] Modeli u ngarkua. {len(feature_columns)} features, "
           f"{len(label_encoder.classes_)} klasa: {list(label_encoder.classes_)}")
+
+    print(f"[live_agent] Duke bere login te {args.backend} si '{args.username}' ...")
+    token = login_and_get_token(args.backend, args.username, args.password)
+    print("[live_agent] Login i suksesshem, token i marre.")
 
     csv_path = Path(args.csv_out)
     if csv_path.exists():
@@ -221,7 +240,7 @@ def main():
             for row in new_rows:
                 feature_vector = map_row_to_feature_vector(row, feature_columns)
                 label, confidence = predict_flow(model, label_encoder, feature_vector, feature_columns)
-                ingest_flow(args.backend, row, feature_vector, label, confidence)
+                ingest_flow(args.backend, token, row, feature_vector, label, confidence)
             seen_rows = len(reader)
 
     except KeyboardInterrupt:
