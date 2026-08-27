@@ -208,6 +208,18 @@ export class OverviewComponent implements OnInit {
         if (current.some((a) => a.id === newest.id)) return current;
         return [newest, ...current];
       });
+      this.alarmStats.update((stats) => {
+        if (!stats) return stats;
+        const statusCounts = { ...stats.statusCounts };
+        statusCounts['NEW'] = (statusCounts['NEW'] ?? 0) + 1;
+        const severityCounts = { ...stats.severityCounts };
+        severityCounts[newest.severity] = (severityCounts[newest.severity] ?? 0) + 1;
+        return { ...stats, totalAlarms: stats.totalAlarms + 1, statusCounts, severityCounts };
+      });
+      this.flowStats.update((stats) => {
+        if (!stats) return stats;
+        return { ...stats, totalFlows: stats.totalFlows + 1 };
+      });
     });
   }
 
