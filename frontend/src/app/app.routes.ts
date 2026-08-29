@@ -14,8 +14,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    loadComponent: () =>
-      import('./layout/shell/shell.component').then((m) => m.ShellComponent),
+    loadComponent: () => import('./layout/shell/shell.component').then((m) => m.ShellComponent),
     canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
@@ -37,12 +36,19 @@ export const routes: Routes = [
       {
         path: 'experiments',
         loadComponent: () =>
-          import('./features/experiments/experiments.component').then((m) => m.ExperimentsComponent),
+          import('./features/experiments/experiments.component').then(
+            (m) => m.ExperimentsComponent,
+          ),
       },
       {
         path: 'models',
         loadComponent: () =>
           import('./features/models/models.component').then((m) => m.ModelsComponent),
+      },
+      {
+        path: 'topology',
+        loadComponent: () =>
+          import('./features/topology/topology.component').then((m) => m.TopologyComponent),
       },
       {
         path: 'settings',
