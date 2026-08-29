@@ -1,0 +1,56 @@
+<div class="p-6">
+  <div class="mb-5">
+    <h2 class="text-xl font-semibold text-white">Topologjia e Labit</h2>
+    <p class="text-xs text-[var(--color-text-muted)] mt-0.5">RQ2 - trafik live Kali &rarr; Metasploitable2</p>
+  </div>
+
+  <div class="grid grid-cols-2 gap-3 mb-6 max-w-md">
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] border-t-2 border-t-[var(--color-primary)] rounded-lg p-4">
+      <p class="text-[10px] text-[var(--color-text-muted)] font-semibold uppercase tracking-wider">Flows te analizuara</p>
+      <p class="text-2xl font-bold text-white mt-1 tabular-nums">{{ totalFlows() }}</p>
+    </div>
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] border-t-2 border-t-[var(--color-critical)] rounded-lg p-4">
+      <p class="text-[10px] text-[var(--color-text-muted)] font-semibold uppercase tracking-wider">Alarme te gjeneruara</p>
+      <p class="text-2xl font-bold text-white mt-1 tabular-nums">{{ totalAlarms() }}</p>
+    </div>
+  </div>
+
+  <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-8">
+    <div class="flex items-center justify-center gap-0">
+      <div class="flex flex-col items-center gap-2 w-40">
+        <div class="w-20 h-20 rounded-xl bg-[var(--color-surface-elevated)] border-2 border-[var(--color-critical)] flex items-center justify-center text-2xl">
+          🐉
+        </div>
+        <p class="text-sm font-semibold text-white">Kali</p>
+        <p class="text-[10px] text-[var(--color-text-muted)]">Attacker</p>
+        <p class="text-[10px] font-mono text-[var(--color-text)]">{{ attackerIp }}</p>
+      </div>
+
+      <div class="flex-1 flex flex-col items-center gap-1.5 px-4">
+        <div class="w-full h-0.5 relative" [class.bg-[var(--color-critical)]]="pulsing()" [class.bg-[var(--color-border)]]="!pulsing()">
+          @if (pulsing()) {
+            <span class="absolute inset-0 bg-[var(--color-critical)] animate-ping"></span>
+          }
+        </div>
+        @if (lastAlarm(); as alarm) {
+          <div class="flex items-center gap-1.5 mt-1">
+            <span class="w-1.5 h-1.5 rounded-full" [class]="severityDotClass(alarm.severity)"></span>
+            <span class="text-[10px] text-[var(--color-text-muted)]">{{ alarm.severity }}</span>
+            <span class="text-[10px] text-[var(--color-text-muted)]">{{ alarm.createdAt | date: 'HH:mm:ss' }}</span>
+          </div>
+        } @else {
+          <p class="text-[10px] text-[var(--color-text-muted)] mt-1">Duke pritur trafik...</p>
+        }
+      </div>
+
+      <div class="flex flex-col items-center gap-2 w-40">
+        <div class="w-20 h-20 rounded-xl bg-[var(--color-surface-elevated)] border-2 border-[var(--color-low)] flex items-center justify-center text-2xl">
+          🎯
+        </div>
+        <p class="text-sm font-semibold text-white">Metasploitable2</p>
+        <p class="text-[10px] text-[var(--color-text-muted)]">Victim</p>
+        <p class="text-[10px] font-mono text-[var(--color-text)]">{{ victimIp }}</p>
+      </div>
+    </div>
+  </div>
+</div>
