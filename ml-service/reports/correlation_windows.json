@@ -1,0 +1,272 @@
+{
+ "schema_version": 1,
+ "generated_at": "2026-08-30T22:20:22.946426Z",
+ "dataset": "cicids2017_cleaned.parquet",
+ "correlation_key": [
+  "source_ip",
+  "attack_type"
+ ],
+ "candidate_windows_seconds": [
+  30,
+  60,
+  120,
+  300,
+  600,
+  1800
+ ],
+ "min_flows_for_claim": 100,
+ "total_attack_flows": 556556,
+ "unparsed_timestamps": 0,
+ "per_family_gap_seconds": {
+  "Bot": {
+   "gap_count": 1948,
+   "p50": 0.0,
+   "p90": 120.0,
+   "p95": 120.0,
+   "p99": 120.0,
+   "max": 120.0,
+   "fraction_under": {
+    "30": 0.6714579055441479,
+    "60": 0.8891170431211499,
+    "120": 1.0,
+    "300": 1.0,
+    "600": 1.0,
+    "1800": 1.0
+   },
+   "flows": 1956,
+   "distinct_sources": 8,
+   "distinct_targets": 8
+  },
+  "DDoS": {
+   "gap_count": 128023,
+   "p50": 0.0,
+   "p90": 0.0,
+   "p95": 0.0,
+   "p99": 0.0,
+   "max": 60.0,
+   "fraction_under": {
+    "30": 0.9998437780711279,
+    "60": 1.0,
+    "120": 1.0,
+    "300": 1.0,
+    "600": 1.0,
+    "1800": 1.0
+   },
+   "flows": 128025,
+   "distinct_sources": 2,
+   "distinct_targets": 2
+  },
+  "DoS GoldenEye": {
+   "gap_count": 10292,
+   "p50": 0.0,
+   "p90": 0.0,
+   "p95": 0.0,
+   "p99": 0.0,
+   "max": 180.0,
+   "fraction_under": {
+    "30": 0.9993198600855033,
+    "60": 0.9999028371550719,
+    "120": 0.9999028371550719,
+    "300": 1.0,
+    "600": 1.0,
+    "1800": 1.0
+   },
+   "flows": 10293,
+   "distinct_sources": 1,
+   "distinct_targets": 1
+  },
+  "DoS Hulk": {
+   "gap_count": 230123,
+   "p50": 0.0,
+   "p90": 0.0,
+   "p95": 0.0,
+   "p99": 0.0,
+   "max": 300.0,
+   "fraction_under": {
+    "30": 0.9999130899562408,
+    "60": 0.999995654497812,
+    "120": 0.999995654497812,
+    "300": 1.0,
+    "600": 1.0,
+    "1800": 1.0
+   },
+   "flows": 230124,
+   "distinct_sources": 1,
+   "distinct_targets": 1
+  },
+  "DoS Slowhttptest": {
+   "gap_count": 5498,
+   "p50": 0.0,
+   "p90": 0.0,
+   "p95": 0.0,
+   "p99": 0.0,
+   "max": 180.0,
+   "fraction_under": {
+    "30": 0.9967260822117133,
+    "60": 0.9996362313568571,
+    "120": 0.9996362313568571,
+    "300": 1.0,
+    "600": 1.0,
+    "1800": 1.0
+   },
+   "flows": 5499,
+   "distinct_sources": 1,
+   "distinct_targets": 1
+  },
+  "DoS slowloris": {
+   "gap_count": 5795,
+   "p50": 0.0,
+   "p90": 0.0,
+   "p95": 0.0,
+   "p99": 0.0,
+   "max": 23760.0,
+   "fraction_under": {
+    "30": 0.9955133735979292,
+    "60": 0.9996548748921484,
+    "120": 0.9996548748921484,
+    "300": 0.9996548748921484,
+    "600": 0.9996548748921484,
+    "1800": 0.9996548748921484
+   },
+   "flows": 5796,
+   "distinct_sources": 1,
+   "distinct_targets": 1
+  },
+  "FTP-Patator": {
+   "gap_count": 7934,
+   "p50": 0.0,
+   "p90": 0.0,
+   "p95": 0.0,
+   "p99": 0.0,
+   "max": 600.0,
+   "fraction_under": {
+    "30": 0.9920594907990925,
+    "60": 0.9997479203428283,
+    "120": 0.9998739601714142,
+    "300": 0.9998739601714142,
+    "600": 1.0,
+    "1800": 1.0
+   },
+   "flows": 7935,
+   "distinct_sources": 1,
+   "distinct_targets": 1
+  },
+  "PortScan": {
+   "gap_count": 158803,
+   "p50": 0.0,
+   "p90": 0.0,
+   "p95": 0.0,
+   "p99": 0.0,
+   "max": 2760.0,
+   "fraction_under": {
+    "30": 0.9998362751333413,
+    "60": 0.9999496231179512,
+    "120": 0.9999559202282072,
+    "300": 0.9999685144487195,
+    "600": 0.9999811086692317,
+    "1800": 0.9999874057794877
+   },
+   "flows": 158804,
+   "distinct_sources": 1,
+   "distinct_targets": 1
+  },
+  "SSH-Patator": {
+   "gap_count": 5896,
+   "p50": 0.0,
+   "p90": 0.0,
+   "p95": 0.0,
+   "p99": 60.0,
+   "max": 60.0,
+   "fraction_under": {
+    "30": 0.9894843962008141,
+    "60": 1.0,
+    "120": 1.0,
+    "300": 1.0,
+    "600": 1.0,
+    "1800": 1.0
+   },
+   "flows": 5897,
+   "distinct_sources": 1,
+   "distinct_targets": 1
+  },
+  "Web Attack - Brute Force": {
+   "gap_count": 1506,
+   "p50": 0.0,
+   "p90": 0.0,
+   "p95": 0.0,
+   "p99": 60.0,
+   "max": 120.0,
+   "fraction_under": {
+    "30": 0.9714475431606906,
+    "60": 0.99867197875166,
+    "120": 1.0,
+    "300": 1.0,
+    "600": 1.0,
+    "1800": 1.0
+   },
+   "flows": 1507,
+   "distinct_sources": 1,
+   "distinct_targets": 1
+  },
+  "Web Attack - XSS": {
+   "gap_count": 651,
+   "p50": 0.0,
+   "p90": 0.0,
+   "p95": 0.0,
+   "p99": 60.0,
+   "max": 60.0,
+   "fraction_under": {
+    "30": 0.9692780337941628,
+    "60": 1.0,
+    "120": 1.0,
+    "300": 1.0,
+    "600": 1.0,
+    "1800": 1.0
+   },
+   "flows": 652,
+   "distinct_sources": 1,
+   "distinct_targets": 1
+  }
+ },
+ "incident_collapse": {
+  "30": {
+   "incidents": 1006,
+   "flows_per_incident": 553.2365805168986,
+   "reduction_factor": 553.2365805168986
+  },
+  "60": {
+   "incidents": 290,
+   "flows_per_incident": 1919.1586206896552,
+   "reduction_factor": 1919.1586206896552
+  },
+  "120": {
+   "incidents": 46,
+   "flows_per_incident": 12099.04347826087,
+   "reduction_factor": 12099.04347826087
+  },
+  "300": {
+   "incidents": 32,
+   "flows_per_incident": 17392.375,
+   "reduction_factor": 17392.375
+  },
+  "600": {
+   "incidents": 28,
+   "flows_per_incident": 19877.0,
+   "reduction_factor": 19877.0
+  },
+  "1800": {
+   "incidents": 26,
+   "flows_per_incident": 21406.0,
+   "reduction_factor": 21406.0
+  }
+ },
+ "mean_gap_coverage": {
+  "30": 0.9622618025958876,
+  "60": 0.9896978330214071,
+  "120": 0.9999108616637737,
+  "300": 0.9999543045011166,
+  "600": 0.9999669075964891,
+  "1800": 0.9999674800610578
+ },
+ "protocol": "Gaps are the time between consecutive flows of the same attack family from the same source IP, taken from the original CICIDS2017 capture timestamps. An idle gap larger than the window closes an incident."
+}
