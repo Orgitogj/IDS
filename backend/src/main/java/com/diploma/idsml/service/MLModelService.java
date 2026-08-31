@@ -31,6 +31,13 @@ public class MLModelService {
         return toResponse(findEntity(id));
     }
 
+    public MLModelResponse getActive() {
+        return mlModelRepository.findByActiveTrue()
+                .map(this::toResponse)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Asnje model aktiv - aktivizo nje model me PATCH /api/models/{id}/activate."));
+    }
+
     @Transactional
     public MLModelResponse setActive(UUID id) {
         mlModelRepository.findByActiveTrue().ifPresent(current -> {
@@ -48,6 +55,10 @@ public class MLModelService {
         MLModel model = MLModel.builder()
                 .algorithm(request.algorithm())
                 .name(request.name())
+                .version(request.version() != null && !request.version().isBlank()
+                        ? request.version()
+                        : "1.0")
+                .featureVersion(request.featureVersion())
                 .trainedOnDataset(request.trainedOnDataset())
                 .artifactPath(request.artifactPath())
                 .hyperparameters(request.hyperparameters())
@@ -69,6 +80,8 @@ public class MLModelService {
                 model.getId(),
                 model.getAlgorithm(),
                 model.getName(),
+                model.getVersion(),
+                model.getFeatureVersion(),
                 model.getTrainedOnDataset(),
                 model.getArtifactPath(),
                 model.getHyperparameters(),

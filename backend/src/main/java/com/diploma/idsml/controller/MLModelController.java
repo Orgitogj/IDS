@@ -34,8 +34,14 @@ public class MLModelController {
         return mlModelService.getAll();
     }
 
+    @GetMapping("/active")
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN','SERVICE')")
+    public MLModelResponse getActive() {
+        return mlModelService.getActive();
+    }
+
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
+    @PreAuthorize("hasAnyRole('ANALYST','ADMIN','SERVICE')")
     public MLModelResponse getById(@PathVariable UUID id) {
         return mlModelService.getById(id);
     }
