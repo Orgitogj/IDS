@@ -7,12 +7,16 @@ import com.diploma.idsml.dto.NetworkFlowIngestRequest;
 import com.diploma.idsml.dto.NetworkFlowResponse;
 import com.diploma.idsml.dto.PageResponse;
 import com.diploma.idsml.entity.Alarm;
+import com.diploma.idsml.entity.AlarmSeverity;
 import com.diploma.idsml.entity.AlarmStatus;
 import com.diploma.idsml.entity.DatasetSource;
 import com.diploma.idsml.entity.FlowLabel;
+import com.diploma.idsml.entity.Incident;
 import com.diploma.idsml.entity.NetworkFlow;
 import com.diploma.idsml.exception.ResourceNotFoundException;
+import com.diploma.idsml.exception.InvalidRequestException;
 import com.diploma.idsml.repository.AlarmRepository;
+import com.diploma.idsml.repository.MLModelRepository;
 import com.diploma.idsml.repository.NetworkFlowRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
@@ -30,23 +34,41 @@ import java.util.stream.Collectors;
 @Service
 public class NetworkFlowService {
 
+    private static final AlarmSeverity ANOMALY_SEVERITY = AlarmSeverity.MEDIUM;
+
     private final NetworkFlowRepository networkFlowRepository;
     private final AlarmRepository alarmRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final SeverityThresholdsService severityThresholdsService;
+    private final MLModelRepository mlModelRepository;
+    private final IncidentService incidentService;
 
     public NetworkFlowService(NetworkFlowRepository networkFlowRepository,
                               AlarmRepository alarmRepository,
                               SimpMessagingTemplate messagingTemplate,
-                              SeverityThresholdsService severityThresholdsService) {
+                              SeverityThresholdsService severityThresholdsService,
+                              MLModelRepository mlModelRepository,
+                              IncidentService incidentService) {
         this.networkFlowRepository = networkFlowRepository;
         this.alarmRepository = alarmRepository;
         this.messagingTemplate = messagingTemplate;
         this.severityThresholdsService = severityThresholdsService;
+        this.mlModelRepository = mlModelRepository;
+        this.incidentService = incidentService;
     }
 
     @Transactional
     public NetworkFlowResponse processFlowResult(NetworkFlowIngestRequest request) {
+        if (request.modelId() != null && !mlModelRepository.existsById(request.modelId())) {
+            throw new InvalidRequestException(
+                    "Modeli s'ekziston ne regjistrin e modeleve: " + request.modelId());
+        }
+
+        if (request.predictionConfidence() == null && request.anomalyScore() == null) {
+            throw new InvalidRequestException(
+                    "Nje detektim duhet te kete ose predictionConfidence ose anomalyScore.");
+        }
+
         NetworkFlow flow = NetworkFlow.builder()
                 .datasetSource(request.datasetSource() != null
                         ? request.datasetSource()
@@ -57,27 +79,40 @@ public class NetworkFlowService {
                 .destinationPort(request.destinationPort())
                 .protocol(request.protocol())
                 .featureVector(request.featureVector())
-                .label(FlowLabel.UNKNOWN)
+                .label(request.groundTruthLabel() != null
+                        ? request.groundTruthLabel()
+                        : FlowLabel.UNKNOWN)
                 .attackType(request.attackType())
+                .groundTruthAttackType(request.groundTruthAttackType())
                 .predictedLabel(request.predictedLabel())
                 .predictionConfidence(request.predictionConfidence())
+                .modelId(request.modelId())
+                .modelName(request.modelName())
+                .modelVersion(request.modelVersion())
+                .featureVersion(request.featureVersion())
+                .detectionMethod(request.detectionMethod())
+                .anomalyScore(request.anomalyScore())
                 .flowTimestamp(request.flowTimestamp())
                 .build();
 
         flow = networkFlowRepository.save(flow);
 
-        if (request.predictedLabel() == FlowLabel.ATTACK) {
+        if (request.predictedLabel() == FlowLabel.ATTACK
+                || request.predictedLabel() == FlowLabel.UNKNOWN) {
             Alarm alarm = Alarm.builder()
                     .networkFlow(flow)
-                    .severity(severityThresholdsService.resolveSeverity(
-                            request.predictionConfidence()))
+                    .severity(resolveSeverity(request))
                     .status(AlarmStatus.NEW)
                     .build();
+            alarm = alarmRepository.save(alarm);
+
+            Incident incident = incidentService.correlate(alarm, flow);
             alarm = alarmRepository.save(alarm);
 
             AlarmResponse alarmResponse = new AlarmResponse(
                     alarm.getId(),
                     flow.getId(),
+                    incident.getId(),
                     alarm.getSeverity(),
                     alarm.getStatus(),
                     alarm.getCreatedAt(),
@@ -85,9 +120,18 @@ public class NetworkFlowService {
                     alarm.getResolvedAt()
             );
             messagingTemplate.convertAndSend("/topic/alarms", alarmResponse);
+            messagingTemplate.convertAndSend("/topic/incidents",
+                    incidentService.toResponse(incident));
         }
 
         return toResponse(flow);
+    }
+
+    private AlarmSeverity resolveSeverity(NetworkFlowIngestRequest request) {
+        if (request.predictedLabel() == FlowLabel.UNKNOWN) {
+            return ANOMALY_SEVERITY;
+        }
+        return severityThresholdsService.resolveSeverity(request.predictionConfidence());
     }
 
     public PageResponse<NetworkFlowResponse> search(FlowLabel predictedLabel, String search,
@@ -151,8 +195,15 @@ public class NetworkFlowService {
                 flow.getFeatureVector(),
                 flow.getLabel(),
                 flow.getAttackType(),
+                flow.getGroundTruthAttackType(),
                 flow.getPredictedLabel(),
                 flow.getPredictionConfidence(),
+                flow.getModelId(),
+                flow.getModelName(),
+                flow.getModelVersion(),
+                flow.getFeatureVersion(),
+                flow.getDetectionMethod(),
+                flow.getAnomalyScore(),
                 flow.getFlowTimestamp(),
                 flow.getCreatedAt()
         );
