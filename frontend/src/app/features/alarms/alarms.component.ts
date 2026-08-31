@@ -9,7 +9,7 @@ import { WebSocketService } from '../../core/services/websocket.service';
 import { PredictionService, ShapContribution } from '../../core/services/prediction.service';
 import { Alarm, AlarmStatus, AlarmSeverity } from '../../core/models/alarm.model';
 import { AlarmStats } from '../../core/models/alarm-stats.model';
-import { Incident } from '../../core/models/incident.model';
+import { AlarmGroup } from '../../core/models/alarm-group.model';
 import { Explanation, ExplanationRating } from '../../core/models/explanation.model';
 import { ToastService } from '../../core/services/toast.service';
 
@@ -40,6 +40,7 @@ export class AlarmsComponent implements OnInit {
   explanationLoading = signal(false);
   generating = signal(false);
   selectedFeatureVector = signal<Record<string, number> | null>(null);
+  selectedModelId = signal<string | null>(null);
   shapFeatures = signal<ShapContribution[] | null>(null);
   shapLoading = signal(false);
 
@@ -51,7 +52,7 @@ export class AlarmsComponent implements OnInit {
 
   stats = signal<AlarmStats | null>(null);
 
-  incidents = signal<Incident[]>([]);
+  incidents = signal<AlarmGroup[]>([]);
   incidentsLoading = signal(false);
   showIncidents = signal(false);
 
@@ -160,7 +161,7 @@ export class AlarmsComponent implements OnInit {
 
   loadIncidents(): void {
     this.incidentsLoading.set(true);
-    this.alarmService.getIncidents().subscribe({
+    this.alarmService.getAlarmGroups().subscribe({
       next: (incidents) => {
         this.incidents.set(incidents);
         this.incidentsLoading.set(false);
@@ -233,6 +234,7 @@ export class AlarmsComponent implements OnInit {
     this.explanations.set([]);
     this.shapFeatures.set(null);
     this.selectedFeatureVector.set(null);
+    this.selectedModelId.set(null);
     this.explanationLoading.set(true);
     this.shapLoading.set(true);
 
@@ -241,7 +243,8 @@ export class AlarmsComponent implements OnInit {
     this.flowService.getById(alarm.networkFlowId).subscribe({
       next: (flow) => {
         this.selectedFeatureVector.set(flow.featureVector);
-        this.predictionService.predict(flow.featureVector).subscribe({
+        this.selectedModelId.set(flow.modelId);
+        this.predictionService.predict(flow.featureVector, flow.modelId).subscribe({
           next: (result) => {
             this.shapFeatures.set(result.top_shap_features);
             this.shapLoading.set(false);
@@ -272,7 +275,7 @@ export class AlarmsComponent implements OnInit {
     if (!alarmId || !featureVector || this.generating()) return;
 
     this.generating.set(true);
-    this.predictionService.explain(alarmId, featureVector, compare).subscribe({
+    this.predictionService.explain(alarmId, featureVector, compare, this.selectedModelId()).subscribe({
       next: (result) => {
         this.generating.set(false);
         this.loadExplanations(alarmId);

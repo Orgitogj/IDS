@@ -2,6 +2,7 @@
 import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { Alarm } from '../models/alarm.model';
+import { Incident } from '../models/incident.model';
 import { AuthService } from './auth.service';
 
 const WS_URL = 'http://localhost:8080/ws';
@@ -13,6 +14,7 @@ export class WebSocketService {
 
   readonly connected = signal(false);
   readonly liveAlarms = signal<Alarm[]>([]);
+  readonly liveIncidents = signal<Incident[]>([]);
 
   connect(): void {
     if (this.client?.active) {
@@ -33,6 +35,13 @@ export class WebSocketService {
         this.client!.subscribe('/topic/alarms', (message: IMessage) => {
           const alarm: Alarm = JSON.parse(message.body);
           this.liveAlarms.update((current) => [alarm, ...current]);
+        });
+        this.client!.subscribe('/topic/incidents', (message: IMessage) => {
+          const incident: Incident = JSON.parse(message.body);
+          this.liveIncidents.update((current) => [
+            incident,
+            ...current.filter((existing) => existing.id !== incident.id),
+          ]);
         });
       },
       onDisconnect: () => this.connected.set(false),
