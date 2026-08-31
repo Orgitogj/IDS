@@ -7,6 +7,8 @@ public record MLModelResponse(
         UUID id,
         String algorithm,
         String name,
+        String version,
+        String featureVersion,
         String trainedOnDataset,
         String artifactPath,
         String hyperparameters,

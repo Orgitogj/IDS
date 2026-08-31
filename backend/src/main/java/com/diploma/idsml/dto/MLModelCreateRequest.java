@@ -11,6 +11,10 @@ public record MLModelCreateRequest(
         @NotBlank
         String name,
 
+        String version,
+
+        String featureVersion,
+
         @NotBlank
         String trainedOnDataset,
 
