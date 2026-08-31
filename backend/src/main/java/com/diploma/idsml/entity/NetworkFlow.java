@@ -62,12 +62,34 @@ public class NetworkFlow {
     @Column(name = "attack_type")
     private String attackType;
 
+    @Column(name = "ground_truth_attack_type")
+    private String groundTruthAttackType;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "predicted_label")
     private FlowLabel predictedLabel;
 
     @Column(name = "prediction_confidence")
     private Double predictionConfidence;
+
+    @Column(name = "model_id")
+    private UUID modelId;
+
+    @Column(name = "model_name")
+    private String modelName;
+
+    @Column(name = "model_version")
+    private String modelVersion;
+
+    @Column(name = "feature_version")
+    private String featureVersion;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "detection_method")
+    private DetectionMethod detectionMethod;
+
+    @Column(name = "anomaly_score")
+    private Double anomalyScore;
 
     @Column(name = "flow_timestamp", nullable = false)
     private Instant flowTimestamp;
