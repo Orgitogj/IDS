@@ -2,6 +2,8 @@
   id: string;
   algorithm: string;
   name: string;
+  version: string;
+  featureVersion: string | null;
   trainedOnDataset: string;
   artifactPath: string;
   hyperparameters: string | null;
