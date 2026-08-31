@@ -10,6 +10,7 @@ backend/*.ipr
 ml-service/__pycache__/
 ml-service/**/__pycache__/
 ml-service/*.py[cod]
+ml-service/.pytest_cache/
 ml-service/.venv/
 ml-service/.venv2/
 ml-service/venv/
