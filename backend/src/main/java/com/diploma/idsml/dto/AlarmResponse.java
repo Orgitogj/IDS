@@ -9,6 +9,7 @@ import java.util.UUID;
 public record AlarmResponse(
         UUID id,
         UUID networkFlowId,
+        UUID incidentId,
         AlarmSeverity severity,
         AlarmStatus status,
         Instant createdAt,
