@@ -15,6 +15,12 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     llm_provider: str = "gemini"
     mlflow_tracking_uri: str = "http://localhost:5000"
+    fallback_model_file: str = "xgb_smote_top50features_v1.joblib"
+    anomaly_detection_enabled: bool = True
+    anomaly_threshold_rate: str = "0.010"
+    drift_monitoring_enabled: bool = True
+    drift_window_size: int = 1000
+    drift_publish_every: int = 500
     models_dir: str = "./models"
     datasets_dir: str = "./datasets"
 
