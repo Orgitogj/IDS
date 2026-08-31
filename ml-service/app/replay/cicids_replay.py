@@ -9,7 +9,9 @@ import pyarrow.parquet as pq
 import requests
 
 from app.core.config import settings
-from app.ml.inference import load_artifacts, predict
+from app.ml.detection_engine import to_flow_label
+from app.ml.feature_validation import load_reference
+from app.ml.inference import anomaly_detector, load_artifacts, predict
 from app.services.spring_client import ingest_flow
 
 _ML_SERVICE_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -100,26 +102,55 @@ def _collect_rows(dataset_path: Path, indices):
 
 def _build_payload(row, feature_columns, preserve_timestamps: bool):
     feature_vector = {column: float(row[column]) for column in feature_columns}
+    truth = _clean_label(row["Label"])
 
     prediction = predict(feature_vector, include_shap=False)
-    predicted = _clean_label(prediction["predicted_label"])
+    predicted = _clean_label(prediction["prediction"])
+    detection_class = prediction["detection_class"]
 
-    is_attack = predicted != "BENIGN"
+    is_attack = detection_class == "KNOWN_ATTACK"
     flow_time = _parse_timestamp(row["Timestamp"]) if preserve_timestamps else None
 
     return {
+        "model_id": prediction["model_id"],
+        "model_name": prediction["model_name"],
+        "model_version": prediction["model_version"],
+        "feature_version": prediction["feature_version"],
+        "detection_method": prediction["detection_method"],
+        "anomaly_score": prediction["anomaly_score"],
+        "ground_truth_label": "BENIGN" if truth == "BENIGN" else "ATTACK",
+        "ground_truth_attack_type": None if truth == "BENIGN" else truth,
         "source_ip": str(row["Source IP"]),
         "destination_ip": str(row["Destination IP"]),
         "source_port": _to_int(row["Source Port"]),
         "destination_port": _to_int(row["Destination Port"]),
         "protocol": _protocol_name(row["Protocol"]),
         "feature_vector": feature_vector,
-        "predicted_label": "ATTACK" if is_attack else "BENIGN",
+        "predicted_label": to_flow_label(detection_class),
         "prediction_confidence": prediction["confidence"],
         "attack_type": predicted if is_attack else None,
         "flow_timestamp_iso": _iso_utc(flow_time or datetime.now(timezone.utc)),
         "dataset_source": DATASET_SOURCE,
     }
+
+
+def _payload_feature_columns(loaded):
+    columns = list(loaded.feature_columns)
+
+    detector = anomaly_detector()
+    if detector is not None:
+        for name in detector.feature_columns:
+            if name not in columns:
+                columns.append(name)
+
+    reference = load_reference()
+    if reference is not None:
+        base = reference["feature_sets"].get(reference["base_feature_version"], [])
+        ordered = [name for name in base if name in columns]
+        ordered += [name for name in columns if name not in ordered]
+        return ordered
+
+    return columns
 
 
 def replay(args) -> int:
@@ -131,8 +162,13 @@ def replay(args) -> int:
         print(f"Dataset-i s'u gjet: {dataset_path}", file=sys.stderr)
         return 1
 
-    load_artifacts()
-    from app.ml.inference import _feature_columns
+    loaded = load_artifacts()
+    identity = loaded.identity
+    feature_columns = _payload_feature_columns(loaded)
+    print(f"Modeli aktiv: {identity.name} v{identity.version} "
+          f"(feature_version={identity.feature_version}, burimi={identity.source})")
+    print(f"Vektori i derguar permban {len(feature_columns)} features "
+          f"(mjaftueshem per modelin e mbikeqyrur dhe per detektorin e anomalive).\n")
 
     indices = _select_indices(dataset_path, args.limit, args.attack_ratio, args.seed)
     print("Duke lexuar rreshtat e zgjedhur nga parquet...")
@@ -149,14 +185,16 @@ def replay(args) -> int:
     next_send = time.perf_counter()
     started = time.perf_counter()
 
-    sent = attacks = errors = 0
+    sent = attacks = errors = suspicious = 0
     consecutive_errors = 0
 
     try:
         for position, row in enumerate(rows, start=1):
-            payload = _build_payload(row, _feature_columns, args.preserve_timestamps)
+            payload = _build_payload(row, feature_columns, args.preserve_timestamps)
             if payload["predicted_label"] == "ATTACK":
                 attacks += 1
+            elif payload["predicted_label"] == "UNKNOWN":
+                suspicious += 1
 
             if args.dry_run:
                 sent += 1
@@ -175,7 +213,8 @@ def replay(args) -> int:
                         break
 
             if position % 50 == 0:
-                print(f"  {position}/{len(rows)} flows - {attacks} sulme te parashikuara")
+                print(f"  {position}/{len(rows)} flows - {attacks} sulme, "
+                      f"{suspicious} te dyshimta")
 
             if interval:
                 next_send += interval
@@ -189,6 +228,7 @@ def replay(args) -> int:
     print("\n--- Permbledhje ---")
     print(f"Derguar:          {sent}")
     print(f"Sulme (alarme):   {attacks}")
+    print(f"Te dyshimta:      {suspicious}")
     print(f"Gabime:           {errors}")
     if elapsed > 0:
         print(f"Kohe:             {elapsed:.1f}s ({sent / elapsed:.1f} flows/sek)")

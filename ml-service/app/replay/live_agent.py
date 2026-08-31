@@ -11,88 +11,16 @@ import joblib
 import numpy as np
 import requests
 
-CICFLOWMETER_TO_CICIDS2017 = {
-    "dst_port": "Destination Port",
-    "protocol": "Protocol",
-    "flow_duration": "Flow Duration",
-    "tot_fwd_pkts": "Total Fwd Packets",
-    "tot_bwd_pkts": "Total Backward Packets",
-    "totlen_fwd_pkts": "Total Length of Fwd Packets",
-    "totlen_bwd_pkts": "Total Length of Bwd Packets",
-    "fwd_pkt_len_max": "Fwd Packet Length Max",
-    "fwd_pkt_len_min": "Fwd Packet Length Min",
-    "fwd_pkt_len_mean": "Fwd Packet Length Mean",
-    "fwd_pkt_len_std": "Fwd Packet Length Std",
-    "bwd_pkt_len_max": "Bwd Packet Length Max",
-    "bwd_pkt_len_min": "Bwd Packet Length Min",
-    "bwd_pkt_len_mean": "Bwd Packet Length Mean",
-    "bwd_pkt_len_std": "Bwd Packet Length Std",
-    "flow_byts_s": "Flow Bytes/s",
-    "flow_pkts_s": "Flow Packets/s",
-    "flow_iat_mean": "Flow IAT Mean",
-    "flow_iat_std": "Flow IAT Std",
-    "flow_iat_max": "Flow IAT Max",
-    "flow_iat_min": "Flow IAT Min",
-    "fwd_iat_tot": "Fwd IAT Total",
-    "fwd_iat_mean": "Fwd IAT Mean",
-    "fwd_iat_std": "Fwd IAT Std",
-    "fwd_iat_max": "Fwd IAT Max",
-    "fwd_iat_min": "Fwd IAT Min",
-    "bwd_iat_tot": "Bwd IAT Total",
-    "bwd_iat_mean": "Bwd IAT Mean",
-    "bwd_iat_std": "Bwd IAT Std",
-    "bwd_iat_max": "Bwd IAT Max",
-    "bwd_iat_min": "Bwd IAT Min",
-    "fwd_psh_flags": "Fwd PSH Flags",
-    "bwd_psh_flags": "Bwd PSH Flags",
-    "fwd_urg_flags": "Fwd URG Flags",
-    "bwd_urg_flags": "Bwd URG Flags",
-    "fwd_header_len": "Fwd Header Length",
-    "bwd_header_len": "Bwd Header Length",
-    "fwd_pkts_s": "Fwd Packets/s",
-    "bwd_pkts_s": "Bwd Packets/s",
-    "pkt_len_min": "Min Packet Length",
-    "pkt_len_max": "Max Packet Length",
-    "pkt_len_mean": "Packet Length Mean",
-    "pkt_len_std": "Packet Length Std",
-    "pkt_len_var": "Packet Length Variance",
-    "fin_flag_cnt": "FIN Flag Count",
-    "syn_flag_cnt": "SYN Flag Count",
-    "rst_flag_cnt": "RST Flag Count",
-    "psh_flag_cnt": "PSH Flag Count",
-    "ack_flag_cnt": "ACK Flag Count",
-    "urg_flag_cnt": "URG Flag Count",
-    "cwr_flag_count": "CWE Flag Count",
-    "ece_flag_cnt": "ECE Flag Count",
-    "down_up_ratio": "Down/Up Ratio",
-    "pkt_size_avg": "Average Packet Size",
-    "fwd_seg_size_avg": "Avg Fwd Segment Size",
-    "bwd_seg_size_avg": "Avg Bwd Segment Size",
-    "fwd_byts_b_avg": "Fwd Avg Bytes/Bulk",
-    "fwd_pkts_b_avg": "Fwd Avg Packets/Bulk",
-    "fwd_blk_rate_avg": "Fwd Avg Bulk Rate",
-    "bwd_byts_b_avg": "Bwd Avg Bytes/Bulk",
-    "bwd_pkts_b_avg": "Bwd Avg Packets/Bulk",
-    "bwd_blk_rate_avg": "Bwd Avg Bulk Rate",
-    "subflow_fwd_pkts": "Subflow Fwd Packets",
-    "subflow_fwd_byts": "Subflow Fwd Bytes",
-    "subflow_bwd_pkts": "Subflow Bwd Packets",
-    "subflow_bwd_byts": "Subflow Bwd Bytes",
-    "init_fwd_win_byts": "Init_Win_bytes_forward",
-    "init_bwd_win_byts": "Init_Win_bytes_backward",
-    "fwd_act_data_pkts": "act_data_pkt_fwd",
-    "fwd_seg_size_min": "min_seg_size_forward",
-    "active_mean": "Active Mean",
-    "active_std": "Active Std",
-    "active_max": "Active Max",
-    "active_min": "Active Min",
-    "idle_mean": "Idle Mean",
-    "idle_std": "Idle Std",
-    "idle_max": "Idle Max",
-    "idle_min": "Idle Min",
-}
-
-META_COLUMNS = {"src_ip", "dst_ip", "src_port", "timestamp"}
+try:
+    from app.replay.feature_mapping import CICFLOWMETER_TO_CICIDS2017, META_COLUMNS
+    from app.ml.feature_validation import STRICT_POLICY, FeatureValidator, load_reference
+    from app.ml.anomaly import load_anomaly_detector
+    from app.ml.detection_engine import decide, to_flow_label
+except ImportError:
+    from feature_mapping import CICFLOWMETER_TO_CICIDS2017, META_COLUMNS
+    from feature_validation import STRICT_POLICY, FeatureValidator, load_reference
+    from anomaly import load_anomaly_detector
+    from detection_engine import decide, to_flow_label
 
 
 def load_model_artifacts(models_dir: Path, model_filename: str):
@@ -113,10 +41,8 @@ def load_model_artifacts(models_dir: Path, model_filename: str):
     return model, label_encoder, feature_columns
 
 
-def map_row_to_feature_vector(row: dict, feature_columns: list) -> dict:
+def map_row_to_feature_vector(row: dict) -> dict:
 
-    mapped = {}
-    missing = []
     renamed = {}
     for k, v in row.items():
         if k in META_COLUMNS:
@@ -125,31 +51,71 @@ def map_row_to_feature_vector(row: dict, feature_columns: list) -> dict:
         if cicids_name:
             renamed[cicids_name] = v
 
-    for col in feature_columns:
-        if col in renamed:
-            try:
-                mapped[col] = float(renamed[col])
-            except (ValueError, TypeError):
-                mapped[col] = 0.0
-        else:
-            mapped[col] = 0.0
-            missing.append(col)
-
-    if missing:
-        print(f"[live_agent] KUJDES: {len(missing)} features mungojne, mbushur me 0: {missing}",
-              file=sys.stderr)
-
-    return mapped
+    return renamed
 
 
-def predict_flow(model, label_encoder, feature_vector: dict, feature_columns: list):
+def predict_flow(model, label_encoder, vector: list):
 
-    x = np.array([[feature_vector[col] for col in feature_columns]])
+    x = np.array([vector])
     pred_idx = model.predict(x)[0]
     pred_proba = model.predict_proba(x)[0]
     confidence = float(pred_proba[pred_idx])
     label = label_encoder.inverse_transform([pred_idx])[0]
-    return label, confidence
+    return {"predicted_label": label, "confidence": confidence}
+
+
+def report_validation(validation, row_number: int):
+
+    if validation.derived_features:
+        names = ", ".join(entry["feature"] for entry in validation.derived_features)
+        print(f"[live_agent] flow {row_number}: {len(validation.derived_features)} features "
+              f"u rindertuan nga kolona te tjera: {names}", file=sys.stderr)
+
+    if validation.zero_filled_features:
+        print(f"[live_agent] flow {row_number}: {len(validation.zero_filled_features)} features "
+              f"konstante-zero u mbushen me 0 (ekzakte ne trajnim)", file=sys.stderr)
+
+    if validation.out_of_range_features:
+        print(f"[live_agent] flow {row_number}: {len(validation.out_of_range_features)} features "
+              f"jashte intervalit p01-p99 te trajnimit", file=sys.stderr)
+
+    if not validation.valid:
+        print(f"[live_agent] flow {row_number} U REFUZUA ({validation.summary()})", file=sys.stderr)
+        for warning in validation.warnings:
+            print(f"[live_agent]   - {warning}", file=sys.stderr)
+
+
+def fetch_active_model(backend_url: str, token: str):
+
+    try:
+        resp = requests.get(f"{backend_url}/api/models/active",
+                             headers={"Authorization": f"Bearer {token}"}, timeout=10)
+        resp.raise_for_status()
+        return resp.json()
+    except requests.RequestException as e:
+        print(f"[live_agent] KUJDES: regjistri i modeleve s'u arrit ({e}). "
+              f"Parashikimet do te dergohen pa identitet modeli.", file=sys.stderr)
+        return None
+
+
+def resolve_model_identity(active, model_file: str):
+
+    if active is None:
+        return {}
+
+    registry_file = Path(str(active.get("artifactPath", ""))).name
+    if registry_file != model_file:
+        print(f"[live_agent] KUJDES: artefakti lokal '{model_file}' NUK eshte modeli aktiv "
+              f"ne regjistrin e modeleve ('{registry_file}'). Alarmet do te shenohen me "
+              f"modelin qe u perdor vertet, jo me ate aktiv.", file=sys.stderr)
+        return {}
+
+    return {
+        "modelId": active.get("id"),
+        "modelName": active.get("name"),
+        "modelVersion": active.get("version"),
+        "featureVersion": active.get("featureVersion"),
+    }
 
 
 def login_and_get_token(backend_url: str, username: str, password: str) -> str:
@@ -164,8 +130,10 @@ def login_and_get_token(backend_url: str, username: str, password: str) -> str:
     return token
 
 
-def ingest_flow(backend_url: str, token: str, row: dict, feature_vector: dict, label: str, confidence: float):
+def ingest_flow(backend_url: str, token: str, row: dict, feature_vector: dict,
+                detection: dict, identity: dict = None, feature_version: str = None):
 
+    label = detection["prediction"]
     payload = {
         "sourceIp": row.get("src_ip", "0.0.0.0"),
         "destinationIp": row.get("dst_ip", "0.0.0.0"),
@@ -173,16 +141,24 @@ def ingest_flow(backend_url: str, token: str, row: dict, feature_vector: dict, l
         "destinationPort": int(float(row.get("dst_port", 0) or 0)),
         "protocol": "TCP" if row.get("protocol") == "6" else "UDP" if row.get("protocol") == "17" else "OTHER",
         "featureVector": feature_vector,
-        "predictedLabel": "BENIGN" if label == "BENIGN" else "ATTACK",
-        "predictionConfidence": confidence,
-        "attackType": label,
+        "predictedLabel": to_flow_label(detection["detection_class"]),
+        "predictionConfidence": detection["confidence"],
+        "attackType": label if detection["detection_class"] == "KNOWN_ATTACK" else None,
+        "detectionMethod": detection["detection_method"],
+        "anomalyScore": detection["anomaly_score"],
         "flowTimestamp": datetime.now(timezone.utc).isoformat(),
     }
+    payload.update(identity or {})
+    if not payload.get("featureVersion"):
+        payload["featureVersion"] = feature_version
     headers = {"Authorization": f"Bearer {token}"}
     try:
         resp = requests.post(f"{backend_url}/api/alarms/ingest", json=payload, headers=headers, timeout=5)
         resp.raise_for_status()
-        print(f"[live_agent] Ingested: {label} (conf={confidence:.4f}) "
+        confidence_text = ("conf=%.4f" % detection["confidence"]
+                           if detection["confidence"] is not None
+                           else "anomaly=%.4f" % (detection["anomaly_score"] or 0.0))
+        print(f"[live_agent] Ingested: {label} ({confidence_text}) "
               f"{payload['sourceIp']}:{payload['sourcePort']} -> "
               f"{payload['destinationIp']}:{payload['destinationPort']}")
     except requests.RequestException as e:
@@ -202,6 +178,15 @@ def main():
     parser.add_argument("--csv-out", default="live_flows.csv", help="File i perkohshem per output te cicflowmeter")
     parser.add_argument("--poll-interval", type=float, default=5.0,
                          help="Sa shpesh (sekonda) te kontrollohet CSV-ja per rreshta te rinj")
+    parser.add_argument("--reference", default=None,
+                         help="Path drejt training_feature_reference.json per kontrollin e intervaleve")
+    parser.add_argument("--no-anomaly-detection", action="store_true",
+                         help="Cakivizo detektorin e anomalive dhe perdor vetem modelin e mbikeqyrur")
+    parser.add_argument("--anomaly-threshold-rate", default="0.010",
+                         help="Shkalla e synuar e flamurimit te BENIGN (default: 0.010)")
+    parser.add_argument("--feature-version", default=None,
+                         help="Emri i feature set-it (p.sh. cicids2017-top50-v1); zbulohet vete "
+                              "nese --reference eshte i pranishem")
     parser.add_argument("--username", default="ml-service", help="Username per login te backend")
     parser.add_argument("--password", default="ml-service-secret", help="Password per login te backend")
     args = parser.parse_args()
@@ -212,9 +197,38 @@ def main():
     print(f"[live_agent] Modeli u ngarkua. {len(feature_columns)} features, "
           f"{len(label_encoder.classes_)} klasa: {list(label_encoder.classes_)}")
 
+    reference = load_reference(args.reference)
+    if reference is None:
+        print("[live_agent] KUJDES: referenca e trajnimit s'u gjet - "
+              "kontrolli i intervaleve eshte i cakivizuar (perdor --reference).", file=sys.stderr)
+    validator = FeatureValidator(feature_columns, reference=reference,
+                                 feature_version=args.feature_version, policy=STRICT_POLICY)
+    print(f"[live_agent] Validimi aktiv: feature_version={validator.feature_version}, "
+          f"politika={validator.policy.name} (flows te pavlefshem refuzohen)")
+    anomaly_detector = None
+    if not args.no_anomaly_detection:
+        anomaly_detector = load_anomaly_detector(
+            models_dir, threshold_rate=args.anomaly_threshold_rate)
+        if anomaly_detector is None:
+            print("[live_agent] KUJDES: artefakti i detektorit te anomalive mungon; "
+                  "po vazhdoj vetem me modelin e mbikeqyrur.", file=sys.stderr)
+        else:
+            print(f"[live_agent] Detektor anomalish aktiv: "
+                  f"{anomaly_detector.artifact_file} "
+                  f"(prag={anomaly_detector.threshold:.6f})")
+
+    if validator.feature_version.startswith("unregistered-"):
+        print("[live_agent] KUJDES: feature set-i s'u njoh - parashikimet nuk do te jene "
+              "te gjurmueshme. Kalo --reference ose --feature-version.", file=sys.stderr)
+
     print(f"[live_agent] Duke bere login te {args.backend} si '{args.username}' ...")
     token = login_and_get_token(args.backend, args.username, args.password)
     print("[live_agent] Login i suksesshem, token i marre.")
+
+    identity = resolve_model_identity(fetch_active_model(args.backend, token), args.model_file)
+    if identity:
+        print(f"[live_agent] Modeli u konfirmua kunder regjistrit: {identity['modelName']} "
+              f"v{identity['modelVersion']}")
 
     csv_path = Path(args.csv_out)
     if csv_path.exists():
@@ -226,6 +240,9 @@ def main():
     )
 
     seen_rows = 0
+    processed = 0
+    rejected = 0
+    suspicious = 0
     print(f"[live_agent] Duke monitoruar {csv_path} per flow te rinj (Ctrl+C per te ndaluar) ...")
     try:
         while True:
@@ -237,10 +254,26 @@ def main():
                 reader = list(csv.DictReader(f))
 
             new_rows = reader[seen_rows:]
-            for row in new_rows:
-                feature_vector = map_row_to_feature_vector(row, feature_columns)
-                label, confidence = predict_flow(model, label_encoder, feature_vector, feature_columns)
-                ingest_flow(args.backend, token, row, feature_vector, label, confidence)
+            for offset, row in enumerate(new_rows):
+                processed += 1
+                row_number = seen_rows + offset + 1
+
+                validation = validator.validate(map_row_to_feature_vector(row))
+                report_validation(validation, row_number)
+
+                if not validation.valid:
+                    rejected += 1
+                    continue
+
+                feature_vector = dict(zip(feature_columns, validation.vector))
+                supervised = predict_flow(model, label_encoder, validation.vector)
+                anomaly = (anomaly_detector.score(map_row_to_feature_vector(row))
+                           if anomaly_detector else None)
+                detection = decide(supervised, anomaly)
+                if detection["detection_class"] == "SUSPICIOUS":
+                    suspicious += 1
+                ingest_flow(args.backend, token, row, feature_vector, detection,
+                            identity=identity, feature_version=validator.feature_version)
             seen_rows = len(reader)
 
     except KeyboardInterrupt:
@@ -251,6 +284,9 @@ def main():
             proc.wait(timeout=5)
         except subprocess.TimeoutExpired:
             proc.kill()
+        rate = (rejected / processed * 100) if processed else 0.0
+        print(f"[live_agent] Gjithsej: {processed} flows, {rejected} te refuzuar "
+              f"({rate:.1f}%), {suspicious} te dyshimta.")
 
 
 if __name__ == "__main__":
