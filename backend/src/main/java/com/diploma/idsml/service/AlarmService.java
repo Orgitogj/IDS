@@ -3,7 +3,7 @@ package com.diploma.idsml.service;
 import com.diploma.idsml.dto.AlarmResponse;
 import com.diploma.idsml.dto.AlarmStatsResponse;
 import com.diploma.idsml.dto.HourlyCount;
-import com.diploma.idsml.dto.IncidentResponse;
+import com.diploma.idsml.dto.AlarmGroupResponse;
 import com.diploma.idsml.dto.PageResponse;
 import com.diploma.idsml.entity.Alarm;
 import com.diploma.idsml.entity.AlarmSeverity;
@@ -29,9 +29,12 @@ import java.util.stream.Collectors;
 public class AlarmService {
 
     private final AlarmRepository alarmRepository;
+    private final AnalystFeedbackService analystFeedbackService;
 
-    public AlarmService(AlarmRepository alarmRepository) {
+    public AlarmService(AlarmRepository alarmRepository,
+                        AnalystFeedbackService analystFeedbackService) {
         this.alarmRepository = alarmRepository;
+        this.analystFeedbackService = analystFeedbackService;
     }
 
     public PageResponse<AlarmResponse> search(AlarmSeverity severity, AlarmStatus status,
@@ -72,9 +75,9 @@ public class AlarmService {
                 hourlyCounts);
     }
 
-    public List<IncidentResponse> getIncidents(int limit) {
+    public List<AlarmGroupResponse> getIncidents(int limit) {
         return alarmRepository.findIncidents(limit).stream()
-                .map(row -> new IncidentResponse(
+                .map(row -> new AlarmGroupResponse(
                         (String) row[0],
                         (String) row[1],
                         ((Number) row[2]).longValue(),
@@ -116,12 +119,18 @@ public class AlarmService {
         };
     }
 
+    public List<AlarmResponse> getByIncidentId(UUID incidentId) {
+        return alarmRepository.findByIncidentIdOrderByCreatedAtDesc(incidentId).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
     public AlarmResponse getById(UUID id) {
         return toResponse(findEntity(id));
     }
 
     @Transactional
-    public AlarmResponse updateStatus(UUID id, AlarmStatus newStatus) {
+    public AlarmResponse updateStatus(UUID id, AlarmStatus newStatus, String analystUsername) {
         Alarm alarm = findEntity(id);
         alarm.setStatus(newStatus);
 
@@ -133,7 +142,9 @@ public class AlarmService {
             alarm.setResolvedAt(Instant.now());
         }
 
-        return toResponse(alarmRepository.save(alarm));
+        Alarm saved = alarmRepository.save(alarm);
+        analystFeedbackService.record(saved, newStatus, analystUsername);
+        return toResponse(saved);
     }
 
     private Alarm findEntity(UUID id) {
@@ -145,6 +156,7 @@ public class AlarmService {
         return new AlarmResponse(
                 alarm.getId(),
                 alarm.getNetworkFlow().getId(),
+                alarm.getIncident() != null ? alarm.getIncident().getId() : null,
                 alarm.getSeverity(),
                 alarm.getStatus(),
                 alarm.getCreatedAt(),

@@ -3,7 +3,7 @@ package com.diploma.idsml.controller;
 import com.diploma.idsml.dto.AlarmResponse;
 import com.diploma.idsml.dto.AlarmStatsResponse;
 import com.diploma.idsml.dto.AlarmStatusUpdateRequest;
-import com.diploma.idsml.dto.IncidentResponse;
+import com.diploma.idsml.dto.AlarmGroupResponse;
 import com.diploma.idsml.dto.PageResponse;
 import com.diploma.idsml.entity.AlarmSeverity;
 import com.diploma.idsml.entity.AlarmStatus;
@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,7 +64,7 @@ public class AlarmController {
 
     @GetMapping("/incidents")
     @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
-    public List<IncidentResponse> getIncidents(
+    public List<AlarmGroupResponse> getIncidents(
             @RequestParam(defaultValue = "50") int limit) {
         return alarmService.getIncidents(Math.min(Math.max(limit, 1), MAX_PAGE_SIZE));
     }
@@ -77,7 +78,8 @@ public class AlarmController {
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public AlarmResponse updateStatus(@PathVariable UUID id,
-                                       @Valid @RequestBody AlarmStatusUpdateRequest request) {
-        return alarmService.updateStatus(id, request.status());
+                                       @Valid @RequestBody AlarmStatusUpdateRequest request,
+                                       Authentication authentication) {
+        return alarmService.updateStatus(id, request.status(), authentication.getName());
     }
 }
