@@ -1,0 +1,162 @@
+import json
+
+import pytest
+import requests
+from fastapi.testclient import TestClient
+
+from app.ml import inference, model_registry
+
+pytestmark = pytest.mark.artifacts
+
+JSON_HEADERS = {"Content-Type": "application/json"}
+
+TOP50_PAYLOAD = {
+    "id": "133f003c-baab-4e11-8b12-21f5f37e2896",
+    "algorithm": "XGBoost",
+    "name": "xgb-smote-top50features-v1",
+    "version": "1.0",
+    "featureVersion": None,
+    "artifactPath": "models/xgb_smote_top50features_v1.joblib",
+}
+
+
+@pytest.fixture
+def client(monkeypatch):
+    monkeypatch.setattr(inference, "_loaded", {})
+    monkeypatch.setattr(inference, "_load_order", [])
+    monkeypatch.setattr(inference, "_active_key", None)
+    monkeypatch.setattr(inference, "_label_encoder", None)
+    monkeypatch.setattr(inference, "_reference", None)
+    monkeypatch.setattr(model_registry.spring_client, "get_active_model", lambda: TOP50_PAYLOAD)
+
+    from app.main import app
+    with TestClient(app) as test_client:
+        yield test_client
+
+
+def post_predict(client, vector, **extra):
+    body = json.dumps({"feature_vector": vector, "include_shap": False, **extra})
+    return client.post("/api/predict", content=body, headers=JSON_HEADERS)
+
+
+def test_health_reports_the_service(client):
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+
+
+def test_active_model_endpoint_reports_identity(client):
+    body = client.get("/api/models/active").json()
+    assert body["model_name"] == "xgb-smote-top50features-v1"
+    assert body["feature_version"] == "cicids2017-top50-v1"
+    assert body["registry_source"] == "registry"
+
+
+def test_valid_vector_returns_a_prediction_with_identity(client, full_vector):
+    response = post_predict(client, full_vector)
+    assert response.status_code == 200
+    body = response.json()
+    assert body["model_name"] == "xgb-smote-top50features-v1"
+    assert body["model_version"] == "1.0"
+    assert body["feature_version"] == "cicids2017-top50-v1"
+    assert body["detection_method"] in {"SUPERVISED_ML", "ANOMALY_DETECTION"}
+    assert body["detection_class"] in {"BENIGN", "KNOWN_ATTACK", "SUSPICIOUS"}
+    assert body["prediction"] == body["predicted_label"] or body["detection_class"] == "SUSPICIOUS"
+    assert body["validation"]["valid"] is True
+
+
+def test_shap_is_returned_when_requested(client, full_vector):
+    body = json.dumps({"feature_vector": full_vector, "include_shap": True})
+    response = client.post("/api/predict", content=body, headers=JSON_HEADERS)
+    assert response.status_code == 200
+    assert len(response.json()["top_shap_features"]) == 5
+
+
+def test_empty_vector_is_rejected_with_a_structured_body(client):
+    response = post_predict(client, {})
+    assert response.status_code == 422
+    detail = response.json()["detail"]
+    assert detail["valid"] is False
+    assert len(detail["missing_features"]) == 50
+    assert detail["feature_version"] == "cicids2017-top50-v1"
+
+
+@pytest.mark.parametrize("bad,reason", [
+    (float("nan"), "nan"),
+    (float("inf"), "inf"),
+    ("abc", "non_numeric"),
+    (None, "null"),
+    ("", "empty"),
+])
+def test_unusable_values_are_rejected_with_a_reason(client, full_vector, bad, reason):
+    full_vector["Init_Win_bytes_backward"] = bad
+    response = post_predict(client, full_vector)
+    assert response.status_code == 422
+    assert response.json()["detail"]["invalid_features"] == [
+        {"feature": "Init_Win_bytes_backward", "reason": reason}
+    ]
+
+
+def test_missing_non_derivable_feature_is_rejected(client, full_vector):
+    del full_vector["Init_Win_bytes_backward"]
+    response = post_predict(client, full_vector)
+    assert response.status_code == 422
+    assert response.json()["detail"]["missing_features"] == ["Init_Win_bytes_backward"]
+
+
+def test_missing_derivable_feature_is_reconstructed(client, full_vector):
+    del full_vector["Down/Up Ratio"]
+    response = post_predict(client, full_vector)
+    assert response.status_code == 200
+    derived = response.json()["validation"]["derived_features"]
+    assert [entry["feature"] for entry in derived] == ["Down/Up Ratio"]
+
+
+def test_unknown_model_id_is_a_not_found(client, full_vector, monkeypatch):
+    def boom(model_id):
+        raise requests.exceptions.HTTPError("404")
+
+    monkeypatch.setattr(model_registry.spring_client, "get_model", boom)
+    response = post_predict(client, full_vector,
+                            model_id="00000000-0000-0000-0000-000000000000")
+    assert response.status_code == 404
+
+
+def test_unreachable_registry_during_lookup_is_a_service_error(client, full_vector, monkeypatch):
+    def boom(model_id):
+        raise requests.exceptions.ConnectionError("refused")
+
+    monkeypatch.setattr(model_registry.spring_client, "get_model", boom)
+    response = post_predict(client, full_vector,
+                            model_id="00000000-0000-0000-0000-000000000000")
+    assert response.status_code == 503
+
+
+def test_reload_endpoint_returns_the_new_identity(client):
+    response = client.post("/api/models/reload")
+    assert response.status_code == 200
+    assert response.json()["model_name"] == "xgb-smote-top50features-v1"
+
+
+def test_explain_rejects_an_invalid_vector_before_calling_an_llm(client, monkeypatch):
+    def fail(*args, **kwargs):
+        raise AssertionError("the LLM must not be called for an invalid vector")
+
+    monkeypatch.setattr("app.api.predict.generate_explanation", fail)
+    monkeypatch.setattr("app.api.predict.generate_all_explanations", fail)
+
+    body = json.dumps({"alarm_id": "00000000-0000-0000-0000-000000000000",
+                       "feature_vector": {}})
+    response = client.post("/api/explain", content=body, headers=JSON_HEADERS)
+    assert response.status_code == 422
+
+
+def test_malformed_request_body_is_a_client_error(client):
+    response = client.post("/api/predict", content="{not json", headers=JSON_HEADERS)
+    assert response.status_code == 422
+
+
+def test_missing_feature_vector_field_is_a_client_error(client):
+    response = client.post("/api/predict", content=json.dumps({"include_shap": True}),
+                           headers=JSON_HEADERS)
+    assert response.status_code == 422
