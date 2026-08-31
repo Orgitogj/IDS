@@ -16,6 +16,8 @@ public interface AlarmRepository extends JpaRepository<Alarm, UUID>,
 
     List<Alarm> findByStatus(AlarmStatus status);
 
+    List<Alarm> findByIncidentIdOrderByCreatedAtDesc(UUID incidentId);
+
     Optional<Alarm> findByNetworkFlowId(UUID networkFlowId);
 
     @Query("SELECT a.severity, COUNT(a) FROM Alarm a GROUP BY a.severity")

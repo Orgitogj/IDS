@@ -32,6 +32,13 @@ public class MLModel {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @Column(name = "version", nullable = false)
+    @Builder.Default
+    private String version = "1.0";
+
+    @Column(name = "feature_version")
+    private String featureVersion;
+
     @Column(name = "trained_on_dataset", nullable = false)
     private String trainedOnDataset;
 
