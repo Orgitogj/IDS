@@ -1,11 +1,14 @@
-from typing import Optional
+from typing import Any, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class PredictionRequest(BaseModel):
-    feature_vector: dict[str, float] = Field(...)
+    model_config = ConfigDict(protected_namespaces=())
+
+    feature_vector: dict[str, Any] = Field(...)
     include_shap: bool = Field(default=True)
+    model_id: Optional[str] = Field(default=None)
 
 
 class ShapContribution(BaseModel):
@@ -14,16 +17,68 @@ class ShapContribution(BaseModel):
     shap_contribution: float
 
 
-class PredictionResponse(BaseModel):
+class FeatureValidationReport(BaseModel):
+    valid: bool
+    feature_version: str
+    policy: str
+    missing_features: list[str] = Field(default_factory=list)
+    invalid_features: list[dict[str, Any]] = Field(default_factory=list)
+    derived_features: list[dict[str, Any]] = Field(default_factory=list)
+    zero_filled_features: list[str] = Field(default_factory=list)
+    out_of_range_features: list[dict[str, Any]] = Field(default_factory=list)
+    unexpected_feature_count: int = 0
+    warnings: list[str] = Field(default_factory=list)
+
+
+class ModelIdentityFields(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    model_id: Optional[str] = None
+    model_name: Optional[str] = None
+    model_version: Optional[str] = None
+    feature_version: Optional[str] = None
+    algorithm: Optional[str] = None
+    artifact_file: Optional[str] = None
+    registry_source: Optional[str] = None
+
+
+class AnomalyReport(BaseModel):
+    available: bool
+    reason: Optional[str] = None
+    raw_score: Optional[float] = None
+    anomaly_score: Optional[float] = None
+    is_anomalous: bool = False
+    missing_features: list[str] = Field(default_factory=list)
+
+
+class DetectionFields(ModelIdentityFields):
+    prediction: str
+    detection_class: str
+    confidence: Optional[float] = None
+    detection_method: str
+    anomaly_score: Optional[float] = None
+    supervised_label: str
+    supervised_confidence: float
+    anomaly: Optional[AnomalyReport] = None
+    anomaly_artifact_file: Optional[str] = None
+    anomaly_feature_version: Optional[str] = None
+    anomaly_threshold_rate: Optional[float] = None
+    anomaly_threshold: Optional[float] = None
+
+
+class PredictionResponse(DetectionFields):
     predicted_label: str
-    confidence: float
     top_shap_features: Optional[list[ShapContribution]] = None
+    validation: Optional[FeatureValidationReport] = None
 
 
 class ExplainRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     alarm_id: str = Field(...)
-    feature_vector: dict[str, float] = Field(...)
+    feature_vector: dict[str, Any] = Field(...)
     compare: bool = Field(default=False)
+    model_id: Optional[str] = Field(default=None)
 
 
 class GeneratedExplanation(BaseModel):
@@ -33,7 +88,7 @@ class GeneratedExplanation(BaseModel):
     generation_latency_ms: float
 
 
-class ExplainResponse(BaseModel):
+class ExplainResponse(DetectionFields):
     predicted_label: str
-    confidence: float
     explanations: list[GeneratedExplanation]
+    validation: Optional[FeatureValidationReport] = None
