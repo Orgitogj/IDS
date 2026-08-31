@@ -1,0 +1,192 @@
+{
+ "schema_version": 1,
+ "generated_at": "2026-08-31T00:12:56.419167Z",
+ "dataset": "cicids2017_cleaned.parquet",
+ "sample_rows": 100000,
+ "seed": 42,
+ "relative_tolerance": 1e-06,
+ "regression_margin": 0.01,
+ "derivations": {
+  "Avg Fwd Segment Size": {
+   "inputs": [
+    "Fwd Packet Length Mean"
+   ],
+   "claimed_exact_rate": 1.0,
+   "measured_exact_rate": 1.0,
+   "comparable_rows": 100000,
+   "matched_rows": 100000,
+   "regressed": false,
+   "note": "Identical column in CICIDS2017."
+  },
+  "Avg Bwd Segment Size": {
+   "inputs": [
+    "Bwd Packet Length Mean"
+   ],
+   "claimed_exact_rate": 1.0,
+   "measured_exact_rate": 1.0,
+   "comparable_rows": 100000,
+   "matched_rows": 100000,
+   "regressed": false,
+   "note": "Identical column in CICIDS2017."
+  },
+  "Subflow Fwd Packets": {
+   "inputs": [
+    "Total Fwd Packets"
+   ],
+   "claimed_exact_rate": 1.0,
+   "measured_exact_rate": 1.0,
+   "comparable_rows": 100000,
+   "matched_rows": 100000,
+   "regressed": false,
+   "note": "CICIDS2017 flows carry a single subflow."
+  },
+  "Subflow Bwd Packets": {
+   "inputs": [
+    "Total Backward Packets"
+   ],
+   "claimed_exact_rate": 1.0,
+   "measured_exact_rate": 1.0,
+   "comparable_rows": 100000,
+   "matched_rows": 100000,
+   "regressed": false,
+   "note": "CICIDS2017 flows carry a single subflow."
+  },
+  "Subflow Fwd Bytes": {
+   "inputs": [
+    "Total Length of Fwd Packets"
+   ],
+   "claimed_exact_rate": 1.0,
+   "measured_exact_rate": 1.0,
+   "comparable_rows": 100000,
+   "matched_rows": 100000,
+   "regressed": false,
+   "note": "CICIDS2017 flows carry a single subflow."
+  },
+  "Subflow Bwd Bytes": {
+   "inputs": [
+    "Total Length of Bwd Packets"
+   ],
+   "claimed_exact_rate": 1.0,
+   "measured_exact_rate": 0.99995,
+   "comparable_rows": 100000,
+   "matched_rows": 99995,
+   "regressed": false,
+   "note": "CICIDS2017 flows carry a single subflow."
+  },
+  "Down/Up Ratio": {
+   "inputs": [
+    "Total Backward Packets",
+    "Total Fwd Packets"
+   ],
+   "claimed_exact_rate": 1.0,
+   "measured_exact_rate": 1.0,
+   "comparable_rows": 100000,
+   "matched_rows": 100000,
+   "regressed": false,
+   "note": "Integer-floored ratio."
+  },
+  "Max Packet Length": {
+   "inputs": [
+    "Fwd Packet Length Max",
+    "Bwd Packet Length Max"
+   ],
+   "claimed_exact_rate": 1.0,
+   "measured_exact_rate": 1.0,
+   "comparable_rows": 100000,
+   "matched_rows": 100000,
+   "regressed": false,
+   "note": "Maximum of the two directional maxima."
+  },
+  "Min Packet Length": {
+   "inputs": [
+    "Fwd Packet Length Min",
+    "Bwd Packet Length Min",
+    "Total Backward Packets"
+   ],
+   "claimed_exact_rate": 1.0,
+   "measured_exact_rate": 1.0,
+   "comparable_rows": 100000,
+   "matched_rows": 100000,
+   "regressed": false,
+   "note": "Backward minimum is recorded as 0 when no backward packet exists and must be ignored."
+  },
+  "Flow Packets/s": {
+   "inputs": [
+    "Total Fwd Packets",
+    "Total Backward Packets",
+    "Flow Duration"
+   ],
+   "claimed_exact_rate": 1.0,
+   "measured_exact_rate": 1.0,
+   "comparable_rows": 100000,
+   "matched_rows": 100000,
+   "regressed": false,
+   "note": "Flow Duration is in microseconds."
+  },
+  "Fwd Packets/s": {
+   "inputs": [
+    "Total Fwd Packets",
+    "Flow Duration"
+   ],
+   "claimed_exact_rate": 0.9999,
+   "measured_exact_rate": 0.99992,
+   "comparable_rows": 100000,
+   "matched_rows": 99992,
+   "regressed": false,
+   "note": "Flow Duration is in microseconds."
+  },
+  "Bwd Packets/s": {
+   "inputs": [
+    "Total Backward Packets",
+    "Flow Duration"
+   ],
+   "claimed_exact_rate": 0.9999,
+   "measured_exact_rate": 0.99992,
+   "comparable_rows": 100000,
+   "matched_rows": 99992,
+   "regressed": false,
+   "note": "Flow Duration is in microseconds."
+  },
+  "Packet Length Variance": {
+   "inputs": [
+    "Packet Length Std"
+   ],
+   "claimed_exact_rate": 0.9932,
+   "measured_exact_rate": 0.99299,
+   "comparable_rows": 100000,
+   "matched_rows": 99299,
+   "regressed": false,
+   "note": "Square of the standard deviation; rounding in the source data costs the remainder."
+  },
+  "Flow Bytes/s": {
+   "inputs": [
+    "Total Length of Fwd Packets",
+    "Total Length of Bwd Packets",
+    "Flow Duration"
+   ],
+   "claimed_exact_rate": 0.9919,
+   "measured_exact_rate": 0.99146,
+   "comparable_rows": 100000,
+   "matched_rows": 99146,
+   "regressed": false,
+   "note": "Flow Duration is in microseconds."
+  },
+  "Flow IAT Mean": {
+   "inputs": [
+    "Flow Duration",
+    "Total Fwd Packets",
+    "Total Backward Packets"
+   ],
+   "claimed_exact_rate": 0.9852,
+   "measured_exact_rate": 0.98531,
+   "comparable_rows": 100000,
+   "matched_rows": 98531,
+   "regressed": false,
+   "note": "Exact only when the flow has no idle-period splitting."
+  }
+ },
+ "not_derivable": {
+  "Average Packet Size": "Implied denominator is fractional against the packet counts, so the CICIDS2017 definition uses a byte total that the other columns do not expose. Measured agreement with totalBytes/totalPackets is only 40.9%."
+ },
+ "regressions": []
+}
