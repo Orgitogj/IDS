@@ -4,6 +4,7 @@ export type AlarmStatus = 'NEW' | 'ACKNOWLEDGED' | 'CONFIRMED' | 'FALSE_POSITIVE
 export interface Alarm {
   id: string;
   networkFlowId: string;
+  incidentId: string | null;
   severity: AlarmSeverity;
   status: AlarmStatus;
   createdAt: string;
