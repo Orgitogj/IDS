@@ -1,0 +1,381 @@
+{
+ "schema_version": 1,
+ "generated_at": "2026-08-30T21:51:25.779645Z",
+ "dataset": "cicids2017_cleaned.parquet",
+ "feature_set": "cicids2017-78-v1",
+ "seed": 42,
+ "benign_cap_in_training": 200000,
+ "min_test_support": 100,
+ "protocol": "For each family F: XGBoost is retrained on training data with every row of F removed, so F is genuinely unseen. The Isolation Forest is fitted on BENIGN training rows only, with its threshold taken from a held-out BENIGN calibration split, and is identical across families. Recovery is measured only on the rows the supervised model called BENIGN. This XGBoost is a controlled comparison model trained without SMOTE; it is not the production artifact.",
+ "families_excluded_for_low_support": [
+  "Heartbleed",
+  "Infiltration",
+  "Web Attack - Sql Injection"
+ ],
+ "results": [
+  {
+   "family": "Bot",
+   "test_support": 391,
+   "sufficient_support": true,
+   "training_rows": 643680,
+   "classes_seen_in_training": 14,
+   "supervised_called_benign_rate": 1.0,
+   "supervised_predicted_labels": {
+    "BENIGN": 391
+   },
+   "operating_points": {
+    "0.010": {
+     "target_benign_flag_rate": 0.01,
+     "anomaly_flag_rate_on_family": 0.0,
+     "supervised_missed": 391,
+     "anomaly_recovered_from_missed": 0,
+     "recovery_rate_on_missed": 0.0,
+     "combined_detection_rate": 0.0
+    },
+    "0.020": {
+     "target_benign_flag_rate": 0.02,
+     "anomaly_flag_rate_on_family": 0.01278772378516624,
+     "supervised_missed": 391,
+     "anomaly_recovered_from_missed": 5,
+     "recovery_rate_on_missed": 0.01278772378516624,
+     "combined_detection_rate": 0.01278772378516624
+    }
+   }
+  },
+  {
+   "family": "DDoS",
+   "test_support": 25605,
+   "sufficient_support": true,
+   "training_rows": 542825,
+   "classes_seen_in_training": 14,
+   "supervised_called_benign_rate": 0.7086115992970123,
+   "supervised_predicted_labels": {
+    "BENIGN": 18144,
+    "DoS Hulk": 7161,
+    "PortScan": 300
+   },
+   "operating_points": {
+    "0.010": {
+     "target_benign_flag_rate": 0.01,
+     "anomaly_flag_rate_on_family": 0.04651435266549502,
+     "supervised_missed": 18144,
+     "anomaly_recovered_from_missed": 1,
+     "recovery_rate_on_missed": 5.511463844797178e-05,
+     "combined_detection_rate": 0.291427455575083
+    },
+    "0.020": {
+     "target_benign_flag_rate": 0.02,
+     "anomaly_flag_rate_on_family": 0.1611013473930873,
+     "supervised_missed": 18144,
+     "anomaly_recovered_from_missed": 4,
+     "recovery_rate_on_missed": 0.0002204585537918871,
+     "combined_detection_rate": 0.2915446201913689
+    }
+   }
+  },
+  {
+   "family": "DoS GoldenEye",
+   "test_support": 2059,
+   "sufficient_support": true,
+   "training_rows": 637011,
+   "classes_seen_in_training": 14,
+   "supervised_called_benign_rate": 0.35842642059252067,
+   "supervised_predicted_labels": {
+    "BENIGN": 738,
+    "DDoS": 81,
+    "DoS Hulk": 1092,
+    "DoS Slowhttptest": 28,
+    "DoS slowloris": 4,
+    "PortScan": 47,
+    "Web Attack - Brute Force": 13,
+    "Web Attack - Sql Injection": 54,
+    "Web Attack - XSS": 2
+   },
+   "operating_points": {
+    "0.010": {
+     "target_benign_flag_rate": 0.01,
+     "anomaly_flag_rate_on_family": 0.00048567265662943174,
+     "supervised_missed": 738,
+     "anomaly_recovered_from_missed": 0,
+     "recovery_rate_on_missed": 0.0,
+     "combined_detection_rate": 0.6415735794074794
+    },
+    "0.020": {
+     "target_benign_flag_rate": 0.02,
+     "anomaly_flag_rate_on_family": 0.035454103933948516,
+     "supervised_missed": 738,
+     "anomaly_recovered_from_missed": 63,
+     "recovery_rate_on_missed": 0.08536585365853659,
+     "combined_detection_rate": 0.6721709567751336
+    }
+   }
+  },
+  {
+   "family": "DoS Hulk",
+   "test_support": 46025,
+   "sufficient_support": true,
+   "training_rows": 461146,
+   "classes_seen_in_training": 14,
+   "supervised_called_benign_rate": 0.6907332971211299,
+   "supervised_predicted_labels": {
+    "BENIGN": 31791,
+    "DDoS": 81,
+    "DoS GoldenEye": 6036,
+    "DoS Slowhttptest": 238,
+    "DoS slowloris": 67,
+    "PortScan": 2967,
+    "Web Attack - Brute Force": 4822,
+    "Web Attack - Sql Injection": 21,
+    "Web Attack - XSS": 2
+   },
+   "operating_points": {
+    "0.010": {
+     "target_benign_flag_rate": 0.01,
+     "anomaly_flag_rate_on_family": 0.32510592069527433,
+     "supervised_missed": 31791,
+     "anomaly_recovered_from_missed": 10296,
+     "recovery_rate_on_missed": 0.32386524488062657,
+     "combined_detection_rate": 0.5329712112982075
+    },
+    "0.020": {
+     "target_benign_flag_rate": 0.02,
+     "anomaly_flag_rate_on_family": 0.5986529060293319,
+     "supervised_missed": 31791,
+     "anomaly_recovered_from_missed": 16747,
+     "recovery_rate_on_missed": 0.5267843100248498,
+     "combined_detection_rate": 0.6731341662140141
+    }
+   }
+  },
+  {
+   "family": "DoS Slowhttptest",
+   "test_support": 1100,
+   "sufficient_support": true,
+   "training_rows": 640846,
+   "classes_seen_in_training": 14,
+   "supervised_called_benign_rate": 0.56,
+   "supervised_predicted_labels": {
+    "BENIGN": 616,
+    "DoS GoldenEye": 13,
+    "DoS Hulk": 123,
+    "DoS slowloris": 345,
+    "Web Attack - Brute Force": 2,
+    "Web Attack - XSS": 1
+   },
+   "operating_points": {
+    "0.010": {
+     "target_benign_flag_rate": 0.01,
+     "anomaly_flag_rate_on_family": 0.006363636363636364,
+     "supervised_missed": 616,
+     "anomaly_recovered_from_missed": 6,
+     "recovery_rate_on_missed": 0.00974025974025974,
+     "combined_detection_rate": 0.44545454545454544
+    },
+    "0.020": {
+     "target_benign_flag_rate": 0.02,
+     "anomaly_flag_rate_on_family": 0.2109090909090909,
+     "supervised_missed": 616,
+     "anomaly_recovered_from_missed": 48,
+     "recovery_rate_on_missed": 0.07792207792207792,
+     "combined_detection_rate": 0.48363636363636364
+    }
+   }
+  },
+  {
+   "family": "DoS slowloris",
+   "test_support": 1159,
+   "sufficient_support": true,
+   "training_rows": 640608,
+   "classes_seen_in_training": 14,
+   "supervised_called_benign_rate": 0.17169974115616912,
+   "supervised_predicted_labels": {
+    "BENIGN": 199,
+    "DoS GoldenEye": 17,
+    "DoS Hulk": 72,
+    "DoS Slowhttptest": 668,
+    "PortScan": 202,
+    "Web Attack - Brute Force": 1
+   },
+   "operating_points": {
+    "0.010": {
+     "target_benign_flag_rate": 0.01,
+     "anomaly_flag_rate_on_family": 0.1742881794650561,
+     "supervised_missed": 199,
+     "anomaly_recovered_from_missed": 0,
+     "recovery_rate_on_missed": 0.0,
+     "combined_detection_rate": 0.8283002588438308
+    },
+    "0.020": {
+     "target_benign_flag_rate": 0.02,
+     "anomaly_flag_rate_on_family": 0.47886108714408976,
+     "supervised_missed": 199,
+     "anomaly_recovered_from_missed": 142,
+     "recovery_rate_on_missed": 0.7135678391959799,
+     "combined_detection_rate": 0.9508196721311475
+    }
+   }
+  },
+  {
+   "family": "FTP-Patator",
+   "test_support": 1587,
+   "sufficient_support": true,
+   "training_rows": 638897,
+   "classes_seen_in_training": 14,
+   "supervised_called_benign_rate": 0.9949590422180214,
+   "supervised_predicted_labels": {
+    "BENIGN": 1579,
+    "PortScan": 2,
+    "SSH-Patator": 5,
+    "Web Attack - Brute Force": 1
+   },
+   "operating_points": {
+    "0.010": {
+     "target_benign_flag_rate": 0.01,
+     "anomaly_flag_rate_on_family": 0.0,
+     "supervised_missed": 1579,
+     "anomaly_recovered_from_missed": 0,
+     "recovery_rate_on_missed": 0.0,
+     "combined_detection_rate": 0.005040957781978576
+    },
+    "0.020": {
+     "target_benign_flag_rate": 0.02,
+     "anomaly_flag_rate_on_family": 0.0,
+     "supervised_missed": 1579,
+     "anomaly_recovered_from_missed": 0,
+     "recovery_rate_on_missed": 0.0,
+     "combined_detection_rate": 0.005040957781978576
+    }
+   }
+  },
+  {
+   "family": "PortScan",
+   "test_support": 31761,
+   "sufficient_support": true,
+   "training_rows": 518202,
+   "classes_seen_in_training": 14,
+   "supervised_called_benign_rate": 0.9946475236925789,
+   "supervised_predicted_labels": {
+    "BENIGN": 31591,
+    "DoS GoldenEye": 3,
+    "DoS Hulk": 22,
+    "DoS slowloris": 1,
+    "FTP-Patator": 38,
+    "SSH-Patator": 79,
+    "Web Attack - Brute Force": 1,
+    "Web Attack - XSS": 26
+   },
+   "operating_points": {
+    "0.010": {
+     "target_benign_flag_rate": 0.01,
+     "anomaly_flag_rate_on_family": 0.00015742577374767798,
+     "supervised_missed": 31591,
+     "anomaly_recovered_from_missed": 5,
+     "recovery_rate_on_missed": 0.00015827292583330696,
+     "combined_detection_rate": 0.0055099020811687285
+    },
+    "0.020": {
+     "target_benign_flag_rate": 0.02,
+     "anomaly_flag_rate_on_family": 0.0003463367022448915,
+     "supervised_missed": 31591,
+     "anomaly_recovered_from_missed": 11,
+     "recovery_rate_on_missed": 0.0003482004368332753,
+     "combined_detection_rate": 0.005698813009665942
+    }
+   }
+  },
+  {
+   "family": "SSH-Patator",
+   "test_support": 1180,
+   "sufficient_support": true,
+   "training_rows": 640528,
+   "classes_seen_in_training": 14,
+   "supervised_called_benign_rate": 0.9906779661016949,
+   "supervised_predicted_labels": {
+    "BENIGN": 1169,
+    "FTP-Patator": 7,
+    "PortScan": 4
+   },
+   "operating_points": {
+    "0.010": {
+     "target_benign_flag_rate": 0.01,
+     "anomaly_flag_rate_on_family": 0.0,
+     "supervised_missed": 1169,
+     "anomaly_recovered_from_missed": 0,
+     "recovery_rate_on_missed": 0.0,
+     "combined_detection_rate": 0.009322033898305085
+    },
+    "0.020": {
+     "target_benign_flag_rate": 0.02,
+     "anomaly_flag_rate_on_family": 0.0,
+     "supervised_missed": 1169,
+     "anomaly_recovered_from_missed": 0,
+     "recovery_rate_on_missed": 0.0,
+     "combined_detection_rate": 0.009322033898305085
+    }
+   }
+  },
+  {
+   "family": "Web Attack - Brute Force",
+   "test_support": 301,
+   "sufficient_support": true,
+   "training_rows": 644039,
+   "classes_seen_in_training": 14,
+   "supervised_called_benign_rate": 0.12624584717607973,
+   "supervised_predicted_labels": {
+    "BENIGN": 38,
+    "PortScan": 1,
+    "Web Attack - Sql Injection": 14,
+    "Web Attack - XSS": 248
+   },
+   "operating_points": {
+    "0.010": {
+     "target_benign_flag_rate": 0.01,
+     "anomaly_flag_rate_on_family": 0.0,
+     "supervised_missed": 38,
+     "anomaly_recovered_from_missed": 0,
+     "recovery_rate_on_missed": 0.0,
+     "combined_detection_rate": 0.8737541528239202
+    },
+    "0.020": {
+     "target_benign_flag_rate": 0.02,
+     "anomaly_flag_rate_on_family": 0.0,
+     "supervised_missed": 38,
+     "anomaly_recovered_from_missed": 0,
+     "recovery_rate_on_missed": 0.0,
+     "combined_detection_rate": 0.8737541528239202
+    }
+   }
+  },
+  {
+   "family": "Web Attack - XSS",
+   "test_support": 130,
+   "sufficient_support": true,
+   "training_rows": 644723,
+   "classes_seen_in_training": 14,
+   "supervised_called_benign_rate": 0.015384615384615385,
+   "supervised_predicted_labels": {
+    "BENIGN": 2,
+    "DoS Hulk": 3,
+    "Web Attack - Brute Force": 125
+   },
+   "operating_points": {
+    "0.010": {
+     "target_benign_flag_rate": 0.01,
+     "anomaly_flag_rate_on_family": 0.0,
+     "supervised_missed": 2,
+     "anomaly_recovered_from_missed": 0,
+     "recovery_rate_on_missed": 0.0,
+     "combined_detection_rate": 0.9846153846153847
+    },
+    "0.020": {
+     "target_benign_flag_rate": 0.02,
+     "anomaly_flag_rate_on_family": 0.007692307692307693,
+     "supervised_missed": 2,
+     "anomaly_recovered_from_missed": 1,
+     "recovery_rate_on_missed": 0.5,
+     "combined_detection_rate": 0.9923076923076923
+    }
+   }
+  }
+ ]
+}
