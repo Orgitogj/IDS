@@ -1,38 +1,31 @@
-# Web framework
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
 pydantic==2.9.2
 pydantic-settings==2.5.2
 
-# Data handling
 pandas==2.2.3
 numpy==2.1.1
 pyarrow==17.0.0
 
-# ML core
 scikit-learn==1.5.2
 imbalanced-learn==0.12.4
 xgboost==2.1.1
 lightgbm==4.5.0
 
-# Experiment tracking & tuning
 mlflow==2.16.2
 optuna==4.0.0
 
-# Model persistence
 joblib==1.4.2
 
-# HTTP client (Python -> Spring Boot)
 requests==2.32.3
 
-# Visualization (per EDA/raport, jo per API)
+PyJWT==2.9.0
+
 matplotlib==3.9.2
 seaborn==0.13.2
 
-# Testing
 pytest==8.3.3
 
-# LLM (per me vone - Explanation integration)
 anthropic==0.34.2
 
 google-genai==1.2.0

@@ -1,14 +1,35 @@
 import json
+from datetime import datetime, timedelta, timezone
 
+import jwt
 import pytest
 import requests
 from fastapi.testclient import TestClient
 
+from app.core.config import settings
 from app.ml import inference, model_registry
 
 pytestmark = pytest.mark.artifacts
 
-JSON_HEADERS = {"Content-Type": "application/json"}
+TEST_JWT_SECRET = "unit-test-secret-key-at-least-32-bytes-long"
+
+
+def token_for(role="ADMIN", username="tester", secret=TEST_JWT_SECRET):
+    now = datetime.now(timezone.utc)
+    payload = {
+        "sub": username,
+        "role": role,
+        "iat": now,
+        "exp": now + timedelta(minutes=5),
+    }
+    return jwt.encode(payload, secret, algorithm="HS256")
+
+
+def auth_headers(role="ADMIN"):
+    return {"Authorization": f"Bearer {token_for(role)}"}
+
+
+JSON_HEADERS = {"Content-Type": "application/json", **auth_headers()}
 
 TOP50_PAYLOAD = {
     "id": "133f003c-baab-4e11-8b12-21f5f37e2896",
@@ -22,6 +43,7 @@ TOP50_PAYLOAD = {
 
 @pytest.fixture
 def client(monkeypatch):
+    monkeypatch.setattr(settings, "jwt_secret", TEST_JWT_SECRET)
     monkeypatch.setattr(inference, "_loaded", {})
     monkeypatch.setattr(inference, "_load_order", [])
     monkeypatch.setattr(inference, "_active_key", None)
@@ -46,7 +68,7 @@ def test_health_reports_the_service(client):
 
 
 def test_active_model_endpoint_reports_identity(client):
-    body = client.get("/api/models/active").json()
+    body = client.get("/api/models/active", headers=auth_headers()).json()
     assert body["model_name"] == "xgb-smote-top50features-v1"
     assert body["feature_version"] == "cicids2017-top50-v1"
     assert body["registry_source"] == "registry"
@@ -133,7 +155,7 @@ def test_unreachable_registry_during_lookup_is_a_service_error(client, full_vect
 
 
 def test_reload_endpoint_returns_the_new_identity(client):
-    response = client.post("/api/models/reload")
+    response = client.post("/api/models/reload", headers=auth_headers("ADMIN"))
     assert response.status_code == 200
     assert response.json()["model_name"] == "xgb-smote-top50features-v1"
 
@@ -160,3 +182,95 @@ def test_missing_feature_vector_field_is_a_client_error(client):
     response = client.post("/api/predict", content=json.dumps({"include_shap": True}),
                            headers=JSON_HEADERS)
     assert response.status_code == 422
+
+
+def test_predict_without_a_token_is_rejected(client, full_vector):
+    body = json.dumps({"feature_vector": full_vector, "include_shap": False})
+    response = client.post("/api/predict", content=body,
+                           headers={"Content-Type": "application/json"})
+    assert response.status_code == 401
+
+
+def test_predict_with_a_foreign_signature_is_rejected(client, full_vector):
+    forged = token_for(role="ADMIN", secret="a-different-secret-of-sufficient-length")
+    body = json.dumps({"feature_vector": full_vector, "include_shap": False})
+    response = client.post("/api/predict", content=body,
+                           headers={"Content-Type": "application/json",
+                                    "Authorization": f"Bearer {forged}"})
+    assert response.status_code == 401
+
+
+def test_predict_accepts_every_operational_role(client, full_vector):
+    for role in ("ANALYST", "ADMIN", "SERVICE"):
+        body = json.dumps({"feature_vector": full_vector, "include_shap": False})
+        response = client.post("/api/predict", content=body,
+                               headers={"Content-Type": "application/json",
+                                        **auth_headers(role)})
+        assert response.status_code == 200, role
+
+
+def test_model_reload_is_admin_only(client):
+    for role in ("ANALYST", "SERVICE"):
+        response = client.post("/api/models/reload", headers=auth_headers(role))
+        assert response.status_code == 403, role
+
+
+def test_drift_publish_is_closed_to_analysts(client):
+    response = client.post("/api/drift/publish", headers=auth_headers("ANALYST"))
+    assert response.status_code == 403
+
+
+def test_explain_without_a_token_never_reaches_the_llm(client, monkeypatch, full_vector):
+    def fail(*args, **kwargs):
+        raise AssertionError("the LLM must not be called for an unauthenticated request")
+
+    monkeypatch.setattr("app.api.predict.generate_explanation", fail)
+    monkeypatch.setattr("app.api.predict.generate_all_explanations", fail)
+
+    body = json.dumps({"alarm_id": "00000000-0000-0000-0000-000000000000",
+                       "feature_vector": full_vector})
+    response = client.post("/api/explain", content=body,
+                           headers={"Content-Type": "application/json"})
+    assert response.status_code == 401
+
+
+def test_service_without_a_configured_secret_refuses(client, monkeypatch, full_vector):
+    monkeypatch.setattr(settings, "jwt_secret", "")
+    body = json.dumps({"feature_vector": full_vector, "include_shap": False})
+    response = client.post("/api/predict", content=body, headers=JSON_HEADERS)
+    assert response.status_code == 503
+
+
+def test_health_stays_open_without_a_token(client):
+    response = client.get("/health")
+    assert response.status_code == 200
+
+
+@pytest.mark.parametrize("algorithm", ["HS384", "HS512"])
+def test_hmac_variants_spring_never_signs_with_are_rejected(client, full_vector, algorithm):
+    payload = {
+        "sub": "tester",
+        "role": "ANALYST",
+        "iat": datetime.now(timezone.utc),
+        "exp": datetime.now(timezone.utc) + timedelta(minutes=5),
+    }
+    token = jwt.encode(payload, TEST_JWT_SECRET, algorithm=algorithm)
+    body = json.dumps({"feature_vector": full_vector, "include_shap": False})
+    response = client.post("/api/predict", content=body,
+                           headers={"Content-Type": "application/json",
+                                    "Authorization": f"Bearer {token}"})
+    assert response.status_code == 401, algorithm
+
+
+def test_a_token_without_an_issued_at_claim_is_rejected(client, full_vector):
+    payload = {
+        "sub": "tester",
+        "role": "ANALYST",
+        "exp": datetime.now(timezone.utc) + timedelta(minutes=5),
+    }
+    token = jwt.encode(payload, TEST_JWT_SECRET, algorithm="HS256")
+    body = json.dumps({"feature_vector": full_vector, "include_shap": False})
+    response = client.post("/api/predict", content=body,
+                           headers={"Content-Type": "application/json",
+                                    "Authorization": f"Bearer {token}"})
+    assert response.status_code == 401
