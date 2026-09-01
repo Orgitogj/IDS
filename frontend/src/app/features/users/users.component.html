@@ -1,0 +1,101 @@
+<div class="p-6">
+  <div class="mb-5 flex items-start justify-between gap-4">
+    <div>
+      <h2 class="text-xl font-semibold text-white">Perdoruesit</h2>
+      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
+        Cakivizimi shkeput menjehere te gjitha sesionet e perdoruesit
+      </p>
+    </div>
+    <a
+      routerLink="/users/new"
+      class="text-xs font-medium px-3 py-2 rounded-lg bg-[var(--color-primary)]/20 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/30 shrink-0"
+    >
+      Krijo perdorues
+    </a>
+  </div>
+
+  @if (loading()) {
+    <p class="text-xs text-[var(--color-text-muted)]">Duke ngarkuar ...</p>
+  } @else if (loadError()) {
+    <p class="text-xs text-[var(--color-critical)]">
+      Lista e perdoruesve s'u ngarkua. Kontrollo backend-in.
+    </p>
+  } @else {
+    <div
+      class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-x-auto"
+    >
+      <table class="w-full text-xs">
+        <thead>
+          <tr class="border-b border-[var(--color-border)] text-[var(--color-text-muted)]">
+            <th class="text-left font-semibold uppercase tracking-wider px-4 py-3">Perdoruesi</th>
+            <th class="text-left font-semibold uppercase tracking-wider px-4 py-3">Roli</th>
+            <th class="text-left font-semibold uppercase tracking-wider px-4 py-3">Statusi</th>
+            <th class="text-left font-semibold uppercase tracking-wider px-4 py-3">Hyrja e fundit</th>
+            <th class="text-left font-semibold uppercase tracking-wider px-4 py-3">Krijuar</th>
+            <th class="text-right font-semibold uppercase tracking-wider px-4 py-3">Veprime</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+            <tr class="border-b border-[var(--color-border)] last:border-0">
+              <td class="px-4 py-3 text-[var(--color-text)]">
+                {{ user.username }}
+                @if (isSelf(user)) {
+                  <span class="ml-2 text-[10px] text-[var(--color-text-muted)]">(ju)</span>
+                }
+              </td>
+              <td class="px-4 py-3 text-[var(--color-text-muted)]">{{ user.role }}</td>
+              <td class="px-4 py-3">
+                @if (!user.enabled) {
+                  <span class="text-[var(--color-critical)]">I cakivizuar</span>
+                } @else if (isLocked(user)) {
+                  <span class="text-[var(--color-high)]">I bllokuar</span>
+                } @else {
+                  <span class="text-[var(--color-low)]">Aktiv</span>
+                }
+              </td>
+              <td class="px-4 py-3 text-[var(--color-text-muted)]">
+                {{ user.lastLoginAt ? (user.lastLoginAt | date: 'short') : '-' }}
+              </td>
+              <td class="px-4 py-3 text-[var(--color-text-muted)]">
+                {{ user.createdAt | date: 'short' }}
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex items-center justify-end gap-2">
+                  @if (isLocked(user)) {
+                    <button
+                      (click)="unlock(user)"
+                      [disabled]="pending() !== null"
+                      class="text-[10px] px-2 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text-muted)] hover:text-white disabled:opacity-40"
+                    >
+                      Zhblloko
+                    </button>
+                  }
+                  <button
+                    (click)="toggleEnabled(user)"
+                    [disabled]="pending() !== null || isSelf(user)"
+                    [title]="isSelf(user) ? 'Nuk mund te cakivizoni llogarine tuaj' : ''"
+                    class="text-[10px] px-2 py-1 rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
+                    [class]="
+                      user.enabled
+                        ? 'bg-[var(--color-critical)]/20 text-[var(--color-critical)] hover:bg-[var(--color-critical)]/30'
+                        : 'bg-[var(--color-low)]/20 text-[var(--color-low)] hover:bg-[var(--color-low)]/30'
+                    "
+                  >
+                    {{ user.enabled ? 'Cakivizo' : 'Aktivizo' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="px-4 py-6 text-center text-[var(--color-text-muted)]">
+                Asnje perdorues.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
