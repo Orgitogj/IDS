@@ -1,6 +1,8 @@
 package com.diploma.idsml.dto;
 
+import com.diploma.idsml.entity.UserRole;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -18,6 +20,9 @@ public record RegisterRequest(
         String password,
 
         @NotBlank(message = "Konfirmimi i fjalekalimit eshte i detyrueshem.")
-        String confirmPassword
+        String confirmPassword,
+
+        @NotNull(message = "Roli eshte i detyrueshem.")
+        UserRole role
 ) {
 }
