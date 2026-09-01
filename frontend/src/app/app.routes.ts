@@ -8,11 +8,6 @@ export const routes: Routes = [
     loadComponent: () => import('./features/login/login.component').then((m) => m.LoginComponent),
   },
   {
-    path: 'register',
-    loadComponent: () =>
-      import('./features/register/register.component').then((m) => m.RegisterComponent),
-  },
-  {
     path: '',
     loadComponent: () => import('./layout/shell/shell.component').then((m) => m.ShellComponent),
     canActivate: [authGuard],
@@ -49,6 +44,23 @@ export const routes: Routes = [
         path: 'topology',
         loadComponent: () =>
           import('./features/topology/topology.component').then((m) => m.TopologyComponent),
+      },
+      {
+        path: 'users',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/users/users.component').then((m) => m.UsersComponent),
+      },
+      {
+        path: 'users/new',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/register/register.component').then((m) => m.RegisterComponent),
+      },
+      {
+        path: 'account/password',
+        loadComponent: () =>
+          import('./features/account/password.component').then((m) => m.PasswordComponent),
       },
       {
         path: 'settings',
