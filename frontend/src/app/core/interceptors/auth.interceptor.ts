@@ -1,26 +1,37 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
-const PUBLIC_ENDPOINTS = ['/api/auth/login', '/api/auth/register'];
+const PUBLIC_ENDPOINTS = ['/api/auth/login', '/api/auth/refresh', '/api/auth/logout'];
+const CREDENTIALED_PREFIX = '/api/auth';
 
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const auth = inject(AuthService);
-  const token = auth.token();
   const isPublic = PUBLIC_ENDPOINTS.some((endpoint) => request.url.includes(endpoint));
 
-  const authorized =
-    token && !isPublic
-      ? request.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-      : request;
+  const prepare = (source: HttpRequest<unknown>, token: string | null) => {
+    const headers = token && !isPublic ? { Authorization: `Bearer ${token}` } : undefined;
 
-  return next(authorized).pipe(
+    return source.clone({
+      ...(headers ? { setHeaders: headers } : {}),
+      withCredentials: source.url.includes(CREDENTIALED_PREFIX),
+    });
+  };
+
+  return next(prepare(request, auth.token())).pipe(
     catchError((error: HttpErrorResponse) => {
-      if ((error.status === 401 || error.status === 403) && !isPublic) {
-        auth.logout();
+      if (error.status !== 401 || isPublic) {
+        return throwError(() => error);
       }
-      return throwError(() => error);
+
+      return auth.refreshAccessToken().pipe(
+        switchMap((token) => next(prepare(request, token))),
+        catchError((refreshError) => {
+          auth.forceLogout();
+          return throwError(() => refreshError);
+        }),
+      );
     }),
   );
 };

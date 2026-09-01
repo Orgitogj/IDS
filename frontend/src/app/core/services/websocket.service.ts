@@ -30,6 +30,10 @@ export class WebSocketService {
       webSocketFactory: () => new SockJS(WS_URL) as WebSocket,
       connectHeaders: { Authorization: `Bearer ${token}` },
       reconnectDelay: 5000,
+      beforeConnect: () => {
+        const current = this.auth.token();
+        this.client!.connectHeaders = current ? { Authorization: `Bearer ${current}` } : {};
+      },
       onConnect: () => {
         this.connected.set(true);
         this.client!.subscribe('/topic/alarms', (message: IMessage) => {
