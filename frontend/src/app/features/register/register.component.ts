@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
+import { UserRole } from '../../core/models/auth.model';
+import { UserService } from '../../core/services/user.service';
 
 type Field = 'username' | 'password' | 'confirmPassword';
 
@@ -10,20 +10,23 @@ const USERNAME_PATTERN = /^[A-Za-z0-9._-]+$/;
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
 export class RegisterComponent {
-  private auth = inject(AuthService);
-  private router = inject(Router);
+  private userService = inject(UserService);
+
+  readonly roles: UserRole[] = ['ANALYST', 'ADMIN', 'SERVICE'];
 
   username = signal('');
   password = signal('');
   confirmPassword = signal('');
+  role = signal<UserRole>('ANALYST');
 
   submitting = signal(false);
   errorMessage = signal<string | null>(null);
+  successMessage = signal<string | null>(null);
   private touched = signal<Record<Field, boolean>>({
     username: false,
     password: false,
@@ -74,21 +77,24 @@ export class RegisterComponent {
 
     this.touched.set({ username: true, password: true, confirmPassword: true });
     this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     if (!this.formValid()) return;
 
     this.submitting.set(true);
 
-    this.auth
-      .register({
+    this.userService
+      .create({
         username: this.username().trim(),
         password: this.password(),
         confirmPassword: this.confirmPassword(),
+        role: this.role(),
       })
       .subscribe({
-        next: () => {
+        next: (user) => {
           this.submitting.set(false);
-          this.router.navigate(['/overview']);
+          this.successMessage.set(`Perdoruesi '${user.username}' u krijua si ${user.role}.`);
+          this.reset();
         },
         error: (error: { status?: number; error?: { message?: string } }) => {
           this.submitting.set(false);
@@ -97,9 +103,18 @@ export class RegisterComponent {
       });
   }
 
+  private reset(): void {
+    this.username.set('');
+    this.password.set('');
+    this.confirmPassword.set('');
+    this.role.set('ANALYST');
+    this.touched.set({ username: false, password: false, confirmPassword: false });
+  }
+
   private describe(error: { status?: number; error?: { message?: string } }): string {
     if (error.status === 0) return 'Lidhja me serverin deshtoi. Kontrollo localhost:8080.';
+    if (error.status === 403) return 'Vetem nje administrator mund te krijoje perdorues.';
     if (error.error?.message) return error.error.message;
-    return 'Rregjistrimi deshtoi. Provoni perseri.';
+    return 'Krijimi i perdoruesit deshtoi. Provoni perseri.';
   }
 }

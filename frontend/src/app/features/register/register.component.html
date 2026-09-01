@@ -1,100 +1,117 @@
-<div class="min-h-screen flex items-center justify-center bg-[var(--color-bg)] p-6">
-  <div class="w-full max-w-sm">
-    <div class="mb-6 text-center">
-      <h1 class="text-xl font-semibold tracking-tight text-white">Krijo llogari</h1>
-      <p class="text-xs text-[var(--color-text-muted)] mt-1">IDS Dashboard - ML + LLM Explainability</p>
-    </div>
-
-    <form
-      (ngSubmit)="submit()"
-      class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-5"
-    >
-      <div class="mb-3">
-        <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">
-          Perdoruesi
-        </label>
-        <input
-          type="text"
-          name="username"
-          autocomplete="username"
-          [(ngModel)]="username"
-          (blur)="markTouched('username')"
-          class="w-full bg-[var(--color-bg)] border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]"
-          [class]="
-            isTouched('username') && usernameError()
-              ? 'border-[var(--color-critical)]'
-              : 'border-[var(--color-border)]'
-          "
-        />
-        @if (isTouched('username') && usernameError(); as error) {
-          <p class="text-[11px] text-[var(--color-critical)] mt-1">{{ error }}</p>
-        }
-      </div>
-
-      <div class="mb-3">
-        <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">
-          Fjalekalimi
-        </label>
-        <input
-          type="password"
-          name="password"
-          autocomplete="new-password"
-          [(ngModel)]="password"
-          (blur)="markTouched('password')"
-          class="w-full bg-[var(--color-bg)] border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]"
-          [class]="
-            isTouched('password') && passwordError()
-              ? 'border-[var(--color-critical)]'
-              : 'border-[var(--color-border)]'
-          "
-        />
-        @if (isTouched('password') && passwordError(); as error) {
-          <p class="text-[11px] text-[var(--color-critical)] mt-1">{{ error }}</p>
-        } @else {
-          <p class="text-[10px] text-[var(--color-text-muted)] mt-1">
-            Te pakten 8 karaktere, me shkronja dhe numra.
-          </p>
-        }
-      </div>
-
-      <div class="mb-4">
-        <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">
-          Konfirmo fjalekalimin
-        </label>
-        <input
-          type="password"
-          name="confirmPassword"
-          autocomplete="new-password"
-          [(ngModel)]="confirmPassword"
-          (blur)="markTouched('confirmPassword')"
-          class="w-full bg-[var(--color-bg)] border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]"
-          [class]="
-            isTouched('confirmPassword') && confirmPasswordError()
-              ? 'border-[var(--color-critical)]'
-              : 'border-[var(--color-border)]'
-          "
-        />
-        @if (isTouched('confirmPassword') && confirmPasswordError(); as error) {
-          <p class="text-[11px] text-[var(--color-critical)] mt-1">{{ error }}</p>
-        }
-      </div>
-
-      @if (errorMessage(); as message) {
-        <p class="text-[11px] text-[var(--color-critical)] mb-3">{{ message }}</p>
-      }
-
-      <button
-        type="submit"
-        [disabled]="submitting()"
-        class="w-full text-xs font-medium px-3 py-2 rounded-lg bg-[var(--color-primary)]/20 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/30 disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        {{ submitting() ? 'Duke u rregjistruar...' : 'Rregjistrohu' }}
-      </button>
-    </form>
-
-    <p class="text-[11px] text-[var(--color-text-muted)] text-center mt-4">
-      Keni nje llogari?
-      <a routerLink="/login" class="text-[var(--color-primary)] hover:underline">Hyr</a>
+<div class="p-6 max-w-xl">
+  <div class="mb-5">
+    <h2 class="text-xl font-semibold text-white">Krijo perdorues</h2>
+    <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
+      Vetem administratori mund te krijoje llogari te reja
     </p>
   </div>
+
+  <form
+    (ngSubmit)="submit()"
+    class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-5"
+  >
+    <div class="mb-3">
+      <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">
+        Perdoruesi
+      </label>
+      <input
+        type="text"
+        name="username"
+        autocomplete="off"
+        [(ngModel)]="username"
+        (blur)="markTouched('username')"
+        class="w-full bg-[var(--color-bg)] border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]"
+        [class]="
+          isTouched('username') && usernameError()
+            ? 'border-[var(--color-critical)]'
+            : 'border-[var(--color-border)]'
+        "
+      />
+      @if (isTouched('username') && usernameError(); as error) {
+        <p class="text-[11px] text-[var(--color-critical)] mt-1">{{ error }}</p>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">
+        Roli
+      </label>
+      <select
+        name="role"
+        [(ngModel)]="role"
+        class="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]"
+      >
+        @for (option of roles; track option) {
+          <option [value]="option">{{ option }}</option>
+        }
+      </select>
+      <p class="text-[10px] text-[var(--color-text-muted)] mt-1">
+        ANALYST lexon dhe triazhon, ADMIN administron, SERVICE vetem dergon te dhena.
+      </p>
+    </div>
+
+    <div class="mb-3">
+      <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">
+        Fjalekalimi
+      </label>
+      <input
+        type="password"
+        name="password"
+        autocomplete="new-password"
+        [(ngModel)]="password"
+        (blur)="markTouched('password')"
+        class="w-full bg-[var(--color-bg)] border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]"
+        [class]="
+          isTouched('password') && passwordError()
+            ? 'border-[var(--color-critical)]'
+            : 'border-[var(--color-border)]'
+        "
+      />
+      @if (isTouched('password') && passwordError(); as error) {
+        <p class="text-[11px] text-[var(--color-critical)] mt-1">{{ error }}</p>
+      } @else {
+        <p class="text-[10px] text-[var(--color-text-muted)] mt-1">
+          Te pakten 8 karaktere, me shkronja dhe numra.
+        </p>
+      }
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">
+        Konfirmo fjalekalimin
+      </label>
+      <input
+        type="password"
+        name="confirmPassword"
+        autocomplete="new-password"
+        [(ngModel)]="confirmPassword"
+        (blur)="markTouched('confirmPassword')"
+        class="w-full bg-[var(--color-bg)] border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]"
+        [class]="
+          isTouched('confirmPassword') && confirmPasswordError()
+            ? 'border-[var(--color-critical)]'
+            : 'border-[var(--color-border)]'
+        "
+      />
+      @if (isTouched('confirmPassword') && confirmPasswordError(); as error) {
+        <p class="text-[11px] text-[var(--color-critical)] mt-1">{{ error }}</p>
+      }
+    </div>
+
+    @if (errorMessage(); as message) {
+      <p class="text-[11px] text-[var(--color-critical)] mb-3">{{ message }}</p>
+    }
+
+    @if (successMessage(); as message) {
+      <p class="text-[11px] text-[var(--color-low)] mb-3">{{ message }}</p>
+    }
+
+    <button
+      type="submit"
+      [disabled]="submitting()"
+      class="w-full text-xs font-medium px-3 py-2 rounded-lg bg-[var(--color-primary)]/20 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/30 disabled:opacity-40 disabled:cursor-not-allowed"
+    >
+      {{ submitting() ? 'Duke krijuar...' : 'Krijo perdorues' }}
+    </button>
+  </form>
 </div>
