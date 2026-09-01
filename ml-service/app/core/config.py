@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _ENV_FILE = Path(__file__).resolve().parent.parent.parent / ".env"
@@ -10,7 +11,8 @@ class Settings(BaseSettings):
 
     spring_boot_base_url: str = "http://localhost:8080"
     spring_service_username: str = "ml-service"
-    spring_service_password: str = "ml-service-secret"
+    spring_service_password: str = ""
+    jwt_secret: str = Field(default="", validation_alias="IDS_JWT_SECRET")
     anthropic_api_key: str = ""
     gemini_api_key: str = ""
     llm_provider: str = "gemini"
