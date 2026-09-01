@@ -16,11 +16,13 @@ try:
     from app.ml.feature_validation import STRICT_POLICY, FeatureValidator, load_reference
     from app.ml.anomaly import load_anomaly_detector
     from app.ml.detection_engine import decide, to_flow_label
+    from app.services.token_provider import TokenProvider
 except ImportError:
     from feature_mapping import CICFLOWMETER_TO_CICIDS2017, META_COLUMNS
     from feature_validation import STRICT_POLICY, FeatureValidator, load_reference
     from anomaly import load_anomaly_detector
     from detection_engine import decide, to_flow_label
+    from token_provider import TokenProvider
 
 
 def load_model_artifacts(models_dir: Path, model_filename: str):
@@ -85,11 +87,10 @@ def report_validation(validation, row_number: int):
             print(f"[live_agent]   - {warning}", file=sys.stderr)
 
 
-def fetch_active_model(backend_url: str, token: str):
+def fetch_active_model(backend_url: str, tokens: TokenProvider):
 
     try:
-        resp = requests.get(f"{backend_url}/api/models/active",
-                             headers={"Authorization": f"Bearer {token}"}, timeout=10)
+        resp = authorized_request(tokens, "GET", f"{backend_url}/api/models/active", timeout=10)
         resp.raise_for_status()
         return resp.json()
     except requests.RequestException as e:
@@ -118,19 +119,21 @@ def resolve_model_identity(active, model_file: str):
     }
 
 
-def login_and_get_token(backend_url: str, username: str, password: str) -> str:
+def authorized_request(tokens: TokenProvider, method: str, url: str,
+                       payload: dict = None, timeout: int = 10):
 
-    resp = requests.post(f"{backend_url}/api/auth/login",
-                          json={"username": username, "password": password}, timeout=10)
-    resp.raise_for_status()
-    data = resp.json()
-    token = data.get("token") or data.get("accessToken")
-    if not token:
-        raise RuntimeError(f"Login-i u be por s'u gjet token ne pergjigje: {data}")
-    return token
+    for attempt in range(2):
+        resp = requests.request(method, url, json=payload,
+                                headers=tokens.authorization_header(force_refresh=attempt > 0),
+                                timeout=timeout)
+        if resp.status_code in (401, 403) and attempt == 0:
+            continue
+        return resp
+
+    return resp
 
 
-def ingest_flow(backend_url: str, token: str, row: dict, feature_vector: dict,
+def ingest_flow(backend_url: str, tokens: TokenProvider, row: dict, feature_vector: dict,
                 detection: dict, identity: dict = None, feature_version: str = None):
 
     label = detection["prediction"]
@@ -151,9 +154,9 @@ def ingest_flow(backend_url: str, token: str, row: dict, feature_vector: dict,
     payload.update(identity or {})
     if not payload.get("featureVersion"):
         payload["featureVersion"] = feature_version
-    headers = {"Authorization": f"Bearer {token}"}
     try:
-        resp = requests.post(f"{backend_url}/api/alarms/ingest", json=payload, headers=headers, timeout=5)
+        resp = authorized_request(tokens, "POST", f"{backend_url}/api/alarms/ingest",
+                                  payload=payload, timeout=5)
         resp.raise_for_status()
         confidence_text = ("conf=%.4f" % detection["confidence"]
                            if detection["confidence"] is not None
@@ -222,10 +225,11 @@ def main():
               "te gjurmueshme. Kalo --reference ose --feature-version.", file=sys.stderr)
 
     print(f"[live_agent] Duke bere login te {args.backend} si '{args.username}' ...")
-    token = login_and_get_token(args.backend, args.username, args.password)
-    print("[live_agent] Login i suksesshem, token i marre.")
+    tokens = TokenProvider(args.backend, args.username, args.password)
+    tokens.token()
+    print("[live_agent] Login i suksesshem, token-i rifreskohet vete para skadimit.")
 
-    identity = resolve_model_identity(fetch_active_model(args.backend, token), args.model_file)
+    identity = resolve_model_identity(fetch_active_model(args.backend, tokens), args.model_file)
     if identity:
         print(f"[live_agent] Modeli u konfirmua kunder regjistrit: {identity['modelName']} "
               f"v{identity['modelVersion']}")
@@ -272,7 +276,7 @@ def main():
                 detection = decide(supervised, anomaly)
                 if detection["detection_class"] == "SUSPICIOUS":
                     suspicious += 1
-                ingest_flow(args.backend, token, row, feature_vector, detection,
+                ingest_flow(args.backend, tokens, row, feature_vector, detection,
                             identity=identity, feature_version=validator.feature_version)
             seen_rows = len(reader)
 

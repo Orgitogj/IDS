@@ -3,34 +3,30 @@ import threading
 import requests
 
 from app.core.config import settings
+from app.services.token_provider import TokenProvider
 
-_token_lock = threading.Lock()
-_cached_token = None
-
-
-def _login() -> str:
-    url = f"{settings.spring_boot_base_url}/api/auth/login"
-    response = requests.post(url, json={
-        "username": settings.spring_service_username,
-        "password": settings.spring_service_password,
-    }, timeout=10)
-    response.raise_for_status()
-    return response.json()["token"]
+_provider_lock = threading.Lock()
+_provider = None
 
 
-def _get_token(force_refresh: bool = False) -> str:
-    global _cached_token
-    with _token_lock:
-        if _cached_token is None or force_refresh:
-            _cached_token = _login()
-        return _cached_token
+def _get_provider() -> TokenProvider:
+    global _provider
+    with _provider_lock:
+        if _provider is None:
+            _provider = TokenProvider(
+                settings.spring_boot_base_url,
+                settings.spring_service_username,
+                settings.spring_service_password,
+            )
+        return _provider
 
 
 def _request(method: str, path: str, payload: dict = None, timeout: int = 10) -> dict:
     url = f"{settings.spring_boot_base_url}{path}"
+    provider = _get_provider()
 
     for attempt in range(2):
-        headers = {"Authorization": f"Bearer {_get_token(force_refresh=attempt > 0)}"}
+        headers = provider.authorization_header(force_refresh=attempt > 0)
         response = requests.request(method, url, json=payload, headers=headers, timeout=timeout)
 
         if response.status_code in (401, 403) and attempt == 0:

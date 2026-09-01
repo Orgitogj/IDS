@@ -1,6 +1,7 @@
 import requests
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from app.core.security import ADMIN, ANALYST, SERVICE, require_roles
 from app.ml.feature_validation import FeatureValidationError
 from app.ml.inference import (
     active_model,
@@ -36,7 +37,7 @@ def _run_prediction(feature_vector: dict, include_shap: bool, model_id=None) -> 
         raise HTTPException(status_code=503, detail=str(error))
 
 
-@router.get("/models/active")
+@router.get("/models/active", dependencies=[Depends(require_roles(ANALYST, ADMIN, SERVICE))])
 def get_active_model():
     try:
         return active_model().identity.to_dict()
@@ -44,7 +45,7 @@ def get_active_model():
         raise HTTPException(status_code=503, detail=str(error))
 
 
-@router.post("/models/reload")
+@router.post("/models/reload", dependencies=[Depends(require_roles(ADMIN))])
 def reload_model():
     try:
         return reload_active().identity.to_dict()
@@ -52,7 +53,7 @@ def reload_model():
         raise HTTPException(status_code=503, detail=str(error))
 
 
-@router.get("/drift/report")
+@router.get("/drift/report", dependencies=[Depends(require_roles(ANALYST, ADMIN))])
 def get_drift_report():
     monitor = drift_monitor()
     if monitor is None:
@@ -61,7 +62,7 @@ def get_drift_report():
     return monitor.report()
 
 
-@router.post("/drift/publish")
+@router.post("/drift/publish", dependencies=[Depends(require_roles(SERVICE, ADMIN))])
 def publish_drift():
     monitor = drift_monitor()
     if monitor is None:
@@ -72,12 +73,14 @@ def publish_drift():
             "drifted_feature_count": report["drifted_feature_count"]}
 
 
-@router.post("/predict", response_model=PredictionResponse)
+@router.post("/predict", response_model=PredictionResponse,
+             dependencies=[Depends(require_roles(ANALYST, ADMIN, SERVICE))])
 def predict_flow(request: PredictionRequest):
     return _run_prediction(request.feature_vector, request.include_shap, request.model_id)
 
 
-@router.post("/explain", response_model=ExplainResponse)
+@router.post("/explain", response_model=ExplainResponse,
+             dependencies=[Depends(require_roles(ANALYST, ADMIN, SERVICE))])
 def explain_alarm(request: ExplainRequest):
     prediction = _run_prediction(request.feature_vector, include_shap=True,
                                  model_id=request.model_id)
