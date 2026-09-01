@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Entity
@@ -45,4 +46,22 @@ public class AppUser {
     @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default
     private Instant createdAt = Instant.now();
+
+    @Column(name = "tokens_valid_from", nullable = false)
+    @Builder.Default
+    private Instant tokensValidFrom = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+
+    @Column(name = "failed_login_attempts", nullable = false)
+    @Builder.Default
+    private int failedLoginAttempts = 0;
+
+    @Column(name = "locked_until")
+    private Instant lockedUntil;
+
+    @Column(name = "last_login_at")
+    private Instant lastLoginAt;
+
+    public boolean isLockedAt(Instant moment) {
+        return lockedUntil != null && lockedUntil.isAfter(moment);
+    }
 }
