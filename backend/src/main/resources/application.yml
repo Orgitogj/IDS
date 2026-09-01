@@ -24,10 +24,22 @@ logging:
     com.diploma.idsml: DEBUG
 ids:
   security:
-    jwt-secret: ${IDS_JWT_SECRET:ZGV2LW9ubHktc2VjcmV0LWNoYW5nZS1tZS1pbi1wcm9kdWN0aW9uLTI1Ni1iaXQ=}
-    jwt-expiration-minutes: 480
+    jwt-secret: ${IDS_JWT_SECRET:}
+    jwt-expiration-minutes: ${IDS_JWT_EXPIRATION_MINUTES:15}
+    refresh-expiration-days: ${IDS_REFRESH_EXPIRATION_DAYS:7}
+    refresh-purge-cron: ${IDS_REFRESH_PURGE_CRON:0 30 3 * * *}
+    cookie-secure: ${IDS_COOKIE_SECURE:false}
+    allowed-origins: ${IDS_ALLOWED_ORIGINS:http://localhost:4200}
+    login:
+      max-user-attempts: ${IDS_LOGIN_MAX_USER_ATTEMPTS:5}
+      user-lock-minutes: ${IDS_LOGIN_USER_LOCK_MINUTES:15}
+      max-ip-attempts: ${IDS_LOGIN_MAX_IP_ATTEMPTS:20}
+      ip-window-minutes: ${IDS_LOGIN_IP_WINDOW_MINUTES:5}
+      purge-interval-ms: ${IDS_LOGIN_PURGE_INTERVAL_MS:300000}
+  correlation:
+    window-seconds: ${IDS_CORRELATION_WINDOW_SECONDS:120}
   bootstrap:
     admin-username: ${IDS_ADMIN_USERNAME:admin}
-    admin-password: ${IDS_ADMIN_PASSWORD:admin123}
+    admin-password: ${IDS_ADMIN_PASSWORD:}
     service-username: ${IDS_SERVICE_USERNAME:ml-service}
-    service-password: ${IDS_SERVICE_PASSWORD:ml-service-secret}
+    service-password: ${IDS_SERVICE_PASSWORD:}
