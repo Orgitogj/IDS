@@ -1,29 +1,25 @@
 package com.diploma.idsml.config;
 
-import com.diploma.idsml.security.JwtService;
+import com.diploma.idsml.security.TokenAuthenticator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import org.springframework.messaging.simp.config.ChannelRegistration;
-
-import java.util.List;
 
 @Configuration
 public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
-    private final JwtService jwtService;
+    private final TokenAuthenticator tokenAuthenticator;
 
-    public WebSocketSecurityConfig(JwtService jwtService) {
-        this.jwtService = jwtService;
+    public WebSocketSecurityConfig(TokenAuthenticator tokenAuthenticator) {
+        this.tokenAuthenticator = tokenAuthenticator;
     }
 
     @Override
@@ -44,13 +40,7 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
                 }
 
                 String token = header.substring(BEARER_PREFIX.length());
-                accessor.setUser(jwtService.parse(token)
-                        .map(claims -> new UsernamePasswordAuthenticationToken(
-                                claims.getSubject(),
-                                null,
-                                List.of(new SimpleGrantedAuthority(
-                                        "ROLE_" + claims.get("role", String.class)))
-                        ))
+                accessor.setUser(tokenAuthenticator.authenticate(token)
                         .orElseThrow(() -> new IllegalArgumentException("Token i pavlefshem.")));
 
                 return message;
