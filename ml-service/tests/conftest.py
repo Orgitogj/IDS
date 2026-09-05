@@ -7,6 +7,7 @@ ML_SERVICE_ROOT = Path(__file__).resolve().parent.parent
 MODELS_DIR = ML_SERVICE_ROOT / "models"
 DATASET_PATH = ML_SERVICE_ROOT / "datasets" / "cicids2017_cleaned.parquet"
 REFERENCE_PATH = ML_SERVICE_ROOT / "reports" / "training_feature_reference.json"
+EVALUATION_REPORT_PATH = ML_SERVICE_ROOT / "reports" / "evaluation_random_vs_temporal.json"
 
 ACTIVE_ARTIFACT = "xgb_smote_top50features_v1.joblib"
 
@@ -45,12 +46,35 @@ def dataset_available():
     return DATASET_PATH.exists()
 
 
+@pytest.fixture(scope="session")
+def evaluation_report():
+    if not EVALUATION_REPORT_PATH.exists():
+        pytest.skip("evaluation_random_vs_temporal.json mungon; xhiro training.evaluate")
+    with open(EVALUATION_REPORT_PATH, encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def _llm_configured():
+    try:
+        from app.core.config import settings
+    except Exception:
+        return False
+    return bool(settings.gemini_api_key or settings.anthropic_api_key)
+
+
 def pytest_collection_modifyitems(config, items):
     models_ok = (MODELS_DIR / ACTIVE_ARTIFACT).exists()
     dataset_ok = DATASET_PATH.exists()
+    report_ok = EVALUATION_REPORT_PATH.exists()
+    llm_ok = _llm_configured()
 
     for item in items:
         if "artifacts" in item.keywords and not models_ok:
             item.add_marker(pytest.mark.skip(reason="artefaktet e modelit mungojne ne models/"))
         if "dataset" in item.keywords and not dataset_ok:
             item.add_marker(pytest.mark.skip(reason="cicids2017_cleaned.parquet mungon"))
+        if "report" in item.keywords and not report_ok:
+            item.add_marker(pytest.mark.skip(
+                reason="reports/evaluation_random_vs_temporal.json mungon"))
+        if "llm" in item.keywords and not llm_ok:
+            item.add_marker(pytest.mark.skip(reason="asnje celes LLM i konfiguruar ne .env"))
