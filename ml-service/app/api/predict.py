@@ -90,14 +90,18 @@ def explain_alarm(request: ExplainRequest):
             predicted_label=prediction["prediction"],
             confidence=prediction["confidence"],
             top_shap_features=prediction["top_shap_features"],
-            detection_class=prediction["detection_class"],
+            detection_method=prediction["detection_method"],
+            top_anomaly_features=prediction["top_anomaly_features"],
+            anomaly_score=prediction["anomaly_score"],
         )
     else:
         llm_results = [generate_explanation(
             predicted_label=prediction["prediction"],
             confidence=prediction["confidence"],
             top_shap_features=prediction["top_shap_features"],
-            detection_class=prediction["detection_class"],
+            detection_method=prediction["detection_method"],
+            top_anomaly_features=prediction["top_anomaly_features"],
+            anomaly_score=prediction["anomaly_score"],
         )]
 
     if not llm_results:

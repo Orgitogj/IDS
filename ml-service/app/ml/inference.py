@@ -15,7 +15,7 @@ from app.ml.feature_validation import (
     resolve_feature_version,
 )
 from app.ml.anomaly import load_anomaly_detector
-from app.ml.detection_engine import decide
+from app.ml.detection_engine import METHOD_ANOMALY, decide
 from app.ml.drift import DriftMonitor, load_thresholds
 from app.ml.feature_validation import FeatureValidationError
 from app.ml.model_registry import fetch_active_identity, fetch_identity_by_id
@@ -268,6 +268,7 @@ def predict(feature_vector: dict, include_shap: bool = True, model_id=None) -> d
         "predicted_label": predicted_label,
         "confidence": confidence,
         "top_shap_features": None,
+        "top_anomaly_features": None,
         "validation": validation.to_dict(),
     }
     result.update(detection)
@@ -288,5 +289,8 @@ def predict(feature_vector: dict, include_shap: bool = True, model_id=None) -> d
             {"feature": f, "value": float(v), "shap_contribution": float(s)}
             for f, v, s in contributions
         ]
+
+        if detection["detection_method"] == METHOD_ANOMALY and _anomaly_detector is not None:
+            result["top_anomaly_features"] = _anomaly_detector.attribute(feature_vector)
 
     return result

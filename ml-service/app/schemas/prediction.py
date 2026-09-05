@@ -17,6 +17,13 @@ class ShapContribution(BaseModel):
     shap_contribution: float
 
 
+class AnomalyContribution(BaseModel):
+    feature: str
+    value: float
+    baseline_value: float
+    anomaly_contribution: float
+
+
 class FeatureValidationReport(BaseModel):
     valid: bool
     feature_version: str
@@ -64,6 +71,8 @@ class DetectionFields(ModelIdentityFields):
     anomaly_feature_version: Optional[str] = None
     anomaly_threshold_rate: Optional[float] = None
     anomaly_threshold: Optional[float] = None
+    anomaly_attribution_method: Optional[str] = None
+    top_anomaly_features: Optional[list[AnomalyContribution]] = None
 
 
 class PredictionResponse(DetectionFields):
