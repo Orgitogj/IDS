@@ -156,3 +156,88 @@ def test_a_stricter_threshold_flags_fewer_flows(calibration):
 
 def test_missing_artifacts_return_no_detector(tmp_path):
     assert load_anomaly_detector(tmp_path) is None
+
+
+def test_the_baseline_is_loaded_alongside_the_detector(detector):
+    if detector.baseline is None:
+        pytest.skip("reports/anomaly_feature_baseline.json mungon")
+    assert detector.baseline["feature_columns"] == detector.feature_columns
+    assert detector.baseline["artifact_file"] == detector.artifact_file
+
+
+def test_the_baseline_was_built_from_the_rows_the_detector_was_fitted_on(detector, calibration):
+    if detector.baseline is None:
+        pytest.skip("reports/anomaly_feature_baseline.json mungon")
+    assert detector.baseline["fit_rows"] == calibration["fit_rows"]
+    assert detector.baseline["feature_version"] == calibration["feature_version"]
+
+
+def test_attribution_returns_the_requested_number_of_features(detector, full_vector):
+    if detector.baseline is None:
+        pytest.skip("reports/anomaly_feature_baseline.json mungon")
+    contributions = detector.attribute(full_vector, top_n=3)
+    assert len(contributions) == 3
+    assert set(contributions[0]) == {
+        "feature", "value", "baseline_value", "anomaly_contribution"}
+    assert all(entry["feature"] in detector.feature_columns for entry in contributions)
+
+
+def test_attribution_is_ordered_by_absolute_contribution(detector, full_vector):
+    if detector.baseline is None:
+        pytest.skip("reports/anomaly_feature_baseline.json mungon")
+    contributions = detector.attribute(full_vector)
+    magnitudes = [abs(entry["anomaly_contribution"]) for entry in contributions]
+    assert magnitudes == sorted(magnitudes, reverse=True)
+
+
+def test_attribution_reports_the_baseline_it_substituted(detector, full_vector):
+    if detector.baseline is None:
+        pytest.skip("reports/anomaly_feature_baseline.json mungon")
+    entries = detector.baseline["baseline"]
+    for entry in detector.attribute(full_vector):
+        assert entry["baseline_value"] == entries[entry["feature"]]["median"]
+
+
+def test_attribution_is_unavailable_when_features_are_missing(detector, full_vector):
+    if detector.baseline is None:
+        pytest.skip("reports/anomaly_feature_baseline.json mungon")
+    partial = dict(full_vector)
+    partial.pop(detector.feature_columns[0])
+    assert detector.attribute(partial) is None
+
+
+def test_attribution_is_unavailable_without_a_baseline(calibration):
+    import joblib
+
+    detector = AnomalyDetector(joblib.load(ARTIFACT_FILE), calibration, baseline=None)
+    assert detector.attribute({}) is None
+
+
+def test_substituting_the_top_feature_moves_the_score_toward_normal(detector, full_vector):
+    if detector.baseline is None:
+        pytest.skip("reports/anomaly_feature_baseline.json mungon")
+
+    anomalous = dict(full_vector)
+    anomalous["Idle Max"] = 98_000_000.0
+    anomalous["Idle Min"] = 98_000_000.0
+    anomalous["Idle Mean"] = 98_000_000.0
+
+    top = detector.attribute(anomalous)[0]
+    assert top["anomaly_contribution"] > 0
+
+    repaired = dict(anomalous)
+    repaired[top["feature"]] = top["baseline_value"]
+    assert detector.score(repaired).raw_score > detector.score(anomalous).raw_score
+
+
+def test_the_identity_names_the_attribution_method_when_a_baseline_is_loaded(detector):
+    if detector.baseline is None:
+        pytest.skip("reports/anomaly_feature_baseline.json mungon")
+    assert detector.identity()["anomaly_attribution_method"] == "median_substitution_v1"
+
+
+def test_the_identity_reports_no_attribution_method_without_a_baseline(calibration):
+    import joblib
+
+    detector = AnomalyDetector(joblib.load(ARTIFACT_FILE), calibration, baseline=None)
+    assert detector.identity()["anomaly_attribution_method"] is None
