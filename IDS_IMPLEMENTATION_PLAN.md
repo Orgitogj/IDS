@@ -669,7 +669,86 @@ a fallback source of truth for what the original arrays looked like.
 
 `notebooks/eda_step1_read.py.ipynb` is **kept untouched** as the research record.
 
-### P2-2 · Evaluation rigour  *(L7, L8 — Phase 9)*
+### P2-2 · Evaluation rigour  *(L7, L8 — Phase 9)* — **DONE**
+
+> **Status 2026-09-05:** the optimism of the headline number is now a measured quantity.
+> Full write-up in **`EVALUATION.md` §6–§7**; raw output in
+> `reports/evaluation_random_vs_temporal.json` and `reports/confusion_matrix_*.csv` / `.png`.
+>
+> **The harness was validated before it was trusted.** `training/evaluate.py` first scores
+> the registered production artifact `xgb_smote_cicids2017_v1` on the existing random split
+> and reproduces the notebook to four decimals on all four headline metrics — accuracy
+> **0.9988**, macro F1 **0.8785**, macro precision **0.8671**, macro recall **0.8978** — with
+> every per-class support matching the audit table exactly (Heartbleed 2, SQL Injection 4,
+> Infiltration 7, BENIGN 454,265). Nothing else in the section would mean anything without
+> that anchor.
+>
+> **The timestamps had to be repaired first, and the repair is checked rather than assumed.**
+> CICIDS2017 stores a **12-hour clock with no AM/PM marker**. Over all 2,827,876 rows the
+> observed hours are exactly `{1..5, 8..12}` — **6 and 7 never occur** — so hours 1–5 are
+> unambiguously the afternoon. The parser raises rather than guessing if 6 or 7 ever appears.
+> Two independent confirmations: every `-Morning-` capture lands in 08:59–12:59 and every
+> `-Afternoon-` capture in 13:00–17:04 (file names were never used in parsing), and the four
+> Thursday/Friday captures come out **perfectly non-decreasing in CSV row order** (1.0000 of
+> adjacent pairs).
+>
+> **Two temporal splits, because one confounds two effects.** `temporal_global` (sort
+> everything by time, last 20 % is test) is deployment-realistic but degenerate on this
+> dataset: each attack family runs on a single day, so DDoS (128,025 test rows) and PortScan
+> (158,804) end up with **zero training rows** and eight other classes with **zero test rows**.
+> `temporal_per_class` takes the last 20 % of *each class* by timestamp with the per-class
+> test count copied from the random split, so support is identical class by class and the
+> only thing that changes is which rows land where — which is precisely what L7 is about.
+>
+> **The answer, on the like-for-like split:** accuracy **0.9988 → 0.9756**, macro F1
+> **0.8614 → 0.7818**, and the number that actually decides operability — the **benign
+> false-positive rate — 0.10 % → 2.58 %, a 26-fold increase**. The damage is concentrated,
+> not uniform: Bot −0.42 F1, DoS slowloris −0.20, DDoS −0.17, DoS Slowhttptest −0.14, while
+> six classes lose under 0.02, and the loss is mostly *precision*.
+>
+> **`temporal_global` came out at 0.4903 accuracy / 0.1009 macro F1 and is reported with its
+> mechanism attached**, not as a per-class score: it mostly measures classes the model was
+> never given. It did produce a free cross-check — with PortScan unseen it called
+> **157,367 of 158,804 PortScan rows BENIGN (99.1 %)**, against the 99.5 % that P1-1's
+> leave-one-family-out measured by a completely different route. Unseen DDoS failed
+> differently: 46,687 called BENIGN and **81,338 called DoS Hulk**, the nearest seen family.
+>
+> **L8 discharged with numbers rather than a caveat.** Heartbleed (2 test rows), SQL Injection
+> (4) and Infiltration (7) are reported as **"insufficient support"** against the existing
+> `MIN_SUPPORT_FOR_CLAIM = 100` — no new threshold was invented. How meaningless they are is
+> shown rather than asserted: Heartbleed scores F1 **1.000** for the production artifact and
+> **0.571** for the controlled model **on the same two rows**. Classes with zero test rows are
+> listed separately as `absent_from_test_classes` so "not measured" is never read as
+> "measured badly".
+>
+> **Delivered.** `training/evaluate.py` (timestamp repair, three splits, per-class
+> precision/recall/F1/FPR/FNR with support beside every number, macro and weighted F1,
+> confusion matrix as CSV **and** PNG per run, JSON report);
+> `reports/evaluation_random_vs_temporal.json`; four confusion matrices; `EVALUATION.md`
+> §6–§7 plus a rewritten §9 limitations; `tests/test_evaluation.py` (28 tests: 21 unit tests
+> for the split, metric and plot functions, 7 regression assertions pinned against the
+> committed report).
+>
+> **What is asserted as a regression.** The random split's per-class support (all 15 classes),
+> its 565,576 test rows, the production artifact's four notebook metrics to four decimals, and
+> that the three minority classes stay flagged `sufficient_support: false` in every
+> random-split run. The temporal per-class split is asserted to carry *identical* support to
+> the random split, which is what makes §6.3 a fair comparison.
+>
+> **Surprises.** (1) The 12-hour clock — CICIDS2017's timestamps cannot be sorted at all
+> until it is resolved, and the dataset ships no marker; the fact that hours 6 and 7 are
+> absent is what makes the repair provable rather than a convention. (2) `temporal_global`
+> was expected to be bad; it was not expected to be *uninformative*, and saying so is the
+> honest reading. (3) The controlled no-SMOTE recipe is within 0.02 macro F1 of the
+> production artifact on the random split, which usefully bounds how much the P2-1 gap can be
+> worth. (4) Both full runs produced bit-identical metrics, so the pipeline is reproducible
+> as it stands.
+>
+> **Not done here.** The split helpers live inside `training/evaluate.py` rather than a
+> separate `training/split.py`; P2-1 owns that file layout and should lift them out. One seed
+> only — no seed sweep, no confidence intervals, and none are claimed.
+
+#### Original scope (for reference)
 
 Adds to `evaluate.py`: per-class precision/recall/F1 **with support counts printed
 next to every number**, confusion matrix (saved as CSV + PNG), macro/weighted F1,
@@ -716,7 +795,83 @@ The existing SOC design is preserved; new information is added, nothing is redes
 * Housekeeping: `environment.ts` for the two base URLs (currently hardcoded in 9 files);
   the hardcoded lab IPs in `topology.component.ts` become inputs.
 
-### P2-6 · LLM explanation for `UNKNOWN`  *(Phase 14)*
+### P2-6 · LLM explanation for `UNKNOWN`  *(Phase 14)* — **DONE**
+
+> **Status 2026-09-05:** the second template already existed — P1-1 shipped it, bumped
+> `PROMPT_VERSION` to `v2` and added the "do not name an attack type" rule. What P2-6 found
+> when it went to finish the job is that the template was being fed **the wrong evidence**,
+> and was being selected by the wrong field. Write-up in **`EVALUATION.md` §8**.
+>
+> **The real defect.** `_build_prompt` branched on `detection_class == "SUSPICIOUS"`, and the
+> features it interpolated were `top_shap_features` — XGBoost's `pred_contribs` **for the
+> class XGBoost predicted, which on this branch is BENIGN**. The prompt therefore said
+> "features that make this flow unusual" over a list explaining why the supervised model
+> thought it was *normal*. The isolation forest, which is the model that actually raised the
+> alarm, contributed nothing but a score. On a real flagged flow the two disagree completely:
+> SHAP's top feature is `Destination Port` (+2.170), the forest's is `Idle Std` (+0.0296).
+>
+> **Routing fixed as specified.** `_build_prompt(..., detection_method=...)` now switches on
+> `METHOD_ANOMALY` from `detection_engine`, never on the label. Regression tests pin both
+> directions: `detection_method=SUPERVISED_ML` with `predicted_label="UNKNOWN"` gets the
+> supervised template, and `METHOD_ANOMALY` gets the anomaly template regardless of label.
+>
+> **Isolation-forest evidence, built rather than borrowed.** `shap` is not installed and not
+> in `requirements.txt` (audit §4.4), and XGBoost's `pred_contribs` has no IF equivalent, so
+> rather than add a dependency the detector attributes by **median substitution**: replace one
+> feature with its median over the 1,453,644 BENIGN rows the forest was fitted on, re-score,
+> and take the delta. `AnomalyDetector.attribute()` does all 78 in one batched call.
+> `training/build_anomaly_baseline.py` → `reports/anomaly_feature_baseline.json` rebuilds
+> those medians from the seed and split recorded in the detector's own calibration file; the
+> reconstruction returned exactly `fit_rows = 1,453,644`, matching the calibration.
+>
+> **It is not TreeSHAP, so it was tested instead of asserted.** Deletion test over 300 flagged
+> flows: substituting the **top-1** attributed feature returns **66.3 %** of them above the
+> threshold against **7.7 %** for a randomly chosen feature; top-3 **91.0 %** vs 25.7 %;
+> top-5 **96.3 %** vs 37.3 %. An 8.6× separation at k=1 is the evidence that the features the
+> LLM is shown are the ones the detector reacted to. `EVALUATION.md` §8 states plainly that
+> the contributions are not additive and were validated for ranking, not magnitude.
+>
+> **Prompt wording changed on a priming argument.** The draft enumerated the forbidden names
+> ("mos permend DoS, DDoS, PortScan, ..."), which puts every one of them in the model's
+> context. The shipped version forbids by category — no attack type "as hypothesis, as denial,
+> or as example" — and instead spends the space on the benign median beside each value, so the
+> model can say how far from normal a measurement is without inventing a magnitude.
+>
+> **Delivered.** `app/services/llm_explainer.py` (two templates, routing on
+> `detection_method`, anomaly score in the prompt, graceful text when attribution is
+> unavailable); `app/ml/anomaly.py` (`load_baseline`, `AnomalyDetector.attribute`, baseline
+> wired through `load_anomaly_detector` and ignored if its feature list disagrees with the
+> calibration); `app/ml/inference.py` (`top_anomaly_features`, computed only on the anomaly
+> branch); `app/api/predict.py`; `app/schemas/prediction.py` (`AnomalyContribution`, exposed
+> on both prediction and explanation responses); `training/build_anomaly_baseline.py`;
+> `reports/anomaly_feature_baseline.json`; `EVALUATION.md` §8;
+> `tests/test_llm_explainer.py` (14 tests) and 10 further attribution tests in
+> `tests/test_anomaly.py`. The Python suite goes from **213 to 265 tests**; 264 pass and the
+> live LLM test is deselected without a key.
+>
+> **Verified live, and the limits of that reported.** Gemini returned `503 UNAVAILABLE` on
+> **466 of 468 calls** during this session, after which the free tier hit its daily ceiling
+> (`429 RESOURCE_EXHAUSTED`, 20 requests/day). The **2 generations that completed both named
+> no CICIDS2017 attack class**; one named only the three features it was given (`Idle Max`,
+> `Init_Win_bytes_forward`, `Flow IAT Std`), said outright that the system cannot link the
+> deviation to a known attack type, and asked for analyst verification. Two samples is a smoke
+> test that the path works end to end, **not a compliance rate**, and `EVALUATION.md` §8.4
+> says exactly that — it should be re-run against a provider with real quota before anyone
+> quotes a figure.
+>
+> **Surprises.** (1) The bug was not the missing template but the evidence behind it — the
+> P1-1 template had been reading XGBoost's explanation of a BENIGN verdict the whole time.
+> (2) Naming the forbidden attacks in the prompt is itself a risk; the fix was to stop naming
+> them. (3) The free Gemini tier allows **20 requests/day** and was returning `503` on top of
+> that, which is why the live test skips on 5xx/429 rather than failing — a provider outage or
+> an exhausted quota is not a defect in this code, and turning it into a red test would train
+> people to ignore red tests.
+>
+> **Not done here.** Nothing in the dashboard changed; P2-5 owns showing `top_anomaly_features`
+> to the analyst. `v1` explanations are untouched and remain comparable, as the schema's
+> `(alarm_id, llm_model, llm_prompt_version)` constraint intends.
+
+#### Original scope (for reference)
 
 The existing SHAP→LLM architecture is kept. Changes: a second prompt template for the
 anomaly case that states the system found anomalous behaviour it **cannot** attribute to a
