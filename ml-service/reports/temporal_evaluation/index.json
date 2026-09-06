@@ -1,0 +1,87 @@
+{
+ "schema_version": 1,
+ "experiment_type": "temporal",
+ "protocol_version": "temporal-v1",
+ "generated_at": "2026-09-06T22:08:21.309567Z",
+ "git_commit": "162fa3a6c739a8b06e7a638d1dd0f23fd1166dd8",
+ "library_versions": {
+  "python": "3.11.9",
+  "numpy": "2.1.1",
+  "pandas": "2.2.3",
+  "scikit-learn": "1.5.2",
+  "xgboost": "2.1.1"
+ },
+ "dataset": {
+  "name": "cicids2017_cleaned.parquet",
+  "sha256": "f5b393d646f69f990ffc48203debc7241f897eacde9870a351db6d264b9e3d1d",
+  "rows": 2827876
+ },
+ "split": {
+  "strategy": "temporal_global",
+  "test_size": 0.2,
+  "boundary_timestamp": "2017-07-07T11:17:00.000000000",
+  "train_rows": 2263211,
+  "test_rows": 564665,
+  "train_first_timestamp": "2017-07-03T08:55:58.000000000",
+  "train_last_timestamp": "2017-07-07T11:17:00.000000000",
+  "test_first_timestamp": "2017-07-07T11:18:00.000000000",
+  "test_last_timestamp": "2017-07-07T17:02:00.000000000"
+ },
+ "random_baseline_index": "reports/artifact_evaluation/index.json",
+ "models": {
+  "mlp_smote_temporal_v1": {
+   "name": "mlp-smote-cicids2017-temporal-v1",
+   "artifact": "mlp_smote_temporal_v1.joblib",
+   "artifact_sha256": "8ad2a1445542eef9b750cbf19be55757e98cc303cb66857ac7a5a9a209bcc253",
+   "random_counterpart": "mlp_smote_cicids2017_v2.joblib",
+   "strict_macro_f1": 0.19457775292578006,
+   "seen_macro_f1": 0.3891555058515601,
+   "unseen_fraction_of_test": 0.5079631285806628
+  },
+  "rf_baseline_temporal_v1": {
+   "name": "rf-baseline-cicids2017-temporal-v1",
+   "artifact": "rf_baseline_temporal_v1.joblib",
+   "artifact_sha256": "42c2ecd85de9f9a620d022563d3f3e7a701a45c9126d79013dfd39fdad21fe10",
+   "random_counterpart": "rf_baseline_cicids2017_v2.joblib",
+   "strict_macro_f1": 0.3100540939534232,
+   "seen_macro_f1": 0.6201081879068464,
+   "unseen_fraction_of_test": 0.5079631285806628
+  },
+  "rf_smote_temporal_v1": {
+   "name": "rf-smote-cicids2017-temporal-v1",
+   "artifact": "rf_smote_temporal_v1.joblib",
+   "artifact_sha256": "dc9cdfa1c32dbb18b4bf94361a3717877e80a3d9046b99199e2d35c6e18e7268",
+   "random_counterpart": "rf_smote_cicids2017_v2.joblib",
+   "strict_macro_f1": 0.3102969527575853,
+   "seen_macro_f1": 0.6205939055151706,
+   "unseen_fraction_of_test": 0.5079631285806628
+  },
+  "xgb_baseline_temporal_v1": {
+   "name": "xgb-baseline-cicids2017-temporal-v1",
+   "artifact": "xgb_baseline_temporal_v1.joblib",
+   "artifact_sha256": "0370d95e46b61e9577b58c19dbd034a3d7033cf6af2f1f4f06c6db3fa818b975",
+   "random_counterpart": "xgb_baseline_cicids2017_v2.joblib",
+   "strict_macro_f1": 0.3079174077794994,
+   "seen_macro_f1": 0.6158348155589988,
+   "unseen_fraction_of_test": 0.5079631285806628
+  },
+  "xgb_smote_temporal_v1": {
+   "name": "xgb-smote-cicids2017-temporal-v1",
+   "artifact": "xgb_smote_temporal_v1.joblib",
+   "artifact_sha256": "91c962f398ea2624ec1ad20a5ea2e7ece81cfd1349c8e868dd465f0acf7b8770",
+   "random_counterpart": "xgb_smote_cicids2017_v2.joblib",
+   "strict_macro_f1": 0.3081210749800881,
+   "seen_macro_f1": 0.6162421499601762,
+   "unseen_fraction_of_test": 0.5079631285806628
+  },
+  "xgb_smote_top50_temporal_v1": {
+   "name": "xgb-smote-top50features-temporal-v1",
+   "artifact": "xgb_smote_top50_temporal_v1.joblib",
+   "artifact_sha256": "cfeaf89b5a74df77d1fc2eb37c7632a5ae343195c160812a8d6400c86c17b092",
+   "random_counterpart": "xgb_smote_top50features_v2.joblib",
+   "strict_macro_f1": 0.3083441888891783,
+   "seen_macro_f1": 0.6166883777783566,
+   "unseen_fraction_of_test": 0.5079631285806628
+  }
+ }
+}

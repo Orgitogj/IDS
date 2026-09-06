@@ -1,0 +1,727 @@
+{
+ "schema_version": 1,
+ "experiment_type": "temporal",
+ "protocol_version": "temporal-v1",
+ "distinct_from": "random-split v2 (reports/artifact_evaluation). Different split protocol, different training rows, different artifacts. The two are not interchangeable.",
+ "generated_at": "2026-09-06T22:08:20.579710Z",
+ "evaluated_at": "2026-09-06T22:08:20.579710Z",
+ "trained_at": "2026-09-06T21:42:58.952475Z",
+ "name": "xgb-smote-top50features-temporal-v1",
+ "version": "temporal-1.0",
+ "algorithm": "xgboost",
+ "artifact_file": "xgb_smote_top50_temporal_v1.joblib",
+ "artifact_sha256": "cfeaf89b5a74df77d1fc2eb37c7632a5ae343195c160812a8d6400c86c17b092",
+ "label_encoder_file": "xgb_smote_top50_temporal_v1_label_encoder.joblib",
+ "scaler_file": null,
+ "scaler_provenance": null,
+ "feature_version": "cicids2017-top50-v2",
+ "feature_columns": [
+  "Bwd Packet Length Min",
+  "PSH Flag Count",
+  "Idle Min",
+  "act_data_pkt_fwd",
+  "Total Length of Fwd Packets",
+  "Total Length of Bwd Packets",
+  "Average Packet Size",
+  "Bwd Packets/s",
+  "Fwd Packet Length Min",
+  "Bwd Header Length",
+  "Bwd Packet Length Std",
+  "Active Std",
+  "Fwd Packet Length Max",
+  "Init_Win_bytes_backward",
+  "Min Packet Length",
+  "Bwd IAT Total",
+  "Total Backward Packets",
+  "Total Fwd Packets",
+  "Fwd Header Length",
+  "Destination Port",
+  "Bwd Packet Length Max",
+  "FIN Flag Count",
+  "Bwd IAT Mean",
+  "Max Packet Length",
+  "Active Min",
+  "Fwd PSH Flags",
+  "Idle Mean",
+  "Init_Win_bytes_forward",
+  "Fwd Packet Length Mean",
+  "Bwd Packet Length Mean",
+  "Packet Length Mean",
+  "Flow IAT Mean",
+  "Flow Bytes/s",
+  "min_seg_size_forward",
+  "Packet Length Std",
+  "Protocol",
+  "Fwd Packet Length Std",
+  "Bwd IAT Std",
+  "Fwd IAT Min",
+  "Bwd IAT Min",
+  "Flow IAT Std",
+  "Packet Length Variance",
+  "URG Flag Count",
+  "Bwd IAT Max",
+  "Flow Duration",
+  "Flow IAT Min",
+  "Flow Packets/s",
+  "Down/Up Ratio",
+  "Idle Max",
+  "Fwd Packets/s"
+ ],
+ "n_features": 50,
+ "seed": 42,
+ "balancing": {
+  "enabled": true,
+  "strategy": "undersample_benign_200k_oversample_rare_2k",
+  "seed": 42,
+  "benign_label": "BENIGN",
+  "benign_cap": 200000,
+  "rare_class_min": 2000,
+  "oversampler": "smote",
+  "smote_k_neighbors": 5,
+  "rows_before": 2263211,
+  "rows_after": 477544,
+  "rows_after_undersampling": 469298,
+  "synthetic_rows": 8246,
+  "replicated_classes": [],
+  "class_counts_before": {
+   "BENIGN": 1993913,
+   "Bot": 1527,
+   "DoS GoldenEye": 10293,
+   "DoS Hulk": 230124,
+   "DoS Slowhttptest": 5499,
+   "DoS slowloris": 5796,
+   "FTP-Patator": 7935,
+   "Heartbleed": 11,
+   "Infiltration": 36,
+   "SSH-Patator": 5897,
+   "Web Attack - Brute Force": 1507,
+   "Web Attack - Sql Injection": 21,
+   "Web Attack - XSS": 652
+  },
+  "class_counts_after": {
+   "BENIGN": 200000,
+   "Bot": 2000,
+   "DoS GoldenEye": 10293,
+   "DoS Hulk": 230124,
+   "DoS Slowhttptest": 5499,
+   "DoS slowloris": 5796,
+   "FTP-Patator": 7935,
+   "Heartbleed": 2000,
+   "Infiltration": 2000,
+   "SSH-Patator": 5897,
+   "Web Attack - Brute Force": 2000,
+   "Web Attack - Sql Injection": 2000,
+   "Web Attack - XSS": 2000
+  },
+  "plan": {
+   "BENIGN": {
+    "available": 1993913,
+    "target": 200000,
+    "method": "undersampled"
+   },
+   "Bot": {
+    "available": 1527,
+    "target": 2000,
+    "method": "smote"
+   },
+   "DoS GoldenEye": {
+    "available": 10293,
+    "target": 10293,
+    "method": "unchanged"
+   },
+   "DoS Hulk": {
+    "available": 230124,
+    "target": 230124,
+    "method": "unchanged"
+   },
+   "DoS Slowhttptest": {
+    "available": 5499,
+    "target": 5499,
+    "method": "unchanged"
+   },
+   "DoS slowloris": {
+    "available": 5796,
+    "target": 5796,
+    "method": "unchanged"
+   },
+   "FTP-Patator": {
+    "available": 7935,
+    "target": 7935,
+    "method": "unchanged"
+   },
+   "Heartbleed": {
+    "available": 11,
+    "target": 2000,
+    "method": "smote"
+   },
+   "Infiltration": {
+    "available": 36,
+    "target": 2000,
+    "method": "smote"
+   },
+   "SSH-Patator": {
+    "available": 5897,
+    "target": 5897,
+    "method": "unchanged"
+   },
+   "Web Attack - Brute Force": {
+    "available": 1507,
+    "target": 2000,
+    "method": "smote"
+   },
+   "Web Attack - Sql Injection": {
+    "available": 21,
+    "target": 2000,
+    "method": "smote"
+   },
+   "Web Attack - XSS": {
+    "available": 652,
+    "target": 2000,
+    "method": "smote"
+   }
+  },
+  "planned_total": 477544
+ },
+ "model_params": {
+  "n_estimators": 100,
+  "n_jobs": -1,
+  "tree_method": "hist",
+  "eval_metric": "mlogloss",
+  "random_state": 42
+ },
+ "dataset": {
+  "name": "cicids2017_cleaned.parquet",
+  "sha256": "f5b393d646f69f990ffc48203debc7241f897eacde9870a351db6d264b9e3d1d",
+  "rows_in_file": 2827876,
+  "rows_used": 2827876,
+  "subsampled": false,
+  "sample_rows_requested": null,
+  "subsample": {
+   "applied": false
+  },
+  "label_column": "Label",
+  "n_features": 50
+ },
+ "split": {
+  "strategy": "temporal_global",
+  "test_size": 0.2,
+  "train_rows": 2263211,
+  "test_rows": 564665,
+  "train_class_support": {
+   "BENIGN": 1993913,
+   "Bot": 1527,
+   "DDoS": 0,
+   "DoS GoldenEye": 10293,
+   "DoS Hulk": 230124,
+   "DoS Slowhttptest": 5499,
+   "DoS slowloris": 5796,
+   "FTP-Patator": 7935,
+   "Heartbleed": 11,
+   "Infiltration": 36,
+   "PortScan": 0,
+   "SSH-Patator": 5897,
+   "Web Attack - Brute Force": 1507,
+   "Web Attack - Sql Injection": 21,
+   "Web Attack - XSS": 652
+  },
+  "test_class_support": {
+   "BENIGN": 277407,
+   "Bot": 429,
+   "DDoS": 128025,
+   "DoS GoldenEye": 0,
+   "DoS Hulk": 0,
+   "DoS Slowhttptest": 0,
+   "DoS slowloris": 0,
+   "FTP-Patator": 0,
+   "Heartbleed": 0,
+   "Infiltration": 0,
+   "PortScan": 158804,
+   "SSH-Patator": 0,
+   "Web Attack - Brute Force": 0,
+   "Web Attack - Sql Injection": 0,
+   "Web Attack - XSS": 0
+  },
+  "classes_absent_from_train": [
+   "DDoS",
+   "PortScan"
+  ],
+  "classes_absent_from_test": [
+   "DoS GoldenEye",
+   "DoS Hulk",
+   "DoS Slowhttptest",
+   "DoS slowloris",
+   "FTP-Patator",
+   "Heartbleed",
+   "Infiltration",
+   "SSH-Patator",
+   "Web Attack - Brute Force",
+   "Web Attack - Sql Injection",
+   "Web Attack - XSS"
+  ],
+  "train_first_timestamp": "2017-07-03T08:55:58.000000000",
+  "train_last_timestamp": "2017-07-07T11:17:00.000000000",
+  "test_first_timestamp": "2017-07-07T11:18:00.000000000",
+  "test_last_timestamp": "2017-07-07T17:02:00.000000000"
+ },
+ "train_classes": [
+  "BENIGN",
+  "Bot",
+  "DoS GoldenEye",
+  "DoS Hulk",
+  "DoS Slowhttptest",
+  "DoS slowloris",
+  "FTP-Patator",
+  "Heartbleed",
+  "Infiltration",
+  "SSH-Patator",
+  "Web Attack - Brute Force",
+  "Web Attack - Sql Injection",
+  "Web Attack - XSS"
+ ],
+ "n_train_classes": 13,
+ "timings": {
+  "train_seconds": 43.156830799998716,
+  "predict_seconds_batch": 1.833679600036703,
+  "avg_latency_ms_batch": 0.003247376054893969,
+  "latency_methodology": "Batch throughput: one predict() over the whole test set, after a discarded warm-up of 1000 rows, repeated 3 times; the median is reported. Comparable with the historical notebook figures. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency.",
+  "latency_scope": "model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency.",
+  "model_inference_latency": {
+   "metric": "model_inference_latency",
+   "scope": "model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency.",
+   "batch": {
+    "metric": "model_inference_latency",
+    "batch_size": 564665,
+    "warmup_rows": 1000,
+    "repetitions": 3,
+    "seconds_per_repetition": [
+     1.833679600036703,
+     1.9369209000142291,
+     1.5653669000021182
+    ],
+    "median_seconds": 1.833679600036703,
+    "min_seconds": 1.5653669000021182,
+    "max_seconds": 1.9369209000142291,
+    "ms_per_flow": 0.003247376054893969,
+    "flows_per_second": 307940.92925977777,
+    "methodology": "Batch throughput: one predict() over the whole test set, after a discarded warm-up of 1000 rows, repeated 3 times; the median is reported. Comparable with the historical notebook figures. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency."
+   },
+   "single_flow": {
+    "metric": "model_inference_latency",
+    "samples": 200,
+    "warmup": 20,
+    "mean_ms": 0.4457709996495396,
+    "median_ms": 0.4186500154901296,
+    "p95_ms": 0.6208499573403969,
+    "methodology": "Single-flow latency: predict() on one row at a time, 200 rows sampled from the test set, after 20 discarded warm-up rows. Mean, median and p95 are reported. This is NOT comparable with the batch figure. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency."
+   }
+  },
+  "production_path_inference_latency": {
+   "metric": "production_path_inference_latency",
+   "samples": 200,
+   "warmup": 20,
+   "mean_ms": 17.532279005390592,
+   "median_ms": 17.670950008323416,
+   "p95_ms": 19.212665013037622,
+   "methodology": "Mimics app/ml/inference.predict: build a one-row DataFrame with the model's feature columns, then predict. DataFrame construction IS inside the timed region. HTTP, Spring Boot, database, SHAP, LLM and frontend are NOT included - those belong to end_to_end_IDS_latency, measured separately."
+  },
+  "batch_latency": {
+   "metric": "model_inference_latency",
+   "batch_size": 564665,
+   "warmup_rows": 1000,
+   "repetitions": 3,
+   "seconds_per_repetition": [
+    1.833679600036703,
+    1.9369209000142291,
+    1.5653669000021182
+   ],
+   "median_seconds": 1.833679600036703,
+   "min_seconds": 1.5653669000021182,
+   "max_seconds": 1.9369209000142291,
+   "ms_per_flow": 0.003247376054893969,
+   "flows_per_second": 307940.92925977777,
+   "methodology": "Batch throughput: one predict() over the whole test set, after a discarded warm-up of 1000 rows, repeated 3 times; the median is reported. Comparable with the historical notebook figures. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency."
+  },
+  "single_flow_latency": {
+   "metric": "model_inference_latency",
+   "samples": 200,
+   "warmup": 20,
+   "mean_ms": 0.4457709996495396,
+   "median_ms": 0.4186500154901296,
+   "p95_ms": 0.6208499573403969,
+   "methodology": "Single-flow latency: predict() on one row at a time, 200 rows sampled from the test set, after 20 discarded warm-up rows. Mean, median and p95 are reported. This is NOT comparable with the batch figure. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency."
+  }
+ },
+ "metrics": {
+  "protocol_version": "temporal-v1",
+  "experiment_type": "temporal",
+  "primary_metric": "classes_present_in_temporal_test",
+  "diagnostic_metric": "classes_present_in_both_partitions",
+  "test_rows": 564665,
+  "overall_accuracy": 0.4904341512224062,
+  "benign_false_positive_rate": 0.0032551449675026225,
+  "binary_benign_vs_attack": {
+   "attack_rows": 287258,
+   "benign_rows": 277407,
+   "attack_recall": 0.2883783915504529,
+   "benign_false_positive_rate": 0.0032551449675026225,
+   "definition": "benign_false_positive_rate is the fraction of true BENIGN rows predicted as some attack class - the same definition the random split uses, so the two are comparable. It is NOT the per-class BENIGN fpr, which counts non-BENIGN rows predicted as BENIGN."
+  },
+  "attack_rows_predicted_as_benign_rate": 0.7116216084495471,
+  "class_sets": {
+   "classes_present_in_temporal_test": [
+    "BENIGN",
+    "Bot",
+    "DDoS",
+    "PortScan"
+   ],
+   "classes_present_in_both_partitions": [
+    "BENIGN",
+    "Bot"
+   ],
+   "union_of_train_and_test_classes": [
+    "BENIGN",
+    "Bot",
+    "DDoS",
+    "DoS GoldenEye",
+    "DoS Hulk",
+    "DoS Slowhttptest",
+    "DoS slowloris",
+    "FTP-Patator",
+    "Heartbleed",
+    "Infiltration",
+    "PortScan",
+    "SSH-Patator",
+    "Web Attack - Brute Force",
+    "Web Attack - Sql Injection",
+    "Web Attack - XSS"
+   ],
+   "classes_only_in_test": [
+    "DDoS",
+    "PortScan"
+   ],
+   "classes_only_in_train": [
+    "DoS GoldenEye",
+    "DoS Hulk",
+    "DoS Slowhttptest",
+    "DoS slowloris",
+    "FTP-Patator",
+    "Heartbleed",
+    "Infiltration",
+    "SSH-Patator",
+    "Web Attack - Brute Force",
+    "Web Attack - Sql Injection",
+    "Web Attack - XSS"
+   ]
+  },
+  "metrics_by_class_set": {
+   "classes_present_in_temporal_test": {
+    "macro_precision": 0.2281234592220514,
+    "macro_recall": 0.49802071259262315,
+    "macro_f1": 0.3083441888891783,
+    "class_set": "classes_present_in_temporal_test",
+    "classes": [
+     "BENIGN",
+     "Bot",
+     "DDoS",
+     "PortScan"
+    ],
+    "n_classes": 4,
+    "accuracy_over_these_classes": 0.4904341512224062,
+    "note": "Every class that occurs in the temporal test partition, including classes never seen during temporal training. This is the STRICT temporal result. Unseen classes are kept, not dropped."
+   },
+   "classes_present_in_both_partitions": {
+    "macro_precision": 0.4562469184441028,
+    "macro_recall": 0.9960414251852463,
+    "macro_f1": 0.6166883777783566,
+    "class_set": "classes_present_in_both_partitions",
+    "classes": [
+     "BENIGN",
+     "Bot"
+    ],
+    "n_classes": 2,
+    "accuracy_over_these_classes": 0.996742682733699,
+    "note": "Only classes present in BOTH the temporal training and the temporal test partition. This is the SEEN-CLASS DIAGNOSTIC: it isolates degradation among classes the model actually had a chance to learn. It is not a replacement for the strict result."
+   },
+   "union_of_train_and_test_classes": {
+    "macro_precision": 0.060832922459213706,
+    "macro_recall": 0.13280552335803283,
+    "macro_f1": 0.08222511703711421,
+    "class_set": "union_of_train_and_test_classes",
+    "classes": [
+     "BENIGN",
+     "Bot",
+     "DDoS",
+     "DoS GoldenEye",
+     "DoS Hulk",
+     "DoS Slowhttptest",
+     "DoS slowloris",
+     "FTP-Patator",
+     "Heartbleed",
+     "Infiltration",
+     "PortScan",
+     "SSH-Patator",
+     "Web Attack - Brute Force",
+     "Web Attack - Sql Injection",
+     "Web Attack - XSS"
+    ],
+    "n_classes": 15,
+    "accuracy_over_these_classes": 0.4904341512224062,
+    "note": "Union of temporal train and test classes. Classes with zero test support score 0 by construction, so this figure is reported for completeness only and should not be used to rank models."
+   },
+   "test_classes_with_support_at_least_100": {
+    "macro_precision": 0.2281234592220514,
+    "macro_recall": 0.49802071259262315,
+    "macro_f1": 0.3083441888891783,
+    "class_set": "test_classes_with_support_at_least_100",
+    "classes": [
+     "BENIGN",
+     "Bot",
+     "DDoS",
+     "PortScan"
+    ],
+    "n_classes": 4,
+    "accuracy_over_these_classes": 0.4904341512224062,
+    "note": "Test classes with at least 100 test rows. Sensitivity analysis only, mirroring the random-split convention."
+   }
+  },
+  "unseen": {
+   "unseen_test_classes": [
+    "DDoS",
+    "PortScan"
+   ],
+   "n_unseen_test_classes": 2,
+   "unseen_test_rows": 286829,
+   "unseen_rows_per_class": {
+    "DDoS": 128025,
+    "PortScan": 158804
+   },
+   "unseen_fraction_of_test": 0.5079631285806628,
+   "note": "A class with zero temporal training rows cannot be predicted by the classifier. Its recall is 0 by construction. This is an unseen-label effect, not evidence about temporal drift among known classes, and it is NOT zero-day detection."
+  },
+  "per_class": {
+   "BENIGN": {
+    "support": 277407,
+    "sufficient_support": true,
+    "predicted_count": 480923,
+    "true_positive": 276504,
+    "false_positive": 204419,
+    "false_negative": 903,
+    "true_negative": 82839,
+    "precision": 0.5749444297735812,
+    "recall": 0.9967448550324973,
+    "f1": 0.7292445241517546,
+    "fpr": 0.7116216084495471,
+    "fnr": 0.0032551449675026225
+   },
+   "Bot": {
+    "support": 429,
+    "sufficient_support": true,
+    "predicted_count": 1265,
+    "true_positive": 427,
+    "false_positive": 838,
+    "false_negative": 2,
+    "true_negative": 563398,
+    "precision": 0.3375494071146245,
+    "recall": 0.9953379953379954,
+    "f1": 0.5041322314049587,
+    "fpr": 0.0014851941386228459,
+    "fnr": 0.004662004662004662
+   },
+   "DDoS": {
+    "support": 128025,
+    "sufficient_support": true,
+    "predicted_count": 0,
+    "true_positive": 0,
+    "false_positive": 0,
+    "false_negative": 128025,
+    "true_negative": 436640,
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "fpr": 0.0,
+    "fnr": 1.0
+   },
+   "DoS GoldenEye": {
+    "support": 0,
+    "sufficient_support": false,
+    "predicted_count": 3,
+    "true_positive": 0,
+    "false_positive": 3,
+    "false_negative": 0,
+    "true_negative": 564662,
+    "precision": 0.0,
+    "recall": null,
+    "f1": 0.0,
+    "fpr": 5.312884630710244e-06,
+    "fnr": null
+   },
+   "DoS Hulk": {
+    "support": 0,
+    "sufficient_support": false,
+    "predicted_count": 81511,
+    "true_positive": 0,
+    "false_positive": 81511,
+    "false_negative": 0,
+    "true_negative": 483154,
+    "precision": 0.0,
+    "recall": null,
+    "f1": 0.0,
+    "fpr": 0.1443528463779409,
+    "fnr": null
+   },
+   "DoS Slowhttptest": {
+    "support": 0,
+    "sufficient_support": false,
+    "predicted_count": 13,
+    "true_positive": 0,
+    "false_positive": 13,
+    "false_negative": 0,
+    "true_negative": 564652,
+    "precision": 0.0,
+    "recall": null,
+    "f1": 0.0,
+    "fpr": 2.3022500066411058e-05,
+    "fnr": null
+   },
+   "DoS slowloris": {
+    "support": 0,
+    "sufficient_support": false,
+    "predicted_count": 4,
+    "true_positive": 0,
+    "false_positive": 4,
+    "false_negative": 0,
+    "true_negative": 564661,
+    "precision": 0.0,
+    "recall": null,
+    "f1": 0.0,
+    "fpr": 7.083846174280325e-06,
+    "fnr": null
+   },
+   "FTP-Patator": {
+    "support": 0,
+    "sufficient_support": false,
+    "predicted_count": 340,
+    "true_positive": 0,
+    "false_positive": 340,
+    "false_negative": 0,
+    "true_negative": 564325,
+    "precision": 0.0,
+    "recall": null,
+    "f1": 0.0,
+    "fpr": 0.0006021269248138277,
+    "fnr": null
+   },
+   "Heartbleed": {
+    "support": 0,
+    "sufficient_support": false,
+    "predicted_count": 0,
+    "true_positive": 0,
+    "false_positive": 0,
+    "false_negative": 0,
+    "true_negative": 564665,
+    "precision": null,
+    "recall": null,
+    "f1": 0.0,
+    "fpr": 0.0,
+    "fnr": null
+   },
+   "Infiltration": {
+    "support": 0,
+    "sufficient_support": false,
+    "predicted_count": 21,
+    "true_positive": 0,
+    "false_positive": 21,
+    "false_negative": 0,
+    "true_negative": 564644,
+    "precision": 0.0,
+    "recall": null,
+    "f1": 0.0,
+    "fpr": 3.719019241497171e-05,
+    "fnr": null
+   },
+   "PortScan": {
+    "support": 158804,
+    "sufficient_support": true,
+    "predicted_count": 0,
+    "true_positive": 0,
+    "false_positive": 0,
+    "false_negative": 158804,
+    "true_negative": 405861,
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "fpr": 0.0,
+    "fnr": 1.0
+   },
+   "SSH-Patator": {
+    "support": 0,
+    "sufficient_support": false,
+    "predicted_count": 459,
+    "true_positive": 0,
+    "false_positive": 459,
+    "false_negative": 0,
+    "true_negative": 564206,
+    "precision": 0.0,
+    "recall": null,
+    "f1": 0.0,
+    "fpr": 0.0008128713484986674,
+    "fnr": null
+   },
+   "Web Attack - Brute Force": {
+    "support": 0,
+    "sufficient_support": false,
+    "predicted_count": 7,
+    "true_positive": 0,
+    "false_positive": 7,
+    "false_negative": 0,
+    "true_negative": 564658,
+    "precision": 0.0,
+    "recall": null,
+    "f1": 0.0,
+    "fpr": 1.239673080499057e-05,
+    "fnr": null
+   },
+   "Web Attack - Sql Injection": {
+    "support": 0,
+    "sufficient_support": false,
+    "predicted_count": 1,
+    "true_positive": 0,
+    "false_positive": 1,
+    "false_negative": 0,
+    "true_negative": 564664,
+    "precision": 0.0,
+    "recall": null,
+    "f1": 0.0,
+    "fpr": 1.7709615435700813e-06,
+    "fnr": null
+   },
+   "Web Attack - XSS": {
+    "support": 0,
+    "sufficient_support": false,
+    "predicted_count": 118,
+    "true_positive": 0,
+    "false_positive": 118,
+    "false_negative": 0,
+    "true_negative": 564547,
+    "precision": 0.0,
+    "recall": null,
+    "f1": 0.0,
+    "fpr": 0.0002089734621412696,
+    "fnr": null
+   }
+  },
+  "min_support_for_claim": 100,
+  "insufficient_support_classes": [],
+  "confusion_matrix_csv": "confusion_matrix.csv",
+  "confusion_matrix_png": "confusion_matrix.png"
+ },
+ "config_source": "C:\\IDS\\ml-service\\training\\configs\\temporal\\xgb_smote_top50_temporal_v1.yaml",
+ "git_commit": "162fa3a6c739a8b06e7a638d1dd0f23fd1166dd8",
+ "library_versions": {
+  "python": "3.11.9",
+  "numpy": "2.1.1",
+  "pandas": "2.2.3",
+  "scikit-learn": "1.5.2",
+  "xgboost": "2.1.1"
+ }
+}
