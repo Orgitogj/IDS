@@ -1,0 +1,684 @@
+{
+ "schema_version": 1,
+ "report_kind": "training_run",
+ "generated_at": "2026-09-06T17:36:15.390744Z",
+ "trained_at": "2026-09-06T17:36:15.390744Z",
+ "evaluated_at": "2026-09-06T17:36:15.390744Z",
+ "artifact_sha256": "16294d80d734ced87b50e65608f960d675c8d8f7fffdafb82c1af7f152d93a19",
+ "name": "mlp-smote-cicids2017-v2",
+ "version": "2.0",
+ "description": "MLP mbi te njejtin balancim. I vetmi model qe kerkon scaler; StandardScaler-i pershtatet VETEM mbi train-in e balancuar dhe aplikohet mbi test pa u ri-pershtatur.",
+ "algorithm": "mlp",
+ "seed": 42,
+ "artifact_file": "mlp_smote_cicids2017_v2.joblib",
+ "label_encoder_file": "mlp_smote_cicids2017_v2_label_encoder.joblib",
+ "scaler_file": "mlp_smote_cicids2017_v2_scaler.joblib",
+ "feature_columns_file": "mlp_smote_cicids2017_v2_feature_columns.json",
+ "feature_version": "cicids2017-78-v1",
+ "feature_columns": [
+  "Destination Port",
+  "Protocol",
+  "Flow Duration",
+  "Total Fwd Packets",
+  "Total Backward Packets",
+  "Total Length of Fwd Packets",
+  "Total Length of Bwd Packets",
+  "Fwd Packet Length Max",
+  "Fwd Packet Length Min",
+  "Fwd Packet Length Mean",
+  "Fwd Packet Length Std",
+  "Bwd Packet Length Max",
+  "Bwd Packet Length Min",
+  "Bwd Packet Length Mean",
+  "Bwd Packet Length Std",
+  "Flow Bytes/s",
+  "Flow Packets/s",
+  "Flow IAT Mean",
+  "Flow IAT Std",
+  "Flow IAT Max",
+  "Flow IAT Min",
+  "Fwd IAT Total",
+  "Fwd IAT Mean",
+  "Fwd IAT Std",
+  "Fwd IAT Max",
+  "Fwd IAT Min",
+  "Bwd IAT Total",
+  "Bwd IAT Mean",
+  "Bwd IAT Std",
+  "Bwd IAT Max",
+  "Bwd IAT Min",
+  "Fwd PSH Flags",
+  "Bwd PSH Flags",
+  "Fwd URG Flags",
+  "Bwd URG Flags",
+  "Fwd Header Length",
+  "Bwd Header Length",
+  "Fwd Packets/s",
+  "Bwd Packets/s",
+  "Min Packet Length",
+  "Max Packet Length",
+  "Packet Length Mean",
+  "Packet Length Std",
+  "Packet Length Variance",
+  "FIN Flag Count",
+  "SYN Flag Count",
+  "RST Flag Count",
+  "PSH Flag Count",
+  "ACK Flag Count",
+  "URG Flag Count",
+  "CWE Flag Count",
+  "ECE Flag Count",
+  "Down/Up Ratio",
+  "Average Packet Size",
+  "Avg Fwd Segment Size",
+  "Avg Bwd Segment Size",
+  "Fwd Avg Bytes/Bulk",
+  "Fwd Avg Packets/Bulk",
+  "Fwd Avg Bulk Rate",
+  "Bwd Avg Bytes/Bulk",
+  "Bwd Avg Packets/Bulk",
+  "Bwd Avg Bulk Rate",
+  "Subflow Fwd Packets",
+  "Subflow Fwd Bytes",
+  "Subflow Bwd Packets",
+  "Subflow Bwd Bytes",
+  "Init_Win_bytes_forward",
+  "Init_Win_bytes_backward",
+  "act_data_pkt_fwd",
+  "min_seg_size_forward",
+  "Active Mean",
+  "Active Std",
+  "Active Max",
+  "Active Min",
+  "Idle Mean",
+  "Idle Std",
+  "Idle Max",
+  "Idle Min"
+ ],
+ "n_features": 78,
+ "label_classes": [
+  "BENIGN",
+  "Bot",
+  "DDoS",
+  "DoS GoldenEye",
+  "DoS Hulk",
+  "DoS Slowhttptest",
+  "DoS slowloris",
+  "FTP-Patator",
+  "Heartbleed",
+  "Infiltration",
+  "PortScan",
+  "SSH-Patator",
+  "Web Attack - Brute Force",
+  "Web Attack - Sql Injection",
+  "Web Attack - XSS"
+ ],
+ "model_params": {
+  "hidden_layer_sizes": [
+   64,
+   32
+  ],
+  "max_iter": 50,
+  "early_stopping": true,
+  "n_iter_no_change": 5,
+  "random_state": 42
+ },
+ "dataset": {
+  "name": "cicids2017_cleaned.parquet",
+  "sha256": "f5b393d646f69f990ffc48203debc7241f897eacde9870a351db6d264b9e3d1d",
+  "rows_in_file": 2827876,
+  "rows_used": 2827876,
+  "subsampled": false,
+  "sample_rows_requested": null,
+  "subsample": {
+   "applied": false
+  },
+  "label_column": "Label",
+  "n_features": 78
+ },
+ "split": {
+  "strategy": "random",
+  "test_size": 0.2,
+  "train_rows": 2262300,
+  "test_rows": 565576,
+  "train_class_support": {
+   "BENIGN": 1817055,
+   "Bot": 1565,
+   "DDoS": 102420,
+   "DoS GoldenEye": 8234,
+   "DoS Hulk": 184099,
+   "DoS Slowhttptest": 4399,
+   "DoS slowloris": 4637,
+   "FTP-Patator": 6348,
+   "Heartbleed": 9,
+   "Infiltration": 29,
+   "PortScan": 127043,
+   "SSH-Patator": 4717,
+   "Web Attack - Brute Force": 1206,
+   "Web Attack - Sql Injection": 17,
+   "Web Attack - XSS": 522
+  },
+  "test_class_support": {
+   "BENIGN": 454265,
+   "Bot": 391,
+   "DDoS": 25605,
+   "DoS GoldenEye": 2059,
+   "DoS Hulk": 46025,
+   "DoS Slowhttptest": 1100,
+   "DoS slowloris": 1159,
+   "FTP-Patator": 1587,
+   "Heartbleed": 2,
+   "Infiltration": 7,
+   "PortScan": 31761,
+   "SSH-Patator": 1180,
+   "Web Attack - Brute Force": 301,
+   "Web Attack - Sql Injection": 4,
+   "Web Attack - XSS": 130
+  },
+  "classes_absent_from_train": [],
+  "classes_absent_from_test": []
+ },
+ "balancing": {
+  "enabled": true,
+  "strategy": "undersample_benign_200k_oversample_rare_2k",
+  "seed": 42,
+  "benign_label": "BENIGN",
+  "benign_cap": 200000,
+  "rare_class_min": 2000,
+  "oversampler": "smote",
+  "smote_k_neighbors": 5,
+  "rows_before": 2262300,
+  "rows_after": 653897,
+  "rows_after_undersampling": 645245,
+  "synthetic_rows": 8652,
+  "replicated_classes": [],
+  "class_counts_before": {
+   "BENIGN": 1817055,
+   "Bot": 1565,
+   "DDoS": 102420,
+   "DoS GoldenEye": 8234,
+   "DoS Hulk": 184099,
+   "DoS Slowhttptest": 4399,
+   "DoS slowloris": 4637,
+   "FTP-Patator": 6348,
+   "Heartbleed": 9,
+   "Infiltration": 29,
+   "PortScan": 127043,
+   "SSH-Patator": 4717,
+   "Web Attack - Brute Force": 1206,
+   "Web Attack - Sql Injection": 17,
+   "Web Attack - XSS": 522
+  },
+  "class_counts_after": {
+   "BENIGN": 200000,
+   "Bot": 2000,
+   "DDoS": 102420,
+   "DoS GoldenEye": 8234,
+   "DoS Hulk": 184099,
+   "DoS Slowhttptest": 4399,
+   "DoS slowloris": 4637,
+   "FTP-Patator": 6348,
+   "Heartbleed": 2000,
+   "Infiltration": 2000,
+   "PortScan": 127043,
+   "SSH-Patator": 4717,
+   "Web Attack - Brute Force": 2000,
+   "Web Attack - Sql Injection": 2000,
+   "Web Attack - XSS": 2000
+  },
+  "plan": {
+   "BENIGN": {
+    "available": 1817055,
+    "target": 200000,
+    "method": "undersampled"
+   },
+   "Bot": {
+    "available": 1565,
+    "target": 2000,
+    "method": "smote"
+   },
+   "DDoS": {
+    "available": 102420,
+    "target": 102420,
+    "method": "unchanged"
+   },
+   "DoS GoldenEye": {
+    "available": 8234,
+    "target": 8234,
+    "method": "unchanged"
+   },
+   "DoS Hulk": {
+    "available": 184099,
+    "target": 184099,
+    "method": "unchanged"
+   },
+   "DoS Slowhttptest": {
+    "available": 4399,
+    "target": 4399,
+    "method": "unchanged"
+   },
+   "DoS slowloris": {
+    "available": 4637,
+    "target": 4637,
+    "method": "unchanged"
+   },
+   "FTP-Patator": {
+    "available": 6348,
+    "target": 6348,
+    "method": "unchanged"
+   },
+   "Heartbleed": {
+    "available": 9,
+    "target": 2000,
+    "method": "smote"
+   },
+   "Infiltration": {
+    "available": 29,
+    "target": 2000,
+    "method": "smote"
+   },
+   "PortScan": {
+    "available": 127043,
+    "target": 127043,
+    "method": "unchanged"
+   },
+   "SSH-Patator": {
+    "available": 4717,
+    "target": 4717,
+    "method": "unchanged"
+   },
+   "Web Attack - Brute Force": {
+    "available": 1206,
+    "target": 2000,
+    "method": "smote"
+   },
+   "Web Attack - Sql Injection": {
+    "available": 17,
+    "target": 2000,
+    "method": "smote"
+   },
+   "Web Attack - XSS": {
+    "available": 522,
+    "target": 2000,
+    "method": "smote"
+   }
+  },
+  "planned_total": 653897
+ },
+ "timings": {
+  "train_seconds": 281.2426529999939,
+  "predict_seconds_batch": 1.2925265000085346,
+  "avg_latency_ms_batch": 0.0022853277013319775,
+  "latency_methodology": "Batch throughput: one predict() over the whole test set, after a discarded warm-up of 1000 rows, repeated 3 times; the median is reported. Comparable with the historical notebook figures. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency.",
+  "latency_scope": "model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency.",
+  "model_inference_latency": {
+   "metric": "model_inference_latency",
+   "scope": "model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency.",
+   "batch": {
+    "metric": "model_inference_latency",
+    "batch_size": 565576,
+    "warmup_rows": 1000,
+    "repetitions": 3,
+    "seconds_per_repetition": [
+     1.2925265000085346,
+     1.342199399950914,
+     1.19435100001283
+    ],
+    "median_seconds": 1.2925265000085346,
+    "min_seconds": 1.19435100001283,
+    "max_seconds": 1.342199399950914,
+    "ms_per_flow": 0.0022853277013319775,
+    "flows_per_second": 437574.0071838105,
+    "methodology": "Batch throughput: one predict() over the whole test set, after a discarded warm-up of 1000 rows, repeated 3 times; the median is reported. Comparable with the historical notebook figures. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency."
+   },
+   "single_flow": {
+    "metric": "model_inference_latency",
+    "samples": 200,
+    "warmup": 20,
+    "mean_ms": 0.2561799978138879,
+    "median_ms": 0.2138499985449016,
+    "p95_ms": 0.5449449497973541,
+    "methodology": "Single-flow latency: predict() on one row at a time, 200 rows sampled from the test set, after 20 discarded warm-up rows. Mean, median and p95 are reported. This is NOT comparable with the batch figure. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency."
+   }
+  },
+  "production_path_inference_latency": {
+   "metric": "production_path_inference_latency",
+   "samples": 200,
+   "warmup": 20,
+   "mean_ms": 3.2762969998293556,
+   "median_ms": 3.453449986409396,
+   "p95_ms": 4.688420009915717,
+   "methodology": "Mimics app/ml/inference.predict: build a one-row DataFrame with the model's feature columns, then predict. DataFrame construction IS inside the timed region. HTTP, Spring Boot, database, SHAP, LLM and frontend are NOT included - those belong to end_to_end_IDS_latency, measured separately."
+  },
+  "batch_latency": {
+   "metric": "model_inference_latency",
+   "batch_size": 565576,
+   "warmup_rows": 1000,
+   "repetitions": 3,
+   "seconds_per_repetition": [
+    1.2925265000085346,
+    1.342199399950914,
+    1.19435100001283
+   ],
+   "median_seconds": 1.2925265000085346,
+   "min_seconds": 1.19435100001283,
+   "max_seconds": 1.342199399950914,
+   "ms_per_flow": 0.0022853277013319775,
+   "flows_per_second": 437574.0071838105,
+   "methodology": "Batch throughput: one predict() over the whole test set, after a discarded warm-up of 1000 rows, repeated 3 times; the median is reported. Comparable with the historical notebook figures. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency."
+  },
+  "single_flow_latency": {
+   "metric": "model_inference_latency",
+   "samples": 200,
+   "warmup": 20,
+   "mean_ms": 0.2561799978138879,
+   "median_ms": 0.2138499985449016,
+   "p95_ms": 0.5449449497973541,
+   "methodology": "Single-flow latency: predict() on one row at a time, 200 rows sampled from the test set, after 20 discarded warm-up rows. Mean, median and p95 are reported. This is NOT comparable with the batch figure. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency."
+  }
+ },
+ "metrics": {
+  "overall": {
+   "rows": 565576,
+   "accuracy": 0.98975734472467,
+   "accuracy_sklearn": 0.98975734472467,
+   "macro_f1": 0.7252187815571804,
+   "weighted_f1": 0.9908900149948155,
+   "macro_precision": 0.6890633805779949,
+   "macro_recall": 0.8517601920459863,
+   "binary_benign_vs_attack": {
+    "attack_rows": 111311,
+    "benign_rows": 454265,
+    "attack_recall": 0.9983739253083702,
+    "benign_false_positive_rate": 0.011651789153907962
+   },
+   "macro_f1_min_support": 0.8086398790628776
+  },
+  "primary_metric": "macro_f1",
+  "sensitivity_metric": "macro_f1_min_support",
+  "macro_f1_from_confusion_matrix": 0.7252187815571804,
+  "macro_f1_min_support": 0.8086398790628776,
+  "classes_in_macro_f1_min_support": [
+   "BENIGN",
+   "Bot",
+   "DDoS",
+   "DoS GoldenEye",
+   "DoS Hulk",
+   "DoS Slowhttptest",
+   "DoS slowloris",
+   "FTP-Patator",
+   "PortScan",
+   "SSH-Patator",
+   "Web Attack - Brute Force",
+   "Web Attack - XSS"
+  ],
+  "weighted_f1_from_confusion_matrix": 0.9908900149948153,
+  "min_support_for_claim": 100,
+  "insufficient_support_classes": [
+   "Heartbleed",
+   "Infiltration",
+   "Web Attack - Sql Injection"
+  ],
+  "absent_from_test_classes": [],
+  "per_class": {
+   "BENIGN": {
+    "support": 454265,
+    "sufficient_support": true,
+    "predicted_count": 449153,
+    "true_positive": 448972,
+    "false_positive": 181,
+    "false_negative": 5293,
+    "true_negative": 111130,
+    "precision": 0.9995970192785086,
+    "recall": 0.988348210846092,
+    "f1": 0.993940789313474,
+    "fpr": 0.0016260746916297582,
+    "fnr": 0.011651789153907962
+   },
+   "Bot": {
+    "support": 391,
+    "sufficient_support": true,
+    "predicted_count": 455,
+    "true_positive": 259,
+    "false_positive": 196,
+    "false_negative": 132,
+    "true_negative": 564989,
+    "precision": 0.5692307692307692,
+    "recall": 0.6624040920716112,
+    "f1": 0.6122931442080378,
+    "fpr": 0.0003467891044525244,
+    "fnr": 0.3375959079283887
+   },
+   "DDoS": {
+    "support": 25605,
+    "sufficient_support": true,
+    "predicted_count": 25658,
+    "true_positive": 25593,
+    "false_positive": 65,
+    "false_negative": 12,
+    "true_negative": 539906,
+    "precision": 0.9974666770597864,
+    "recall": 0.9995313415348565,
+    "f1": 0.9984979419854476,
+    "fpr": 0.00012037683505225281,
+    "fnr": 0.00046865846514352667
+   },
+   "DoS GoldenEye": {
+    "support": 2059,
+    "sufficient_support": true,
+    "predicted_count": 2116,
+    "true_positive": 2034,
+    "false_positive": 82,
+    "false_negative": 25,
+    "true_negative": 563435,
+    "precision": 0.9612476370510397,
+    "recall": 0.9878581835842642,
+    "f1": 0.9743712574850298,
+    "fpr": 0.00014551468722327808,
+    "fnr": 0.012141816415735794
+   },
+   "DoS Hulk": {
+    "support": 46025,
+    "sufficient_support": true,
+    "predicted_count": 48791,
+    "true_positive": 46021,
+    "false_positive": 2770,
+    "false_negative": 4,
+    "true_negative": 516781,
+    "precision": 0.9432272345309586,
+    "recall": 0.9999130907115698,
+    "f1": 0.9707433344583193,
+    "fpr": 0.005331526645122423,
+    "fnr": 8.690928843020098e-05
+   },
+   "DoS Slowhttptest": {
+    "support": 1100,
+    "sufficient_support": true,
+    "predicted_count": 1225,
+    "true_positive": 1087,
+    "false_positive": 138,
+    "false_negative": 13,
+    "true_negative": 564338,
+    "precision": 0.8873469387755102,
+    "recall": 0.9881818181818182,
+    "f1": 0.9350537634408602,
+    "fpr": 0.00024447452150312855,
+    "fnr": 0.011818181818181818
+   },
+   "DoS slowloris": {
+    "support": 1159,
+    "sufficient_support": true,
+    "predicted_count": 1202,
+    "true_positive": 1149,
+    "false_positive": 53,
+    "false_negative": 10,
+    "true_negative": 564364,
+    "precision": 0.9559068219633944,
+    "recall": 0.99137187230371,
+    "f1": 0.9733163913595934,
+    "fpr": 9.39022035126511e-05,
+    "fnr": 0.008628127696289905
+   },
+   "FTP-Patator": {
+    "support": 1587,
+    "sufficient_support": true,
+    "predicted_count": 1658,
+    "true_positive": 1579,
+    "false_positive": 79,
+    "false_negative": 8,
+    "true_negative": 563910,
+    "precision": 0.9523522316043426,
+    "recall": 0.9949590422180214,
+    "f1": 0.9731895223420648,
+    "fpr": 0.0001400736539187821,
+    "fnr": 0.005040957781978576
+   },
+   "Heartbleed": {
+    "support": 2,
+    "sufficient_support": false,
+    "predicted_count": 4,
+    "true_positive": 2,
+    "false_positive": 2,
+    "false_negative": 0,
+    "true_negative": 565572,
+    "precision": 0.5,
+    "recall": 1.0,
+    "f1": 0.6666666666666666,
+    "fpr": 3.5362304490659046e-06,
+    "fnr": 0.0
+   },
+   "Infiltration": {
+    "support": 7,
+    "sufficient_support": false,
+    "predicted_count": 21,
+    "true_positive": 4,
+    "false_positive": 17,
+    "false_negative": 3,
+    "true_negative": 565552,
+    "precision": 0.19047619047619047,
+    "recall": 0.5714285714285714,
+    "f1": 0.2857142857142857,
+    "fpr": 3.005822454908243e-05,
+    "fnr": 0.42857142857142855
+   },
+   "PortScan": {
+    "support": 31761,
+    "sufficient_support": true,
+    "predicted_count": 32184,
+    "true_positive": 31745,
+    "false_positive": 439,
+    "false_negative": 16,
+    "true_negative": 533376,
+    "precision": 0.9863596818294805,
+    "recall": 0.9994962375240074,
+    "f1": 0.9928845101258894,
+    "fpr": 0.0008223822859979581,
+    "fnr": 0.0005037624759925695
+   },
+   "SSH-Patator": {
+    "support": 1180,
+    "sufficient_support": true,
+    "predicted_count": 1320,
+    "true_positive": 1165,
+    "false_positive": 155,
+    "false_negative": 15,
+    "true_negative": 564241,
+    "precision": 0.8825757575757576,
+    "recall": 0.9872881355932204,
+    "f1": 0.932,
+    "fpr": 0.00027462986980772365,
+    "fnr": 0.012711864406779662
+   },
+   "Web Attack - Brute Force": {
+    "support": 301,
+    "sufficient_support": true,
+    "predicted_count": 165,
+    "true_positive": 48,
+    "false_positive": 117,
+    "false_negative": 253,
+    "true_negative": 565158,
+    "precision": 0.2909090909090909,
+    "recall": 0.15946843853820597,
+    "f1": 0.20600858369098712,
+    "fpr": 0.00020697890407323869,
+    "fnr": 0.840531561461794
+   },
+   "Web Attack - Sql Injection": {
+    "support": 4,
+    "sufficient_support": false,
+    "predicted_count": 14,
+    "true_positive": 2,
+    "false_positive": 12,
+    "false_negative": 2,
+    "true_negative": 565560,
+    "precision": 0.14285714285714285,
+    "recall": 0.5,
+    "f1": 0.22222222222222224,
+    "fpr": 2.1217457724215484e-05,
+    "fnr": 0.5
+   },
+   "Web Attack - XSS": {
+    "support": 130,
+    "sufficient_support": true,
+    "predicted_count": 1610,
+    "true_positive": 123,
+    "false_positive": 1487,
+    "false_negative": 7,
+    "true_negative": 563959,
+    "precision": 0.07639751552795031,
+    "recall": 0.9461538461538461,
+    "f1": 0.14137931034482756,
+    "fpr": 0.002629782507967162,
+    "fnr": 0.05384615384615385
+   }
+  },
+  "confusion_matrix_csv": "confusion_matrix.csv",
+  "confusion_matrix_png": "confusion_matrix.png"
+ },
+ "config": {
+  "name": "mlp-smote-cicids2017-v2",
+  "version": "2.0",
+  "description": "MLP mbi te njejtin balancim. I vetmi model qe kerkon scaler; StandardScaler-i pershtatet VETEM mbi train-in e balancuar dhe aplikohet mbi test pa u ri-pershtatur.",
+  "seed": 42,
+  "dataset": {
+   "path": "datasets/cicids2017_cleaned.parquet",
+   "label_column": "Label",
+   "timestamp_column": "Timestamp"
+  },
+  "features": {
+   "reference": "reports/training_feature_reference.json",
+   "feature_set": "cicids2017-78-v1",
+   "columns": null
+  },
+  "split": {
+   "strategy": "random",
+   "test_size": 0.2
+  },
+  "balancing": {
+   "enabled": true,
+   "benign_label": "BENIGN",
+   "benign_cap": 200000,
+   "rare_class_min": 2000,
+   "oversampler": "smote",
+   "smote_k_neighbors": 5
+  },
+  "model": {
+   "type": "mlp",
+   "params": {
+    "hidden_layer_sizes": [
+     64,
+     32
+    ],
+    "max_iter": 50,
+    "early_stopping": true,
+    "n_iter_no_change": 5
+   }
+  },
+  "output": {
+   "models_dir": "models",
+   "reports_dir": "reports/training",
+   "artifact_name": "mlp_smote_cicids2017_v2"
+  }
+ },
+ "config_source": "C:\\IDS\\ml-service\\training\\configs\\mlp_smote_v2.yaml"
+}
