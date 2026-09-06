@@ -1,0 +1,41 @@
+name: xgb-smote-cicids2017-temporal-v1
+version: "temporal-1.0"
+description: >-
+  XGBoost me balancim, ndarje kohore globale. Nuk krahasohet drejtperdrejt me
+  random-v2: ndryshon protokolli i ndarjes, jo vetem seed-i.
+
+seed: 42
+
+dataset:
+  path: datasets/cicids2017_cleaned.parquet
+  label_column: Label
+  timestamp_column: Timestamp
+
+features:
+  reference: reports/training_feature_reference.json
+  feature_set: cicids2017-78-v1
+
+split:
+  strategy: temporal_global
+  test_size: 0.2
+
+output:
+  models_dir: models
+  reports_dir: reports/temporal_evaluation/training
+  artifact_name: xgb_smote_temporal_v1
+
+balancing:
+  enabled: true
+  benign_label: BENIGN
+  benign_cap: 200000
+  rare_class_min: 2000
+  oversampler: smote
+  smote_k_neighbors: 5
+
+model:
+  type: xgboost
+  params:
+    n_estimators: 100
+    tree_method: hist
+    eval_metric: mlogloss
+    n_jobs: -1
