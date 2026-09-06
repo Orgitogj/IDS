@@ -1,0 +1,36 @@
+name: xgb-smote-top20features-v2
+version: "2.0"
+description: >-
+  RQ3: i njejti recept balancimi dhe i njejti split, mbi feature set-in top-20 te
+  rirenditur nga modeli xgb-smote-cicids2017-v2. Renditja mesohet VETEM nga te dhenat e
+  trajnimit. Kerkon qe 'python -m training.build_feature_ranking --write-reference' te
+  jete xhiruar me pare.
+
+seed: 42
+
+dataset:
+  path: datasets/cicids2017_cleaned.parquet
+
+features:
+  feature_set: cicids2017-top20-v2
+
+split:
+  strategy: random
+  test_size: 0.2
+
+balancing:
+  enabled: true
+  benign_cap: 200000
+  rare_class_min: 2000
+  oversampler: smote
+
+model:
+  type: xgboost
+  params:
+    n_estimators: 100
+    tree_method: hist
+    eval_metric: mlogloss
+    n_jobs: -1
+
+output:
+  artifact_name: xgb_smote_top20features_v2
