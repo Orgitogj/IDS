@@ -11,8 +11,10 @@ from app.core.config import settings
 from app.ml.feature_validation import (
     STRICT_POLICY,
     FeatureValidator,
+    FeatureVersionMismatch,
     load_reference,
     resolve_feature_version,
+    verify_feature_version,
 )
 from app.ml.anomaly import load_anomaly_detector
 from app.ml.detection_engine import METHOD_ANOMALY, decide
@@ -47,12 +49,35 @@ def _models_dir():
     return Path(settings.models_dir)
 
 
-def _feature_columns_for(model, models_dir):
+def _feature_columns_for(model, models_dir, artifact_file=None):
     names = getattr(model, "feature_names_in_", None)
     if names is not None:
         return [str(name) for name in names]
+
+    expected = getattr(model, "n_features_in_", None)
+
+    if artifact_file:
+        sidecar = models_dir / f"{Path(artifact_file).stem}_feature_columns.json"
+        if sidecar.exists():
+            with open(sidecar, encoding="utf-8") as handle:
+                columns = [str(name) for name in json.load(handle)]
+            if expected is not None and len(columns) != expected:
+                raise RuntimeError(
+                    f"{sidecar.name} ka {len(columns)} features ndersa modeli pret "
+                    f"{expected}.")
+            return columns
+
     with open(models_dir / "feature_columns.json") as handle:
-        return json.load(handle)
+        columns = [str(name) for name in json.load(handle)]
+
+    if expected is not None and len(columns) != expected:
+        raise RuntimeError(
+            f"Modeli '{artifact_file}' pret {expected} features, por s'ekspozon "
+            f"feature_names_in_ dhe s'ka sidecar; feature_columns.json i pergjithshem ka "
+            f"{len(columns)}. Refuzoj fallback-un e heshtur - shto "
+            f"'{Path(artifact_file or 'model').stem}_feature_columns.json'.")
+
+    return columns
 
 
 def _evict_if_needed():
@@ -78,7 +103,12 @@ def _load(identity):
     if _label_encoder is None:
         _label_encoder = joblib.load(models_dir / "label_encoder_cicids2017.joblib")
 
-    feature_columns = _feature_columns_for(model, models_dir)
+    feature_columns = _feature_columns_for(model, models_dir, identity.artifact_file)
+
+    mismatch = verify_feature_version(feature_columns, identity.feature_version, _reference)
+    if mismatch is not None:
+        print(f"[inference] REFUZIM: {identity.artifact_file} -> {mismatch['message']}")
+        raise FeatureVersionMismatch(mismatch)
 
     if not identity.feature_version:
         identity.feature_version = resolve_feature_version(feature_columns, _reference)
