@@ -1,0 +1,34 @@
+name: mlp-smote-cicids2017-v2
+version: "2.0"
+description: >-
+  MLP mbi te njejtin balancim. I vetmi model qe kerkon scaler; StandardScaler-i
+  pershtatet VETEM mbi train-in e balancuar dhe aplikohet mbi test pa u ri-pershtatur.
+
+seed: 42
+
+dataset:
+  path: datasets/cicids2017_cleaned.parquet
+
+features:
+  feature_set: cicids2017-78-v1
+
+split:
+  strategy: random
+  test_size: 0.2
+
+balancing:
+  enabled: true
+  benign_cap: 200000
+  rare_class_min: 2000
+  oversampler: smote
+
+model:
+  type: mlp
+  params:
+    hidden_layer_sizes: [64, 32]
+    max_iter: 50
+    early_stopping: true
+    n_iter_no_change: 5
+
+output:
+  artifact_name: mlp_smote_cicids2017_v2
