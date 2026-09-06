@@ -1,0 +1,33 @@
+name: rf-baseline-cicids2017-v2-final
+version: "2.0"
+description: >-
+  Random Forest pa balancim, mbi te njejtin split dhe te njejtat hiperparametra si
+  rf-smote-cicids2017-v2. Emri i regjistrit mban prapashtesen '-final' sepse artefakti
+  historik rf_baseline_cicids2017_v1.joblib u regjistrua nga notebook-u me emrin
+  'rf-baseline-cicids2017-v2'; ai rekord historik nuk preket. Bashke me xgb-baseline-v2 formon 2x2-shin algoritem x balancim,
+  qe izolon efektin e balancimit ne te dyja familjet e algoritmeve.
+
+seed: 42
+
+dataset:
+  path: datasets/cicids2017_cleaned.parquet
+
+features:
+  feature_set: cicids2017-78-v1
+
+split:
+  strategy: random
+  test_size: 0.2
+
+balancing:
+  enabled: false
+
+model:
+  type: random_forest
+  params:
+    n_estimators: 100
+    n_jobs: -1
+    class_weight: null
+
+output:
+  artifact_name: rf_baseline_cicids2017_v2
