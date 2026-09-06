@@ -1,0 +1,22 @@
+[
+ "Bwd Packet Length Min",
+ "PSH Flag Count",
+ "Idle Min",
+ "act_data_pkt_fwd",
+ "Total Length of Fwd Packets",
+ "Total Length of Bwd Packets",
+ "Average Packet Size",
+ "Bwd Packets/s",
+ "Fwd Packet Length Min",
+ "Bwd Header Length",
+ "Bwd Packet Length Std",
+ "Active Std",
+ "Fwd Packet Length Max",
+ "Init_Win_bytes_backward",
+ "Min Packet Length",
+ "Bwd IAT Total",
+ "Total Backward Packets",
+ "Total Fwd Packets",
+ "Fwd Header Length",
+ "Destination Port"
+]
