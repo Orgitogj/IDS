@@ -237,6 +237,17 @@ def macro_f1_from_per_class(per_class):
     return float(np.mean(scores)) if scores else 0.0
 
 
+def macro_f1_at_min_support(per_class, min_support=MIN_SUPPORT_FOR_CLAIM):
+    scores = [row["f1"] for row in per_class.values()
+              if row["support"] >= min_support]
+    return float(np.mean(scores)) if scores else None
+
+
+def classes_at_min_support(per_class, min_support=MIN_SUPPORT_FOR_CLAIM):
+    return sorted(name for name, row in per_class.items()
+                  if row["support"] >= min_support)
+
+
 def weighted_f1_from_per_class(per_class):
     total = sum(row["support"] for row in per_class.values())
     if not total:
@@ -323,6 +334,8 @@ def score_run(name, split_name, y_true, y_pred, reports_dir, notes=None, extra=N
         "notes": notes,
         "overall": overall,
         "macro_f1_from_confusion_matrix": macro_f1_from_per_class(per_class),
+        "macro_f1_min_support": macro_f1_at_min_support(per_class),
+        "classes_in_macro_f1_min_support": classes_at_min_support(per_class),
         "weighted_f1_from_confusion_matrix": weighted_f1_from_per_class(per_class),
         "min_support_for_claim": MIN_SUPPORT_FOR_CLAIM,
         "insufficient_support_classes": insufficient,
