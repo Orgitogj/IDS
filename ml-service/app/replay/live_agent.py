@@ -13,13 +13,15 @@ import requests
 
 try:
     from app.replay.feature_mapping import CICFLOWMETER_TO_CICIDS2017, META_COLUMNS
-    from app.ml.feature_validation import STRICT_POLICY, FeatureValidator, load_reference
+    from app.ml.feature_validation import (STRICT_POLICY, FeatureValidator,
+                                           load_reference, verify_feature_version)
     from app.ml.anomaly import load_anomaly_detector
     from app.ml.detection_engine import decide, to_flow_label
     from app.services.token_provider import TokenProvider
 except ImportError:
     from feature_mapping import CICFLOWMETER_TO_CICIDS2017, META_COLUMNS
-    from feature_validation import STRICT_POLICY, FeatureValidator, load_reference
+    from feature_validation import (STRICT_POLICY, FeatureValidator, load_reference,
+                                    verify_feature_version)
     from anomaly import load_anomaly_detector
     from detection_engine import decide, to_flow_label
     from token_provider import TokenProvider
@@ -30,15 +32,29 @@ def load_model_artifacts(models_dir: Path, model_filename: str):
     model = joblib.load(models_dir / model_filename)
     label_encoder = joblib.load(models_dir / "label_encoder_cicids2017.joblib")
 
-    if hasattr(model, "feature_names_in_"):
-        feature_columns = [str(c) for c in model.feature_names_in_]
-    else:
+    names = getattr(model, "feature_names_in_", None)
+    if names is not None:
+        return model, label_encoder, [str(c) for c in names]
 
-        print("[live_agent] KUJDES: modeli s'ka feature_names_in_, "
-              "duke perdorur feature_columns.json te plote (78) si fallback",
-              file=sys.stderr)
+    expected = getattr(model, "n_features_in_", None)
+    sidecar = models_dir / f"{Path(model_filename).stem}_feature_columns.json"
+
+    if sidecar.exists():
+        with open(sidecar, encoding="utf-8") as f:
+            feature_columns = [str(c) for c in json.load(f)]
+        print(f"[live_agent] Modeli s'ka feature_names_in_; schema u lexua nga "
+              f"{sidecar.name} ({len(feature_columns)} features).", file=sys.stderr)
+    else:
         with open(models_dir / "feature_columns.json") as f:
-            feature_columns = json.load(f)
+            feature_columns = [str(c) for c in json.load(f)]
+        print("[live_agent] KUJDES: modeli s'ka feature_names_in_ dhe s'ka sidecar; "
+              "po perdoret feature_columns.json i pergjithshem.", file=sys.stderr)
+
+    if expected is not None and len(feature_columns) != expected:
+        raise RuntimeError(
+            f"Modeli pret {expected} features por schema e gjetur ka "
+            f"{len(feature_columns)}. Kopjo "
+            f"'{Path(model_filename).stem}_feature_columns.json' krahas artefaktit.")
 
     return model, label_encoder, feature_columns
 
@@ -204,6 +220,13 @@ def main():
     if reference is None:
         print("[live_agent] KUJDES: referenca e trajnimit s'u gjet - "
               "kontrolli i intervaleve eshte i cakivizuar (perdor --reference).", file=sys.stderr)
+    mismatch = verify_feature_version(feature_columns, args.feature_version, reference)
+    if mismatch is not None:
+        print(f"[live_agent] NDALESE: {mismatch['message']}", file=sys.stderr)
+        print(f"[live_agent] Feature set-i qe i pergjigjet vertet artefaktit: "
+              f"{mismatch['resolved_feature_version']}", file=sys.stderr)
+        return 1
+
     validator = FeatureValidator(feature_columns, reference=reference,
                                  feature_version=args.feature_version, policy=STRICT_POLICY)
     print(f"[live_agent] Validimi aktiv: feature_version={validator.feature_version}, "
@@ -294,4 +317,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)
