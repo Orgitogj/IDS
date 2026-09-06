@@ -6,7 +6,7 @@ from google import genai
 from app.core.config import settings
 from app.ml.detection_engine import METHOD_ANOMALY
 
-PROMPT_VERSION = "v2"
+PROMPT_VERSION = "v3"
 
 _anthropic_client = None
 _gemini_client = None
@@ -26,9 +26,31 @@ def _get_gemini_client():
     return _gemini_client
 
 
+ROLE = ("Je nje asistent sigurie qe shpjegon alarme te sistemit IDS per nje administrator "
+        "rrjeti. Administratori NUK eshte ekspert machine learning, por e kupton "
+        "terminologjine baze te rrjetit.")
+
+EVIDENCE_BOUNDARY = """CFARE DI DHE CFARE NUK DI:
+- Ti NUK e ke pare vete trafikun e rrjetit. Nuk ke akses te paketat, te permbajtja e tyre, as te ndonje log.
+- E vetmja evidence qe ke eshte ajo e listuar me poshte ne kete mesazh. Asgje tjeter.
+- Vlerat e features jane matje statistikore te rrjedhes, te llogaritura nga sistemi; nuk jane permbajtje e paketave."""
+
+INVENTION_RULES = """MOS SHPIK:
+- Mos permend adresa IP, porta ose emra pajisjesh qe nuk jane ne evidencen me siper.
+- Mos permend protokolle konkrete nese nuk dalin nga evidenca; mos i nxirr nga hamendja.
+- Mos pershkruaj permbajtje paketash, komanda, skedare apo payload - nuk i ke pare.
+- Mos shto teknika, mjete apo hapa sulmi qe nuk mbeshteten nga matjet e listuara.
+- Nese nje detaj nuk eshte ne evidence, mos e permend fare; mos e zevendeso me hamendje."""
+
+STYLE_RULES = """STILI:
+- Shkruaj ne shqip te qarte, 3-5 fjali, per nje administrator rrjeti.
+- Termat teknike standarde (flow, packet, feature, forward, backward, timeout) mund te mbeten ne anglisht kur perkthimi do ta bente tekstin artificial.
+- Pa ekzagjerime dhe pa gjuhe alarmi; teknikisht i sakte dhe i permbajtur."""
+
+
 def _format_shap_features(top_shap_features):
     return "\n".join(
-        f"- {f['feature']}: vlera={f['value']:.2f}, kontribut SHAP={f['shap_contribution']:.3f}"
+        f"- {f['feature']}: vlera e matur={f['value']:.2f}, kontribut SHAP={f['shap_contribution']:+.3f}"
         for f in top_shap_features or []
     )
 
@@ -39,6 +61,12 @@ def _format_anomaly_features(top_anomaly_features):
         f"{f['baseline_value']:.2f}, kontribut ne anomali={f['anomaly_contribution']:.4f}"
         for f in top_anomaly_features or []
     )
+
+
+def _confidence_text(confidence):
+    if confidence is None:
+        return "e padisponueshme"
+    return f"{confidence:.1%}"
 
 
 def _anomaly_prompt(top_anomaly_features, anomaly_score=None):
@@ -55,33 +83,59 @@ def _anomaly_prompt(top_anomaly_features, anomaly_score=None):
         score_text = (f"\nRezultati i anomalise: {anomaly_score:.3f} "
                       "(percentile kunder trafikut normal te trajnimit).")
 
-    return f"""Je nje asistent sigurie qe shpjegon alarme te sistemit IDS per nje administrator rrjeti. Administratori NUK eshte ekspert machine learning, por e kupton terminologjine baze te rrjetit.
+    return f"""{ROLE}
+
+{EVIDENCE_BOUNDARY}
 
 Ky alarm NUK erdhi nga klasifikuesi i mbikeqyrur. Modeli i mbikeqyrur e quajti flow-in trafik normal. Alarmin e ngriti detektori i anomalive, i cili u trajnua VETEM mbi trafik normal dhe nuk njeh asnje lloj sulmi. Prandaj sistemi ka gjetur sjellje te pazakonte qe NUK ia atribuon dot asnje klase te njohur sulmi nga CICIDS2017.{score_text}
 
 {evidence}
 
-Shkruaj nje shpjegim te shkurter (3-5 fjali) ne shqip. RREGULLA TE DETYRUESHME:
+Kontributi ne anomali tregon sa e ndikoi secila matje rezultatin e detektorit. Eshte atribuim statistikor i vendimit te modelit, jo shkak i provuar.
+
+{INVENTION_RULES}
+
+RREGULLA TE DETYRUESHME PER KETE RAST:
 - Thuaj qartesisht se sistemi zbuloi sjellje te pazakonte por NUK e lidh dot me nje lloj sulmi te njohur.
 - MOS emerto asnje lloj sulmi konkret, as si hipoteze, as si mohim, as si shembull. Asnje emer familjeje sulmi nuk mbeshtetet nga evidenca me siper, prandaj asnje emer i tille nuk duhet te shfaqet ne tekst.
 - MOS shpik karakteristika qe nuk jane ne listen e features me siper.
 - Pershkruaj vetem se cilat matje dalin jashte normales dhe cfare do te thote kjo ne gjuhe rrjeti.
-- Sugjero qe kjo kerkon verifikim nga analisti; mos e paraqit si sulm te konfirmuar."""
+- Sugjero qe kjo kerkon verifikim nga analisti; mos e paraqit si sulm te konfirmuar.
+
+{STYLE_RULES}"""
 
 
 def _supervised_prompt(predicted_label, confidence, top_shap_features):
     features_text = _format_shap_features(top_shap_features)
-    confidence_text = f"{confidence:.1%}" if confidence is not None else "e padisponueshme"
+    if not features_text:
+        features_text = ("(Sistemi nuk dha kontribute features per kete parashikim; ke "
+                         "vetem klasifikimin dhe besueshmerine.)")
 
-    return f"""Je nje asistent sigurie qe shpjegon alarme te sistemit IDS per nje administrator rrjeti. Administratori NUK eshte ekspert machine learning, por e kupton terminologjine baze te rrjetit.
+    return f"""{ROLE}
 
+{EVIDENCE_BOUNDARY}
+
+PARASHIKIMI I MODELIT:
 Modeli ML klasifikoi kete flow trafiku si: {predicted_label}
-Niveli i besueshmerise: {confidence_text}
+Besueshmeria e modelit per kete klasifikim: {_confidence_text(confidence)}
 
-Features qe kontribuan me shume:
+Ky eshte parashikim i nje modeli statistikor, JO fakt i provuar. Shkruaj gjithmone "modeli e klasifikoi si {predicted_label}" ose "sipas modelit", dhe kurrsesi "kjo rrjedhe ishte {predicted_label}" apo "u konfirmua si {predicted_label}".
+
+Besueshmeria eshte siguria e modelit ne klasen qe zgjodhi. NUK eshte probabiliteti qe sulmi ka ndodhur vertet dhe nuk eshte matje rreziku. Sa me e ulet te jete, aq me te kujdesshme duhet te jene formulimet e tua dhe aq me qarte duhet te kerkosh verifikim nga analisti.
+
+FEATURES ME KONTRIBUTIN ME TE MADH (vlera SHAP):
 {features_text}
 
-Shkruaj nje shpjegim te shkurter (3-5 fjali) ne shqip qe shpjegon ne gjuhe te thjeshte cfare u zbulua dhe pse, pa xhargon ML. Mos shpik karakteristika qe nuk mbeshteten nga te dhenat me siper."""
+Vlera e matur eshte matja reale e flow-it. Kontributi SHAP eshte sa e shtyu ajo matje modelin drejt kesaj klase: pozitiv = ne favor te klases, negativ = kunder saj. SHAP shpjegon vendimin e modelit, NUK provon shkakun real te trafikut - mos e paraqit si lidhje shkakesore.
+
+{INVENTION_RULES}
+
+RREGULLA TE DETYRUESHME PER KETE RAST:
+- Shpjego pse modeli arriti te ky klasifikim, duke u mbeshtetur vetem te matjet me siper.
+- Dallo qarte mes "modeli e klasifikoi si {predicted_label}" dhe "eshte provuar se ishte {predicted_label}".
+- Mos e paraqit klasifikimin si incident te konfirmuar; rekomando verifikim nga analisti.
+
+{STYLE_RULES}"""
 
 
 def _build_prompt(predicted_label, confidence, top_shap_features, detection_method=None,
