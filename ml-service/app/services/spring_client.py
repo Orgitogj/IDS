@@ -63,24 +63,37 @@ def register_model(algorithm: str, name: str, trained_on_dataset: str,
     })
 
 
-def record_experiment_result(ml_model_id: str, tested_on_dataset: str,
-                             accuracy: float, precision: float, recall: float,
-                             f1: float, avg_latency_ms: float = None,
-                             sample_size: int = None,
-                             feature_set_used: str = None,
-                             notes: str = None) -> dict:
-    return _request("POST", "/api/experiments", {
-        "mlModelId": ml_model_id,
-        "testedOnDataset": tested_on_dataset,
-        "featureSetUsed": feature_set_used,
-        "accuracy": accuracy,
-        "precisionScore": precision,
-        "recall": recall,
-        "f1Score": f1,
-        "avgLatencyMs": avg_latency_ms,
-        "sampleSize": sample_size,
-        "notes": notes,
-    })
+EXPERIMENT_PAYLOAD_KEYS = ("mlModelId", "testedOnDataset", "featureSetUsed", "accuracy",
+                          "precisionScore", "recall", "f1Score", "avgLatencyMs",
+                          "sampleSize", "notes")
+
+MANUAL_METRICS_REFUSED = (
+    "Metrikat e eksperimenteve nuk pranohen si argumente. Nje rezultat regjistrohet "
+    "vetem nga nje raport evaluation i validuar:\n"
+    "  from training.pipeline.reporting import EvaluationReport\n"
+    "  from training.pipeline.registration import experiment_payload\n"
+    "  payload = experiment_payload(EvaluationReport.from_path(path), model_id)\n"
+    "  spring_client.create_experiment_result(payload)\n"
+    "Ose xhiro: python -m training.reregister_experiments"
+)
+
+
+def create_experiment_result(payload: dict) -> dict:
+    if not isinstance(payload, dict):
+        raise TypeError(MANUAL_METRICS_REFUSED)
+
+    unexpected = [key for key in payload if key not in EXPERIMENT_PAYLOAD_KEYS]
+    if unexpected:
+        raise ValueError(f"Fusha te panjohura ne payload: {', '.join(sorted(unexpected))}")
+
+    if not str(payload.get("notes", "")).startswith("provenance="):
+        raise ValueError(MANUAL_METRICS_REFUSED)
+
+    return _request("POST", "/api/experiments", payload)
+
+
+def record_experiment_result(*args, **kwargs):
+    raise NotImplementedError(MANUAL_METRICS_REFUSED)
 
 
 def ingest_flow(source_ip: str, destination_ip: str, source_port: int,
