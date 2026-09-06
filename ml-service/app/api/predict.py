@@ -16,6 +16,8 @@ from app.schemas.prediction import (
     PredictionRequest,
     PredictionResponse,
 )
+from app.services.groundedness import check as check_groundedness
+from app.services.groundedness import evidence_from_prediction
 from app.services.llm_explainer import generate_all_explanations, generate_explanation
 from app.services.spring_client import create_explanation
 
@@ -107,6 +109,8 @@ def explain_alarm(request: ExplainRequest):
     if not llm_results:
         raise HTTPException(status_code=502, detail="Asnje ofrues LLM s'u pergjigj.")
 
+    evidence = evidence_from_prediction(prediction)
+
     stored = []
     for llm_result in llm_results:
         try:
@@ -125,6 +129,8 @@ def explain_alarm(request: ExplainRequest):
             "llm_model": llm_result["llm_model"],
             "llm_prompt_version": llm_result["llm_prompt_version"],
             "generation_latency_ms": llm_result["generation_latency_ms"],
+            "provider": llm_result.get("provider"),
+            "groundedness": check_groundedness(llm_result["explanation_text"], evidence),
         })
 
     if not stored:
