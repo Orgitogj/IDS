@@ -487,3 +487,256 @@ people to ignore red tests.
 * The §8.2 deletion test uses one substitution baseline (the benign median). Whether a
   different reference — a nearest benign neighbour, say — ranks features differently has not
   been measured.
+
+---
+
+## 10. Experiment registration and the historical numbers *(P0-2)*
+
+Produced by `training/evaluate_artifacts.py`; raw output in
+`reports/artifact_evaluation/index.json` and `reports/artifact_evaluation/<name>/metrics.json`.
+
+### 10.1 The one set of hand-typed numbers
+
+Notebook cell 17 registered the Random Forest baseline with three metrics written as
+literals rather than computed:
+
+```python
+record_experiment_result(
+    accuracy=0.9986,        # literal
+    precision=precision_macro,
+    recall=recall_macro,
+    f1=0.8724,              # literal
+    avg_latency_ms=0.0054,  # literal
+    ...)
+```
+
+Every other registration in the notebook passed computed variables. Cell 17 is the only
+confirmed hand-entry, and it is the only registration whose full API response was echoed
+into a notebook output, so it is also the only stored row whose values can be read without
+a running database.
+
+### 10.2 Stored versus recomputed
+
+Recomputed from `rf_baseline_cicids2017_v1.joblib` on the historical split
+(stratified, `test_size=0.2`, `random_state=42`, 565,576 test rows):
+
+| Field | Stored | Recomputed | Difference | Origin |
+|---|---:|---:|---:|---|
+| accuracy | 0.998600 | **0.998639** | +0.000039 | hand-typed |
+| macro precision | 0.938149 | 0.938149 | 0.000000 | computed |
+| macro recall | 0.846629 | 0.846629 | 0.000000 | computed |
+| macro F1 | 0.872400 | **0.872388** | −0.000012 | hand-typed |
+| avg latency (ms) | 0.005400 | 0.007729 | +0.002329 | hand-typed — **not comparable** |
+| sample size | 565,576 | 565,576 | 0 | computed |
+
+**The hand-typed values were not fabricated — they were rounded.** Both differ from the
+true value only in the fourth decimal place, which is what a human copying a printed
+`:.4f` would produce. The two computed fields reproduce to full double precision, which is
+the control that makes the comparison meaningful.
+
+The latency row is **not** evidence of anything. Latency depends on the machine, the
+thread count and the load; 0.0054 ms was measured on the notebook's host and 0.0077 ms on
+this one. It is reported for completeness and must not be read as a reproducibility check.
+
+### 10.3 The rest of the registry, recomputed
+
+Same split, same encoder, same feature order as each artifact declares. No stored value is
+available offline for these rows, so the recomputed figures below are simply the
+authoritative ones from now on.
+
+| Registered model | Features | Accuracy | Macro P | Macro R | Macro F1 |
+|---|---:|---:|---:|---:|---:|
+| xgb-baseline-cicids2017-v1 | 78 | 0.998992 | 0.913647 | 0.862852 | 0.881109 |
+| xgb-smote-cicids2017-v1 | 78 | 0.998808 | 0.867056 | 0.897846 | 0.878453 |
+| rf-baseline-cicids2017-v2 | 78 | 0.998639 | 0.938149 | 0.846629 | 0.872388 |
+| rf-smote-cicids2017-v1 | 78 | 0.998515 | 0.853430 | 0.879200 | 0.864613 |
+| mlp-smote-cicids2017-v1 | 78 | 0.977607 | 0.700031 | 0.855349 | 0.703710 |
+| xgb-smote-top78features-v1 | 78 | 0.998815 | 0.876183 | 0.907048 | 0.887587 |
+| xgb-smote-top50features-v1 | 50 | 0.998801 | 0.868014 | 0.899928 | 0.879436 |
+| xgb-smote-top30features-v1 | 30 | 0.996803 | 0.797280 | 0.906234 | 0.827990 |
+| xgb-smote-top20features-v1 | 20 | 0.989269 | 0.747796 | 0.897106 | 0.785098 |
+| xgb-smote-top10features-v1 | 10 | 0.959364 | 0.671401 | 0.813893 | 0.687340 |
+
+**The harness was validated before these numbers were trusted.** Recomputing
+`xgb-smote-cicids2017-v1` reproduces §6's already-verified anchor exactly to four
+decimals on all four metrics — accuracy 0.9988, macro F1 0.8785, macro precision 0.8671,
+macro recall 0.8978. Independently, predictions from a bare feature array and from a
+column-named DataFrame were checked to be identical, which is what rules out a silent
+feature-reordering bug in the audit itself.
+
+Two observations worth stating rather than burying:
+
+* **`top50` is not worse than the full 78-feature model** on this split — 0.879436 macro
+  F1 against 0.878453. The RQ3 conclusion that the feature reduction is nearly free is
+  supported; it is not a trade-off in accuracy terms at 50 features. The cost appears
+  between 50 and 30.
+* **`xgb-smote-top78features-v1` declares a feature order that matches no registered
+  feature set.** It holds all 78 features but ordered by importance rather than by the
+  dataset's column order, so it is a *different schema* from
+  `xgb-smote-cicids2017-v1` despite having the same members. It is not registered in
+  `training_feature_reference.json` and nothing loads it at runtime; it scores highest of
+  all ten (0.887587), which is worth knowing before anyone picks a production model.
+
+### 10.4 Isolation Forest is excluded, deliberately
+
+Both isolation forests are audited for existence, loadability and feature schema, and are
+then **excluded from the table above**. They are binary BENIGN-versus-attack detectors;
+their accuracy, precision, recall and F1 are computed against a two-class problem and
+placing them in a column beside a 15-class macro F1 would be a category error. They are
+evaluated by `training/evaluate_isolation_forest.py` — see §1–§4.
+
+### 10.5 What may and may not be quoted
+
+**Safe to quote:** every figure in §10.2's *Recomputed* column and in §10.3. Each is
+produced by `training/evaluate_artifacts.py` from an artifact whose SHA-256 is recorded in
+the report beside the number.
+
+**Do not quote:** the stored `accuracy = 0.9986`, `macro F1 = 0.8724` and
+`avg_latency_ms = 0.0054` for the Random Forest baseline. They are hand-entered and, for
+latency, not reproducible in principle. Use 0.998639, 0.872388 and a latency measured on
+the machine being described.
+
+**Do not compare across latency methodologies.** `avg_latency_ms_batch` (batch predict
+over the test set ÷ row count) is the historical methodology and the only one comparable
+with the stored numbers. `single_flow_latency` measures one row at a time and is between
+30× and 5,000× larger depending on the model — 0.0077 ms batch against 37.3 ms single-flow
+for the Random Forest. They are different measurements of different things.
+
+### 10.6 How a result reaches the database now
+
+```
+model artifact → evaluate_artifacts.py → metrics.json → EvaluationReport (validated)
+              → registration.experiment_payload() → spring_client.create_experiment_result()
+```
+
+`spring_client.record_experiment_result(accuracy=..., f1=...)` no longer exists as a
+callable path — it raises, pointing at the report-based one. `create_experiment_result`
+rejects any payload whose `notes` field does not carry a `provenance=` block, and
+`experiment_payload` accepts nothing but a validated `EvaluationReport`. Validation
+rejects a report whose macro F1 disagrees with its own confusion matrix, whose per-class
+supports do not sum to the row count, whose accuracy disagrees with the sklearn
+cross-check, or that carries no artifact SHA-256.
+
+Registration only ever **inserts**. A recomputed row carries, inside its own provenance,
+the historical values it supersedes and the fields that were hand-typed, so the old record
+is preserved rather than overwritten.
+
+---
+
+## 11. LLM grounding *(P0-3)*
+
+### 11.1 The pipeline as built
+
+```
+alarm click → POST :8000/api/explain {alarm_id, feature_vector, compare}
+  → predict(): validate → XGBoost → decide() → TreeSHAP for the predicted class
+  → _build_prompt() routes on detection_method, not on the label
+  → the SAME prompt string is handed to Claude and to Gemini
+  → POST :8080/api/alarms/{id}/explanations  (text, llm_model, prompt_version, latency)
+  → the dashboard re-GETs and the analyst rates HELPFUL / UNCLEAR / INCORRECT
+```
+
+Two properties were already correct and were left alone: the prompt is built **once**
+and dispatched to both providers, so a provider comparison varies only the provider; and
+the LLM is never consulted for the verdict, only for the narrative.
+
+### 11.2 What was wrong
+
+P2-6 hardened the *anomaly* template and left the *supervised* one as it was. The
+supervised prompt carried a single instruction — "do not invent characteristics not
+supported by the data above" — and nothing else. It did not tell the model that it had
+never seen the traffic, that it had no packet payload, that the classification was a
+prediction rather than an established fact, that the confidence figure is the model's
+confidence in a class rather than the probability an attack occurred, or that a SHAP
+contribution is an attribution of the model's decision rather than a cause.
+
+### 11.3 What changed
+
+`PROMPT_VERSION` moves `v2 → v3`. Three blocks are now shared verbatim by both templates,
+so the anomaly path keeps everything it had and the supervised path gains it:
+
+* **`EVIDENCE_BOUNDARY`** — you have not seen the traffic; you have no access to packets or
+  their contents; the only evidence is what is in this message; feature values are
+  statistical measurements of the flow, not packet contents.
+* **`INVENTION_RULES`** — do not name IP addresses, ports or device names absent from the
+  evidence; do not name protocols not derivable from it; do not describe payloads,
+  commands or files; do not add techniques or tools; if a detail is not in the evidence,
+  omit it rather than guessing.
+* **`STYLE_RULES`** — clear Albanian, 3–5 sentences, standard technical terms may stay in
+  English where translating would read artificially, no alarmist language.
+
+The supervised template additionally states that the classification is a prediction and
+not a proven fact, and requires the wording *"modeli e klasifikoi si X"* over *"kjo rrjedhe
+ishte X"*; frames confidence explicitly as the model's confidence in the chosen class,
+"not the probability that the attack actually occurred and not a risk measure"; asks for
+proportionally more cautious wording as confidence falls; and separates *vlera e matur*
+(the measurement) from *kontribut SHAP* (its push toward the class), stating that SHAP
+explains the model's decision and does not prove the real cause.
+
+**No new confidence thresholds were introduced.** The existing 0.95/0.85/0.70 thresholds
+are *severity* thresholds, and the audit already established that prediction confidence is
+not security severity; reusing them for linguistic hedging would import exactly that
+confusion. The prompt is given the confidence value and asked to scale its caution to it,
+with no numeric bands. This is a deliberate choice, and it means the hedging is a model
+behaviour rather than a system guarantee.
+
+Historical explanations are untouched. The unique index is
+`(alarm_id, llm_model, llm_prompt_version)`, so `v3` rows sit alongside `v1` and `v2`
+instead of replacing them, and registration only ever inserts.
+
+### 11.4 The groundedness check
+
+`app/services/groundedness.py`, method `deterministic_heuristic_v1`. **No LLM judge.** It
+builds an allow-list from the evidence actually handed to the model — feature names, every
+feature value and SHAP contribution in several rounded forms, the confidence as both
+fraction and percentage, the predicted label — and then flags:
+
+| Finding | Severity | Rationale |
+|---|---|---|
+| IPv4 / IPv6 address | high | The feature vector contains no address. One can never be grounded. |
+| Payload or packet-content claim | high | The model receives aggregate flow statistics only. |
+| Port number in a port context, absent from the evidence | medium | `Destination Port` may legitimately appear; another port cannot. |
+| Protocol name absent from the evidence | medium | The 78-feature set carries no protocol identity. |
+
+The design decision that makes it usable rather than noisy: **only numbers in a port
+context are checked**, never every number. An explanation may freely quote `0.812` or
+`1200` from the evidence, and does not trip the check; "portes 8080" does, while "portes
+443" does not when 443 is a feature value. This is pinned by tests in both directions.
+
+**What it is not.** It cannot tell whether an explanation is *correct*, only whether it
+names entities the model could not have been given. A clean result is not evidence of
+correctness, and the report says so in its own `caveat` field. It is reported on
+`/api/explain` responses and in the H4 export; it does not block or alter any explanation.
+
+### 11.5 The H4 export
+
+`python -m training.export_explanations` (read-only; GET requests only) writes
+`reports/llm_evaluation/{explanations.csv, explanations.jsonl, summary.json}`, one row per
+explanation: alarm and flow ids, ground-truth label and attack type where the replay
+supplied them, predicted class, confidence, detection method, model name/version/feature
+version, provider, LLM model, prompt version, latency, analyst rating, the SHAP evidence
+recomputed from the stored feature vector, and the groundedness result.
+
+No migration was needed. `explanations` already stores the text, model, prompt version,
+latency and rating; the confidence and model identity live on `network_flows`; and the
+SHAP evidence is *reconstructed* by re-running the recorded model over the stored feature
+vector rather than being duplicated into a new column.
+
+### 11.6 Limitations
+
+* The hedging requirement in §11.3 is an instruction, not an enforced constraint. Nothing
+  measures whether a model actually hedges more at 0.42 than at 0.96.
+* The groundedness heuristic covers addresses, packet-content claims, ports and a fixed
+  list of 19 protocol names. A fabricated *technique* or a wrong causal story passes it
+  cleanly. It is a floor, not a ceiling.
+* Protocol findings are `medium` because a model inferring "HTTPS" from port 443 is making
+  an inference rather than inventing an entity. Whether that should count as ungrounded is
+  a judgement call, and it is recorded rather than resolved.
+* The v3 prompts have **not** been exercised against a live provider in this phase — no
+  API credits were spent, by instruction. The prompt-construction tests are exhaustive but
+  they test the prompt, not the model's compliance with it. §8.4's warning still stands:
+  the two live generations recorded there are a smoke test, not a compliance rate, and a
+  v3 compliance figure requires a provider with real quota.
+* `generate_all_explanations` still swallows a provider failure with a printed message, so
+  a comparison run can silently yield one provider instead of two. The export makes this
+  visible after the fact (`by_provider` counts), but the API response does not.
