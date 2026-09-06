@@ -29,6 +29,12 @@ class FeatureValidationError(Exception):
         self.result = result
 
 
+class FeatureVersionMismatch(Exception):
+    def __init__(self, report):
+        super().__init__(report["message"])
+        self.report = report
+
+
 class ValidationPolicy:
     def __init__(self, name, reject_on_missing=True, reject_on_invalid=True,
                  allow_derivation=True, allow_const_zero_fill=True, range_check=True):
@@ -116,6 +122,48 @@ def load_reference(path=None):
         return None
     with open(reference_path, encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def verify_feature_version(feature_columns, feature_version, reference):
+    if not feature_version or not reference:
+        return None
+
+    registered = (reference.get("feature_sets") or {}).get(feature_version)
+    if registered is None:
+        return None
+
+    actual = [str(name) for name in feature_columns]
+    expected = [str(name) for name in registered]
+
+    if actual == expected:
+        return None
+
+    missing = [name for name in expected if name not in actual]
+    unexpected = [name for name in actual if name not in expected]
+    same_members = not missing and not unexpected
+
+    if same_members:
+        reason = "order_mismatch"
+        detail = (f"i njejti set features por ne renditje tjeter "
+                  f"({sum(1 for a, b in zip(actual, expected) if a != b)} pozicione "
+                  f"ndryshojne)")
+    else:
+        reason = "member_mismatch"
+        detail = (f"{len(missing)} features mungojne, {len(unexpected)} te tepert "
+                  f"(artefakti ka {len(actual)}, '{feature_version}' ka {len(expected)})")
+
+    return {
+        "reason": reason,
+        "declared_feature_version": feature_version,
+        "declared_n_features": len(expected),
+        "actual_n_features": len(actual),
+        "missing_from_artifact": missing[:10],
+        "unexpected_in_artifact": unexpected[:10],
+        "resolved_feature_version": resolve_feature_version(actual, reference),
+        "message": (f"Artefakti NUK perputhet me feature set-in '{feature_version}': "
+                    f"{detail}. Modeli dhe feature schema jane cift i versionuar - "
+                    f"mos e perdor modelin me nje feature set tjeter."),
+    }
 
 
 def resolve_feature_version(feature_columns, reference):
