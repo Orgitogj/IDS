@@ -1,0 +1,610 @@
+{
+ "schema_version": 1,
+ "report_kind": "training_run",
+ "generated_at": "2026-09-06T17:44:48.111124Z",
+ "trained_at": "2026-09-06T17:44:48.111124Z",
+ "evaluated_at": "2026-09-06T17:44:48.111124Z",
+ "artifact_sha256": "ec96e0a26d76b031afb3b3b554b1fe05a2538b807665c1e660178b3209344e84",
+ "name": "xgb-smote-top10features-v2",
+ "version": "2.0",
+ "description": "RQ3: i njejti recept balancimi dhe i njejti split, mbi feature set-in top-10 te rirenditur nga modeli xgb-smote-cicids2017-v2. Renditja mesohet VETEM nga te dhenat e trajnimit. Kerkon qe 'python -m training.build_feature_ranking --write-reference' te jete xhiruar me pare.",
+ "algorithm": "xgboost",
+ "seed": 42,
+ "artifact_file": "xgb_smote_top10features_v2.joblib",
+ "label_encoder_file": "xgb_smote_top10features_v2_label_encoder.joblib",
+ "scaler_file": null,
+ "feature_columns_file": "xgb_smote_top10features_v2_feature_columns.json",
+ "feature_version": "cicids2017-top10-v2",
+ "feature_columns": [
+  "Bwd Packet Length Min",
+  "PSH Flag Count",
+  "Idle Min",
+  "act_data_pkt_fwd",
+  "Total Length of Fwd Packets",
+  "Total Length of Bwd Packets",
+  "Average Packet Size",
+  "Bwd Packets/s",
+  "Fwd Packet Length Min",
+  "Bwd Header Length"
+ ],
+ "n_features": 10,
+ "label_classes": [
+  "BENIGN",
+  "Bot",
+  "DDoS",
+  "DoS GoldenEye",
+  "DoS Hulk",
+  "DoS Slowhttptest",
+  "DoS slowloris",
+  "FTP-Patator",
+  "Heartbleed",
+  "Infiltration",
+  "PortScan",
+  "SSH-Patator",
+  "Web Attack - Brute Force",
+  "Web Attack - Sql Injection",
+  "Web Attack - XSS"
+ ],
+ "model_params": {
+  "n_estimators": 100,
+  "n_jobs": -1,
+  "tree_method": "hist",
+  "eval_metric": "mlogloss",
+  "random_state": 42
+ },
+ "dataset": {
+  "name": "cicids2017_cleaned.parquet",
+  "sha256": "f5b393d646f69f990ffc48203debc7241f897eacde9870a351db6d264b9e3d1d",
+  "rows_in_file": 2827876,
+  "rows_used": 2827876,
+  "subsampled": false,
+  "sample_rows_requested": null,
+  "subsample": {
+   "applied": false
+  },
+  "label_column": "Label",
+  "n_features": 10
+ },
+ "split": {
+  "strategy": "random",
+  "test_size": 0.2,
+  "train_rows": 2262300,
+  "test_rows": 565576,
+  "train_class_support": {
+   "BENIGN": 1817055,
+   "Bot": 1565,
+   "DDoS": 102420,
+   "DoS GoldenEye": 8234,
+   "DoS Hulk": 184099,
+   "DoS Slowhttptest": 4399,
+   "DoS slowloris": 4637,
+   "FTP-Patator": 6348,
+   "Heartbleed": 9,
+   "Infiltration": 29,
+   "PortScan": 127043,
+   "SSH-Patator": 4717,
+   "Web Attack - Brute Force": 1206,
+   "Web Attack - Sql Injection": 17,
+   "Web Attack - XSS": 522
+  },
+  "test_class_support": {
+   "BENIGN": 454265,
+   "Bot": 391,
+   "DDoS": 25605,
+   "DoS GoldenEye": 2059,
+   "DoS Hulk": 46025,
+   "DoS Slowhttptest": 1100,
+   "DoS slowloris": 1159,
+   "FTP-Patator": 1587,
+   "Heartbleed": 2,
+   "Infiltration": 7,
+   "PortScan": 31761,
+   "SSH-Patator": 1180,
+   "Web Attack - Brute Force": 301,
+   "Web Attack - Sql Injection": 4,
+   "Web Attack - XSS": 130
+  },
+  "classes_absent_from_train": [],
+  "classes_absent_from_test": []
+ },
+ "balancing": {
+  "enabled": true,
+  "strategy": "undersample_benign_200k_oversample_rare_2k",
+  "seed": 42,
+  "benign_label": "BENIGN",
+  "benign_cap": 200000,
+  "rare_class_min": 2000,
+  "oversampler": "smote",
+  "smote_k_neighbors": 5,
+  "rows_before": 2262300,
+  "rows_after": 653897,
+  "rows_after_undersampling": 645245,
+  "synthetic_rows": 8652,
+  "replicated_classes": [],
+  "class_counts_before": {
+   "BENIGN": 1817055,
+   "Bot": 1565,
+   "DDoS": 102420,
+   "DoS GoldenEye": 8234,
+   "DoS Hulk": 184099,
+   "DoS Slowhttptest": 4399,
+   "DoS slowloris": 4637,
+   "FTP-Patator": 6348,
+   "Heartbleed": 9,
+   "Infiltration": 29,
+   "PortScan": 127043,
+   "SSH-Patator": 4717,
+   "Web Attack - Brute Force": 1206,
+   "Web Attack - Sql Injection": 17,
+   "Web Attack - XSS": 522
+  },
+  "class_counts_after": {
+   "BENIGN": 200000,
+   "Bot": 2000,
+   "DDoS": 102420,
+   "DoS GoldenEye": 8234,
+   "DoS Hulk": 184099,
+   "DoS Slowhttptest": 4399,
+   "DoS slowloris": 4637,
+   "FTP-Patator": 6348,
+   "Heartbleed": 2000,
+   "Infiltration": 2000,
+   "PortScan": 127043,
+   "SSH-Patator": 4717,
+   "Web Attack - Brute Force": 2000,
+   "Web Attack - Sql Injection": 2000,
+   "Web Attack - XSS": 2000
+  },
+  "plan": {
+   "BENIGN": {
+    "available": 1817055,
+    "target": 200000,
+    "method": "undersampled"
+   },
+   "Bot": {
+    "available": 1565,
+    "target": 2000,
+    "method": "smote"
+   },
+   "DDoS": {
+    "available": 102420,
+    "target": 102420,
+    "method": "unchanged"
+   },
+   "DoS GoldenEye": {
+    "available": 8234,
+    "target": 8234,
+    "method": "unchanged"
+   },
+   "DoS Hulk": {
+    "available": 184099,
+    "target": 184099,
+    "method": "unchanged"
+   },
+   "DoS Slowhttptest": {
+    "available": 4399,
+    "target": 4399,
+    "method": "unchanged"
+   },
+   "DoS slowloris": {
+    "available": 4637,
+    "target": 4637,
+    "method": "unchanged"
+   },
+   "FTP-Patator": {
+    "available": 6348,
+    "target": 6348,
+    "method": "unchanged"
+   },
+   "Heartbleed": {
+    "available": 9,
+    "target": 2000,
+    "method": "smote"
+   },
+   "Infiltration": {
+    "available": 29,
+    "target": 2000,
+    "method": "smote"
+   },
+   "PortScan": {
+    "available": 127043,
+    "target": 127043,
+    "method": "unchanged"
+   },
+   "SSH-Patator": {
+    "available": 4717,
+    "target": 4717,
+    "method": "unchanged"
+   },
+   "Web Attack - Brute Force": {
+    "available": 1206,
+    "target": 2000,
+    "method": "smote"
+   },
+   "Web Attack - Sql Injection": {
+    "available": 17,
+    "target": 2000,
+    "method": "smote"
+   },
+   "Web Attack - XSS": {
+    "available": 522,
+    "target": 2000,
+    "method": "smote"
+   }
+  },
+  "planned_total": 653897
+ },
+ "timings": {
+  "train_seconds": 37.7292843000032,
+  "predict_seconds_batch": 3.1381521000294015,
+  "avg_latency_ms_batch": 0.005548594883851864,
+  "latency_methodology": "Batch throughput: one predict() over the whole test set, after a discarded warm-up of 1000 rows, repeated 3 times; the median is reported. Comparable with the historical notebook figures. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency.",
+  "latency_scope": "model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency.",
+  "model_inference_latency": {
+   "metric": "model_inference_latency",
+   "scope": "model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency.",
+   "batch": {
+    "metric": "model_inference_latency",
+    "batch_size": 565576,
+    "warmup_rows": 1000,
+    "repetitions": 3,
+    "seconds_per_repetition": [
+     3.1381521000294015,
+     3.35216449998552,
+     3.0139128000009805
+    ],
+    "median_seconds": 3.1381521000294015,
+    "min_seconds": 3.0139128000009805,
+    "max_seconds": 3.35216449998552,
+    "ms_per_flow": 0.005548594883851864,
+    "flows_per_second": 180225.80868362024,
+    "methodology": "Batch throughput: one predict() over the whole test set, after a discarded warm-up of 1000 rows, repeated 3 times; the median is reported. Comparable with the historical notebook figures. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency."
+   },
+   "single_flow": {
+    "metric": "model_inference_latency",
+    "samples": 200,
+    "warmup": 20,
+    "mean_ms": 0.6852510033058934,
+    "median_ms": 0.6364000146277249,
+    "p95_ms": 0.9179100015899165,
+    "methodology": "Single-flow latency: predict() on one row at a time, 200 rows sampled from the test set, after 20 discarded warm-up rows. Mean, median and p95 are reported. This is NOT comparable with the batch figure. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency."
+   }
+  },
+  "production_path_inference_latency": {
+   "metric": "production_path_inference_latency",
+   "samples": 200,
+   "warmup": 20,
+   "mean_ms": 4.869853500858881,
+   "median_ms": 5.093000014312565,
+   "p95_ms": 5.960810027318074,
+   "methodology": "Mimics app/ml/inference.predict: build a one-row DataFrame with the model's feature columns, then predict. DataFrame construction IS inside the timed region. HTTP, Spring Boot, database, SHAP, LLM and frontend are NOT included - those belong to end_to_end_IDS_latency, measured separately."
+  },
+  "batch_latency": {
+   "metric": "model_inference_latency",
+   "batch_size": 565576,
+   "warmup_rows": 1000,
+   "repetitions": 3,
+   "seconds_per_repetition": [
+    3.1381521000294015,
+    3.35216449998552,
+    3.0139128000009805
+   ],
+   "median_seconds": 3.1381521000294015,
+   "min_seconds": 3.0139128000009805,
+   "max_seconds": 3.35216449998552,
+   "ms_per_flow": 0.005548594883851864,
+   "flows_per_second": 180225.80868362024,
+   "methodology": "Batch throughput: one predict() over the whole test set, after a discarded warm-up of 1000 rows, repeated 3 times; the median is reported. Comparable with the historical notebook figures. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency."
+  },
+  "single_flow_latency": {
+   "metric": "model_inference_latency",
+   "samples": 200,
+   "warmup": 20,
+   "mean_ms": 0.6852510033058934,
+   "median_ms": 0.6364000146277249,
+   "p95_ms": 0.9179100015899165,
+   "methodology": "Single-flow latency: predict() on one row at a time, 200 rows sampled from the test set, after 20 discarded warm-up rows. Mean, median and p95 are reported. This is NOT comparable with the batch figure. model inference only, on a model-input-ready ndarray. Feature validation, DataFrame construction and conversion, SHAP, HTTP, database and frontend are all outside the timed region. This is NOT production latency."
+  }
+ },
+ "metrics": {
+  "overall": {
+   "rows": 565576,
+   "accuracy": 0.9596181591863869,
+   "accuracy_sklearn": 0.9596181591863869,
+   "macro_f1": 0.6924953534636903,
+   "weighted_f1": 0.9637719917234591,
+   "macro_precision": 0.6587598538990588,
+   "macro_recall": 0.8172296925133931,
+   "binary_benign_vs_attack": {
+    "attack_rows": 111311,
+    "benign_rows": 454265,
+    "attack_recall": 0.9937113133472882,
+    "benign_false_positive_rate": 0.048049046261543375
+   },
+   "macro_f1_min_support": 0.756766932977354
+  },
+  "primary_metric": "macro_f1",
+  "sensitivity_metric": "macro_f1_min_support",
+  "macro_f1_from_confusion_matrix": 0.6924953534636903,
+  "macro_f1_min_support": 0.756766932977354,
+  "classes_in_macro_f1_min_support": [
+   "BENIGN",
+   "Bot",
+   "DDoS",
+   "DoS GoldenEye",
+   "DoS Hulk",
+   "DoS Slowhttptest",
+   "DoS slowloris",
+   "FTP-Patator",
+   "PortScan",
+   "SSH-Patator",
+   "Web Attack - Brute Force",
+   "Web Attack - XSS"
+  ],
+  "weighted_f1_from_confusion_matrix": 0.9637719917234591,
+  "min_support_for_claim": 100,
+  "insufficient_support_classes": [
+   "Heartbleed",
+   "Infiltration",
+   "Web Attack - Sql Injection"
+  ],
+  "absent_from_test_classes": [],
+  "per_class": {
+   "BENIGN": {
+    "support": 454265,
+    "sufficient_support": true,
+    "predicted_count": 433138,
+    "true_positive": 432438,
+    "false_positive": 700,
+    "false_negative": 21827,
+    "true_negative": 110611,
+    "precision": 0.9983838868905522,
+    "recall": 0.9519509537384566,
+    "f1": 0.974614690281642,
+    "fpr": 0.006288686652711772,
+    "fnr": 0.048049046261543375
+   },
+   "Bot": {
+    "support": 391,
+    "sufficient_support": true,
+    "predicted_count": 409,
+    "true_positive": 246,
+    "false_positive": 163,
+    "false_negative": 145,
+    "true_negative": 565022,
+    "precision": 0.6014669926650367,
+    "recall": 0.629156010230179,
+    "f1": 0.615,
+    "fpr": 0.00028840114298857896,
+    "fnr": 0.37084398976982097
+   },
+   "DDoS": {
+    "support": 25605,
+    "sufficient_support": true,
+    "predicted_count": 25660,
+    "true_positive": 25568,
+    "false_positive": 92,
+    "false_negative": 37,
+    "true_negative": 539879,
+    "precision": 0.9964146531566641,
+    "recall": 0.9985549697324742,
+    "f1": 0.9974836633180534,
+    "fpr": 0.00017037952038165011,
+    "fnr": 0.0014450302675258738
+   },
+   "DoS GoldenEye": {
+    "support": 2059,
+    "sufficient_support": true,
+    "predicted_count": 2051,
+    "true_positive": 1974,
+    "false_positive": 77,
+    "false_negative": 85,
+    "true_negative": 563440,
+    "precision": 0.962457337883959,
+    "recall": 0.9587178241864983,
+    "f1": 0.9605839416058395,
+    "fpr": 0.00013664184044137088,
+    "fnr": 0.0412821758135017
+   },
+   "DoS Hulk": {
+    "support": 46025,
+    "sufficient_support": true,
+    "predicted_count": 63561,
+    "true_positive": 45919,
+    "false_positive": 17642,
+    "false_negative": 106,
+    "true_negative": 501909,
+    "precision": 0.722439860921005,
+    "recall": 0.9976969038565997,
+    "f1": 0.8380450057489096,
+    "fpr": 0.033956242986732776,
+    "fnr": 0.002303096143400326
+   },
+   "DoS Slowhttptest": {
+    "support": 1100,
+    "sufficient_support": true,
+    "predicted_count": 1197,
+    "true_positive": 1085,
+    "false_positive": 112,
+    "false_negative": 15,
+    "true_negative": 564364,
+    "precision": 0.9064327485380117,
+    "recall": 0.9863636363636363,
+    "f1": 0.9447104919460165,
+    "fpr": 0.00019841410440833623,
+    "fnr": 0.013636363636363636
+   },
+   "DoS slowloris": {
+    "support": 1159,
+    "sufficient_support": true,
+    "predicted_count": 1244,
+    "true_positive": 1155,
+    "false_positive": 89,
+    "false_negative": 4,
+    "true_negative": 564328,
+    "precision": 0.9284565916398714,
+    "recall": 0.996548748921484,
+    "f1": 0.9612983770287141,
+    "fpr": 0.00015768483231369713,
+    "fnr": 0.003451251078515962
+   },
+   "FTP-Patator": {
+    "support": 1587,
+    "sufficient_support": true,
+    "predicted_count": 1645,
+    "true_positive": 1581,
+    "false_positive": 64,
+    "false_negative": 6,
+    "true_negative": 563925,
+    "precision": 0.9610942249240122,
+    "recall": 0.996219281663516,
+    "f1": 0.9783415841584159,
+    "fpr": 0.0001134773905164817,
+    "fnr": 0.003780718336483932
+   },
+   "Heartbleed": {
+    "support": 2,
+    "sufficient_support": false,
+    "predicted_count": 2,
+    "true_positive": 2,
+    "false_positive": 0,
+    "false_negative": 0,
+    "true_negative": 565574,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "fpr": 0.0,
+    "fnr": 0.0
+   },
+   "Infiltration": {
+    "support": 7,
+    "sufficient_support": false,
+    "predicted_count": 14,
+    "true_positive": 3,
+    "false_positive": 11,
+    "false_negative": 4,
+    "true_negative": 565558,
+    "precision": 0.21428571428571427,
+    "recall": 0.42857142857142855,
+    "f1": 0.2857142857142857,
+    "fpr": 1.944943941411216e-05,
+    "fnr": 0.5714285714285714
+   },
+   "PortScan": {
+    "support": 31761,
+    "sufficient_support": true,
+    "predicted_count": 31942,
+    "true_positive": 31743,
+    "false_positive": 199,
+    "false_negative": 18,
+    "true_negative": 533616,
+    "precision": 0.9937699580489637,
+    "recall": 0.9994332672145083,
+    "f1": 0.9965935670219611,
+    "fpr": 0.0003727883255434935,
+    "fnr": 0.0005667327854916407
+   },
+   "SSH-Patator": {
+    "support": 1180,
+    "sufficient_support": true,
+    "predicted_count": 2015,
+    "true_positive": 789,
+    "false_positive": 1226,
+    "false_negative": 391,
+    "true_negative": 563170,
+    "precision": 0.3915632754342432,
+    "recall": 0.6686440677966101,
+    "f1": 0.49389671361502346,
+    "fpr": 0.002172233679898511,
+    "fnr": 0.3313559322033898
+   },
+   "Web Attack - Brute Force": {
+    "support": 301,
+    "sufficient_support": true,
+    "predicted_count": 1096,
+    "true_positive": 146,
+    "false_positive": 950,
+    "false_negative": 155,
+    "true_negative": 564325,
+    "precision": 0.1332116788321168,
+    "recall": 0.4850498338870432,
+    "f1": 0.20901932712956336,
+    "fpr": 0.0016805979390562115,
+    "fnr": 0.5149501661129569
+   },
+   "Web Attack - Sql Injection": {
+    "support": 4,
+    "sufficient_support": false,
+    "predicted_count": 191,
+    "true_positive": 2,
+    "false_positive": 189,
+    "false_negative": 2,
+    "true_negative": 565383,
+    "precision": 0.010471204188481676,
+    "recall": 0.5,
+    "f1": 0.020512820512820513,
+    "fpr": 0.00033417495915639387,
+    "fnr": 0.5
+   },
+   "Web Attack - XSS": {
+    "support": 130,
+    "sufficient_support": true,
+    "predicted_count": 1411,
+    "true_positive": 86,
+    "false_positive": 1325,
+    "false_negative": 44,
+    "true_negative": 564121,
+    "precision": 0.06094968107725018,
+    "recall": 0.6615384615384615,
+    "f1": 0.11161583387410773,
+    "fpr": 0.002343283001382979,
+    "fnr": 0.3384615384615385
+   }
+  },
+  "confusion_matrix_csv": "confusion_matrix.csv",
+  "confusion_matrix_png": "confusion_matrix.png"
+ },
+ "config": {
+  "name": "xgb-smote-top10features-v2",
+  "version": "2.0",
+  "description": "RQ3: i njejti recept balancimi dhe i njejti split, mbi feature set-in top-10 te rirenditur nga modeli xgb-smote-cicids2017-v2. Renditja mesohet VETEM nga te dhenat e trajnimit. Kerkon qe 'python -m training.build_feature_ranking --write-reference' te jete xhiruar me pare.",
+  "seed": 42,
+  "dataset": {
+   "path": "datasets/cicids2017_cleaned.parquet",
+   "label_column": "Label",
+   "timestamp_column": "Timestamp"
+  },
+  "features": {
+   "reference": "reports/training_feature_reference.json",
+   "feature_set": "cicids2017-top10-v2",
+   "columns": null
+  },
+  "split": {
+   "strategy": "random",
+   "test_size": 0.2
+  },
+  "balancing": {
+   "enabled": true,
+   "benign_label": "BENIGN",
+   "benign_cap": 200000,
+   "rare_class_min": 2000,
+   "oversampler": "smote",
+   "smote_k_neighbors": 5
+  },
+  "model": {
+   "type": "xgboost",
+   "params": {
+    "n_estimators": 100,
+    "tree_method": "hist",
+    "eval_metric": "mlogloss",
+    "n_jobs": -1
+   }
+  },
+  "output": {
+   "models_dir": "models",
+   "reports_dir": "reports/training",
+   "artifact_name": "xgb_smote_top10features_v2"
+  }
+ },
+ "config_source": "C:\\IDS\\ml-service\\training\\configs\\xgb_smote_top10_v2.yaml"
+}

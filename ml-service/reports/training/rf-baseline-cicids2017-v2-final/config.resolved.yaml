@@ -1,0 +1,34 @@
+name: rf-baseline-cicids2017-v2-final
+version: '2.0'
+description: Random Forest pa balancim, mbi te njejtin split dhe te njejtat hiperparametra
+  si rf-smote-cicids2017-v2. Bashke me xgb-baseline-v2 formon 2x2-shin algoritem x
+  balancim, qe izolon efektin e balancimit ne te dyja familjet e algoritmeve.
+seed: 42
+dataset:
+  path: datasets/cicids2017_cleaned.parquet
+  label_column: Label
+  timestamp_column: Timestamp
+features:
+  reference: reports/training_feature_reference.json
+  feature_set: cicids2017-78-v1
+  columns: null
+split:
+  strategy: random
+  test_size: 0.2
+balancing:
+  enabled: false
+  benign_label: BENIGN
+  benign_cap: 200000
+  rare_class_min: 2000
+  oversampler: smote
+  smote_k_neighbors: 5
+model:
+  type: random_forest
+  params:
+    n_estimators: 100
+    n_jobs: -1
+    class_weight: null
+output:
+  models_dir: models
+  reports_dir: reports/training
+  artifact_name: rf_baseline_cicids2017_v2
