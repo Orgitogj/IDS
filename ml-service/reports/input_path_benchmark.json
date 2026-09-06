@@ -1,0 +1,122 @@
+{
+ "schema_version": 1,
+ "generated_at": "2026-09-06T17:17:51.709692Z",
+ "note": "Controlled decomposition of the one-row inference cost. Each stage is timed separately over the same sampled rows so that the DataFrame overhead can be attributed rather than assumed. No production code is optimised here.",
+ "samples": 200,
+ "warmup": 20,
+ "rows_pool": 20000,
+ "results": [
+  {
+   "artifact": "xgb_smote_cicids2017_v2.joblib",
+   "model_class": "XGBClassifier",
+   "n_features": 78,
+   "samples": 200,
+   "warmup": 20,
+   "dataframe_construction_only": {
+    "mean_ms": 2.2759885009145364,
+    "median_ms": 2.0559499971568584,
+    "p95_ms": 4.293190012685954
+   },
+   "predict_on_dataframe": {
+    "mean_ms": 41.587511996913236,
+    "median_ms": 34.722099982900545,
+    "p95_ms": 71.62713498109947
+   },
+   "predict_on_ndarray": {
+    "mean_ms": 1.4193535019876435,
+    "median_ms": 1.369300007354468,
+    "p95_ms": 1.949075050652027
+   },
+   "xgboost_internal": {
+    "dmatrix_construction_from_frame": {
+     "mean_ms": 19.887648997246288,
+     "median_ms": 17.41845000651665,
+     "p95_ms": 30.738804955035423
+    },
+    "booster_predict_on_dmatrix": {
+     "mean_ms": 1.320754499756731,
+     "median_ms": 1.2527499930001795,
+     "p95_ms": 2.6317700132494792
+    }
+   },
+   "attribution": {
+    "frame_vs_array_overhead_ms": 40.16815849492559,
+    "explained_by_dataframe_construction_ms": 2.2759885009145364,
+    "explained_fraction": 0.05666150966821295,
+    "residual_inside_predict_ms": 37.892169994011056,
+    "ratio_frame_over_array": 29.300320137777266
+   }
+  },
+  {
+   "artifact": "xgb_smote_cicids2017_v1.joblib",
+   "model_class": "XGBClassifier",
+   "n_features": 78,
+   "samples": 200,
+   "warmup": 20,
+   "dataframe_construction_only": {
+    "mean_ms": 2.1003344995551743,
+    "median_ms": 2.0564000005833805,
+    "p95_ms": 2.8880650410428643
+   },
+   "predict_on_dataframe": {
+    "mean_ms": 39.5717220052029,
+    "median_ms": 36.51955001987517,
+    "p95_ms": 60.64605004212352
+   },
+   "predict_on_ndarray": {
+    "mean_ms": 0.8765534998383373,
+    "median_ms": 0.8622000459581614,
+    "p95_ms": 1.0947850096272305
+   },
+   "xgboost_internal": {
+    "dmatrix_construction_from_frame": {
+     "mean_ms": 33.60196600318886,
+     "median_ms": 34.45609996560961,
+     "p95_ms": 42.988455013255574
+    },
+    "booster_predict_on_dmatrix": {
+     "mean_ms": 0.5953589989803731,
+     "median_ms": 0.5187999922782183,
+     "p95_ms": 0.9888200176646932
+    }
+   },
+   "attribution": {
+    "frame_vs_array_overhead_ms": 38.69516850536456,
+    "explained_by_dataframe_construction_ms": 2.1003344995551743,
+    "explained_fraction": 0.05427898574117829,
+    "residual_inside_predict_ms": 36.59483400580939,
+    "ratio_frame_over_array": 45.144674013053525
+   }
+  },
+  {
+   "artifact": "rf_smote_cicids2017_v1.joblib",
+   "model_class": "RandomForestClassifier",
+   "n_features": 78,
+   "samples": 200,
+   "warmup": 20,
+   "dataframe_construction_only": {
+    "mean_ms": 2.004124501545448,
+    "median_ms": 2.1157999872229993,
+    "p95_ms": 2.6920850039459765
+   },
+   "predict_on_dataframe": {
+    "mean_ms": 33.24300299980678,
+    "median_ms": 35.65425000851974,
+    "p95_ms": 43.07388998568057
+   },
+   "predict_on_ndarray": {
+    "mean_ms": 34.28855350270169,
+    "median_ms": 35.24624998681247,
+    "p95_ms": 44.16157997620758
+   },
+   "xgboost_internal": null,
+   "attribution": {
+    "frame_vs_array_overhead_ms": -1.045550502894912,
+    "explained_by_dataframe_construction_ms": 2.004124501545448,
+    "explained_fraction": -1.9168127182727606,
+    "residual_inside_predict_ms": -3.0496750044403598,
+    "ratio_frame_over_array": 0.9695073021143185
+   }
+  }
+ ]
+}
