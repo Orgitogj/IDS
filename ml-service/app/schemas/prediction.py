@@ -90,11 +90,29 @@ class ExplainRequest(BaseModel):
     model_id: Optional[str] = Field(default=None)
 
 
+class GroundednessFinding(BaseModel):
+    kind: str
+    severity: str
+    matched: str
+    detail: str
+
+
+class GroundednessReport(BaseModel):
+    grounded: bool
+    finding_count: int
+    high_severity_count: int
+    findings: list[GroundednessFinding] = Field(default_factory=list)
+    method: str
+    caveat: str
+
+
 class GeneratedExplanation(BaseModel):
     explanation_text: str
     llm_model: str
     llm_prompt_version: str
     generation_latency_ms: float
+    provider: Optional[str] = None
+    groundedness: Optional[GroundednessReport] = None
 
 
 class ExplainResponse(DetectionFields):
