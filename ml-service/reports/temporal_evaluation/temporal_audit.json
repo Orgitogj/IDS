@@ -1,0 +1,334 @@
+{
+ "schema_version": 1,
+ "experiment_type": "temporal",
+ "generated_at": "2026-09-06T21:06:25.119625Z",
+ "dataset": {
+  "name": "cicids2017_cleaned.parquet",
+  "sha256": "f5b393d646f69f990ffc48203debc7241f897eacde9870a351db6d264b9e3d1d",
+  "rows": 2827876
+ },
+ "chronology_source": "The 'Timestamp' column of the cleaned parquet, repaired from CICIDS2017's 12-hour clock by training.evaluate.parse_cicids_timestamps. Hours 1-5 become 13-17; hours 8-12 are left alone; the parser raises if 6 or 7 ever appears, which they do not. 'source_file' is retained as an independent corroboration of the day, and is never used to order rows.",
+ "timestamp_is_a_feature": false,
+ "identifier_columns_excluded_from_features": [
+  "Flow ID",
+  "Source IP",
+  "Source Port",
+  "Destination IP",
+  "Timestamp",
+  "Label",
+  "source_file"
+ ],
+ "dataset_first_timestamp": "2017-07-03T08:55:58.000000000",
+ "dataset_last_timestamp": "2017-07-07T17:02:00.000000000",
+ "sources": {
+  "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv": {
+   "rows": 225711,
+   "first_timestamp": "2017-07-07T15:30:00.000000000",
+   "last_timestamp": "2017-07-07T17:02:00.000000000",
+   "non_decreasing_in_file_order": 1.0,
+   "class_counts": {
+    "BENIGN": 97686,
+    "DDoS": 128025
+   },
+   "classes": [
+    "BENIGN",
+    "DDoS"
+   ]
+  },
+  "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv": {
+   "rows": 286096,
+   "first_timestamp": "2017-07-07T13:00:00.000000000",
+   "last_timestamp": "2017-07-07T15:29:00.000000000",
+   "non_decreasing_in_file_order": 1.0,
+   "class_counts": {
+    "BENIGN": 127292,
+    "PortScan": 158804
+   },
+   "classes": [
+    "BENIGN",
+    "PortScan"
+   ]
+  },
+  "Friday-WorkingHours-Morning.pcap_ISCX.csv": {
+   "rows": 190911,
+   "first_timestamp": "2017-07-07T08:59:00.000000000",
+   "last_timestamp": "2017-07-07T12:59:00.000000000",
+   "non_decreasing_in_file_order": 1.0,
+   "class_counts": {
+    "BENIGN": 188955,
+    "Bot": 1956
+   },
+   "classes": [
+    "BENIGN",
+    "Bot"
+   ]
+  },
+  "Monday-WorkingHours.pcap_ISCX.csv": {
+   "rows": 529481,
+   "first_timestamp": "2017-07-03T08:55:58.000000000",
+   "last_timestamp": "2017-07-03T17:01:34.000000000",
+   "non_decreasing_in_file_order": 0.605762257309058,
+   "class_counts": {
+    "BENIGN": 529481
+   },
+   "classes": [
+    "BENIGN"
+   ]
+  },
+  "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv": {
+   "rows": 288395,
+   "first_timestamp": "2017-07-06T13:00:00.000000000",
+   "last_timestamp": "2017-07-06T17:04:00.000000000",
+   "non_decreasing_in_file_order": 1.0,
+   "class_counts": {
+    "BENIGN": 288359,
+    "Infiltration": 36
+   },
+   "classes": [
+    "BENIGN",
+    "Infiltration"
+   ]
+  },
+  "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv": {
+   "rows": 170231,
+   "first_timestamp": "2017-07-06T08:59:00.000000000",
+   "last_timestamp": "2017-07-06T12:59:00.000000000",
+   "non_decreasing_in_file_order": 1.0,
+   "class_counts": {
+    "BENIGN": 168051,
+    "Web Attack - Brute Force": 1507,
+    "Web Attack - Sql Injection": 21,
+    "Web Attack - XSS": 652
+   },
+   "classes": [
+    "BENIGN",
+    "Web Attack - Brute Force",
+    "Web Attack - Sql Injection",
+    "Web Attack - XSS"
+   ]
+  },
+  "Tuesday-WorkingHours.pcap_ISCX.csv": {
+   "rows": 445645,
+   "first_timestamp": "2017-07-04T08:53:00.000000000",
+   "last_timestamp": "2017-07-04T17:00:00.000000000",
+   "non_decreasing_in_file_order": 0.6423692454066474,
+   "class_counts": {
+    "BENIGN": 431813,
+    "FTP-Patator": 7935,
+    "SSH-Patator": 5897
+   },
+   "classes": [
+    "BENIGN",
+    "FTP-Patator",
+    "SSH-Patator"
+   ]
+  },
+  "Wednesday-workingHours.pcap_ISCX.csv": {
+   "rows": 691406,
+   "first_timestamp": "2017-07-05T08:42:00.000000000",
+   "last_timestamp": "2017-07-05T17:10:00.000000000",
+   "non_decreasing_in_file_order": 0.7630260122504177,
+   "class_counts": {
+    "BENIGN": 439683,
+    "DoS GoldenEye": 10293,
+    "DoS Hulk": 230124,
+    "DoS Slowhttptest": 5499,
+    "DoS slowloris": 5796,
+    "Heartbleed": 11
+   },
+   "classes": [
+    "BENIGN",
+    "DoS GoldenEye",
+    "DoS Hulk",
+    "DoS Slowhttptest",
+    "DoS slowloris",
+    "Heartbleed"
+   ]
+  }
+ },
+ "class_windows": {
+  "BENIGN": {
+   "rows": 2271320,
+   "first_occurrence": "2017-07-03T08:55:58.000000000",
+   "last_occurrence": "2017-07-07T17:02:00.000000000"
+  },
+  "Bot": {
+   "rows": 1956,
+   "first_occurrence": "2017-07-07T09:34:00.000000000",
+   "last_occurrence": "2017-07-07T12:59:00.000000000"
+  },
+  "DDoS": {
+   "rows": 128025,
+   "first_occurrence": "2017-07-07T15:56:00.000000000",
+   "last_occurrence": "2017-07-07T16:16:00.000000000"
+  },
+  "DoS GoldenEye": {
+   "rows": 10293,
+   "first_occurrence": "2017-07-05T11:10:00.000000000",
+   "last_occurrence": "2017-07-05T11:19:00.000000000"
+  },
+  "DoS Hulk": {
+   "rows": 230124,
+   "first_occurrence": "2017-07-05T10:43:00.000000000",
+   "last_occurrence": "2017-07-05T11:07:00.000000000"
+  },
+  "DoS Slowhttptest": {
+   "rows": 5499,
+   "first_occurrence": "2017-07-05T10:15:00.000000000",
+   "last_occurrence": "2017-07-05T10:37:00.000000000"
+  },
+  "DoS slowloris": {
+   "rows": 5796,
+   "first_occurrence": "2017-07-05T09:01:00.000000000",
+   "last_occurrence": "2017-07-05T14:25:00.000000000"
+  },
+  "FTP-Patator": {
+   "rows": 7935,
+   "first_occurrence": "2017-07-04T09:17:00.000000000",
+   "last_occurrence": "2017-07-04T10:30:00.000000000"
+  },
+  "Heartbleed": {
+   "rows": 11,
+   "first_occurrence": "2017-07-05T15:12:00.000000000",
+   "last_occurrence": "2017-07-05T15:32:00.000000000"
+  },
+  "Infiltration": {
+   "rows": 36,
+   "first_occurrence": "2017-07-06T14:19:00.000000000",
+   "last_occurrence": "2017-07-06T15:45:00.000000000"
+  },
+  "PortScan": {
+   "rows": 158804,
+   "first_occurrence": "2017-07-07T13:05:00.000000000",
+   "last_occurrence": "2017-07-07T15:23:00.000000000"
+  },
+  "SSH-Patator": {
+   "rows": 5897,
+   "first_occurrence": "2017-07-04T14:09:00.000000000",
+   "last_occurrence": "2017-07-04T15:11:00.000000000"
+  },
+  "Web Attack - Brute Force": {
+   "rows": 1507,
+   "first_occurrence": "2017-07-06T09:15:00.000000000",
+   "last_occurrence": "2017-07-06T10:00:00.000000000"
+  },
+  "Web Attack - Sql Injection": {
+   "rows": 21,
+   "first_occurrence": "2017-07-06T10:40:00.000000000",
+   "last_occurrence": "2017-07-06T10:42:00.000000000"
+  },
+  "Web Attack - XSS": {
+   "rows": 652,
+   "first_occurrence": "2017-07-06T10:15:00.000000000",
+   "last_occurrence": "2017-07-06T10:35:00.000000000"
+  }
+ },
+ "proposed_cutoff": {
+  "strategy": "global_chronological",
+  "test_size": 0.2,
+  "boundary_timestamp": "2017-07-07T11:17:00.000000000",
+  "rule": "Sort every row by repaired timestamp, take the last test_size as test, then extend the cut forward so that no single timestamp value is split across the boundary."
+ },
+ "partition": {
+  "train_rows": 2263211,
+  "test_rows": 564665,
+  "test_fraction": 0.19967813298744358,
+  "train_first_timestamp": "2017-07-03T08:55:58.000000000",
+  "train_last_timestamp": "2017-07-07T11:17:00.000000000",
+  "test_first_timestamp": "2017-07-07T11:18:00.000000000",
+  "test_last_timestamp": "2017-07-07T17:02:00.000000000",
+  "chronology_respected": true,
+  "train_classes": [
+   "BENIGN",
+   "Bot",
+   "DoS GoldenEye",
+   "DoS Hulk",
+   "DoS Slowhttptest",
+   "DoS slowloris",
+   "FTP-Patator",
+   "Heartbleed",
+   "Infiltration",
+   "SSH-Patator",
+   "Web Attack - Brute Force",
+   "Web Attack - Sql Injection",
+   "Web Attack - XSS"
+  ],
+  "test_classes": [
+   "BENIGN",
+   "Bot",
+   "DDoS",
+   "PortScan"
+  ],
+  "classes_in_both": [
+   "BENIGN",
+   "Bot"
+  ],
+  "classes_only_in_train": [
+   "DoS GoldenEye",
+   "DoS Hulk",
+   "DoS Slowhttptest",
+   "DoS slowloris",
+   "FTP-Patator",
+   "Heartbleed",
+   "Infiltration",
+   "SSH-Patator",
+   "Web Attack - Brute Force",
+   "Web Attack - Sql Injection",
+   "Web Attack - XSS"
+  ],
+  "classes_only_in_test": [
+   "DDoS",
+   "PortScan"
+  ],
+  "n_train_classes": 13,
+  "n_test_classes": 4,
+  "n_unseen_test_classes": 2,
+  "unseen_test_rows": 286829,
+  "unseen_test_fraction": 0.5079631285806628,
+  "train_class_support": {
+   "BENIGN": 1993913,
+   "Bot": 1527,
+   "DDoS": 0,
+   "DoS GoldenEye": 10293,
+   "DoS Hulk": 230124,
+   "DoS Slowhttptest": 5499,
+   "DoS slowloris": 5796,
+   "FTP-Patator": 7935,
+   "Heartbleed": 11,
+   "Infiltration": 36,
+   "PortScan": 0,
+   "SSH-Patator": 5897,
+   "Web Attack - Brute Force": 1507,
+   "Web Attack - Sql Injection": 21,
+   "Web Attack - XSS": 652
+  },
+  "test_class_support": {
+   "BENIGN": 277407,
+   "Bot": 429,
+   "DDoS": 128025,
+   "DoS GoldenEye": 0,
+   "DoS Hulk": 0,
+   "DoS Slowhttptest": 0,
+   "DoS slowloris": 0,
+   "FTP-Patator": 0,
+   "Heartbleed": 0,
+   "Infiltration": 0,
+   "PortScan": 158804,
+   "SSH-Patator": 0,
+   "Web Attack - Brute Force": 0,
+   "Web Attack - Sql Injection": 0,
+   "Web Attack - XSS": 0
+  }
+ },
+ "duplicates": {
+  "method": "64-bit pandas row hash over the feature columns only (labels and metadata excluded). Collisions are possible in principle and would over-report, so this is an upper bound on duplication.",
+  "total_rows": 2827876,
+  "unique_feature_rows": 2520265,
+  "duplicate_rate": 0.10877810766808726,
+  "duplicate_groups": 95406,
+  "groups_straddling_the_cutoff": 15606,
+  "rows_in_straddling_groups": 92178,
+  "straddling_fraction_of_dataset": 0.03259619587280348,
+  "interpretation": "A duplicate group that straddles the cutoff means an identical feature vector appears both before and after the boundary. Under a chronological split this is not preprocessing leakage - the rows are genuinely distinct flows that happen to be identical - but it does mean the test set is not fully novel with respect to training, and the figure belongs in the limitations."
+ }
+}
