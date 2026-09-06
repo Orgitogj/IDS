@@ -645,3 +645,128 @@ Every latency number in the final table comes from `training/evaluate_artifacts.
 the frozen harness, applied identically to v1 and v2. Latency recorded inside individual
 training bundles is *not* used for the table — the anchor's bundle predates the metric
 namespacing and would not have been comparable.
+
+---
+
+## 16. Temporal generalization protocol *(PK2 / H2)*
+
+**Namespace:** `ml-service/reports/temporal_evaluation/`, artifacts `*_temporal_v1`,
+configs `training/configs/temporal/`. The canonical random-split v2 results in
+`reports/artifact_evaluation/` are **frozen and untouched** by this phase.
+
+### 16.1 Motivation
+
+The random split is an *in-distribution* estimate: train and test rows are drawn from the
+same five-day capture, so flows from the same attack burst land on both sides. This section
+measures what happens when the evaluation is ordered by time instead.
+
+### 16.2 Source of chronology
+
+The `Timestamp` column of `cicids2017_cleaned.parquet`, repaired from CICIDS2017's
+**12-hour clock with no AM/PM marker** by `training.evaluate.parse_cicids_timestamps`
+(hours 1–5 → 13–17; hours 8–12 unchanged; the parser raises if 6 or 7 ever appears, which
+they never do). `source_file` is retained as an independent corroboration of the day and is
+**never** used to order rows.
+
+`Timestamp` is **not a feature**. It is excluded from every registered feature set, along
+with `Flow ID`, `Source IP`, `Source Port`, `Destination IP`, `Label` and `source_file`, so
+no temporal information reaches the classifier as an input.
+
+### 16.3 What the dataset actually permits
+
+Measured, not assumed (`reports/temporal_evaluation/temporal_audit.json`):
+
+| Class | Window | Span |
+|---|---|---|
+| BENIGN | Mon 08:55 → Fri 17:02 | all five days |
+| FTP-Patator | Tue 09:17 → 10:30 | 73 min |
+| SSH-Patator | Tue 14:09 → 15:11 | 62 min |
+| DoS slowloris / Slowhttptest / Hulk / GoldenEye | Wed 09:01 → 11:19 | one morning |
+| Heartbleed | Wed 15:12 → 15:32 | 20 min |
+| Web Attack – Brute Force / XSS / Sql Injection | Thu 09:15 → 10:42 | 87 min |
+| Infiltration | Thu 14:19 → 15:45 | 86 min |
+| Bot | Fri 09:34 → 12:59 | 3.4 h |
+| PortScan | Fri 13:05 → 15:23 | 2.3 h |
+| DDoS | Fri 15:56 → 16:16 | 20 min |
+
+**No attack family recurs across days.** Every family occupies one contiguous window inside
+a single day. This is a property of how CICIDS2017 was generated, and it constrains what
+any chronological protocol can measure: a cut at a day boundary makes *every* attack class
+in the test period unseen during training. The only attack class that straddles the 80/20
+cut is Bot.
+
+### 16.4 The split
+
+Strategy `temporal_global`: sort every row by repaired timestamp, take the last 20 % as
+test, then extend the cut forward so no single timestamp value is split across the
+boundary. Deterministic; no RNG is involved, so the seed does not affect it.
+
+| | |
+|---|---|
+| Boundary | `2017-07-07 11:17:00` |
+| Train | 2,263,211 rows, Mon 08:55:58 → Fri 11:17:00, **13 classes** |
+| Test | 564,665 rows, Fri 11:18:00 → Fri 17:02:00, **4 classes** |
+| In both partitions | BENIGN, Bot |
+| **Unseen in training** | **DDoS, PortScan — 286,829 rows = 50.8 % of the test set** |
+| Absent from test | 11 training classes |
+
+### 16.5 Metrics and the class set each one uses
+
+Because the test period contains classes the model never saw, a single macro F1 would
+conflate two different effects. Each figure therefore names its class set explicitly:
+
+| Metric | Class set | Role |
+|---|---|---|
+| `classes_present_in_temporal_test` | the 4 test classes, **including unseen ones** | **STRICT — primary** |
+| `classes_present_in_both_partitions` | BENIGN, Bot | **SEEN-CLASS DIAGNOSTIC** |
+| `union_of_train_and_test_classes` | all 15 | completeness only; classes with zero test support score 0 by construction, so it cannot rank models |
+| `test_classes_with_support_at_least_100` | test classes ≥ 100 rows | sensitivity analysis |
+
+Nothing is silently dropped: unseen classes stay in the strict metric with the recall of 0
+they necessarily have. The seen-class diagnostic is reported **alongside** the strict
+result, never instead of it.
+
+Also reported per model: accuracy, macro precision/recall, per-class precision/recall/F1/
+support, confusion matrix, BENIGN false-positive rate, number of train and test classes,
+unseen classes, unseen test rows, and the unseen fraction of the test set.
+
+### 16.6 Leakage controls
+
+Identical in standard to random-v2, re-verified for the temporal order:
+
+* The split happens **first**, by time, and `assert_disjoint` fails the run otherwise.
+* Balancing/SMOTE receives only `train_idx` — pinned by a test that asserts the maximum
+  training timestamp never exceeds the minimum test timestamp.
+* The scaler is fitted on the balanced temporal **training** matrix only — pinned by a test
+  that asserts the row count it sees equals the balanced training size.
+* The label encoder is fitted on training labels only.
+* Feature sets are fixed registered lists; no selection step learns from the test period.
+* No synthetic row can enter the test partition; a test asserts the source feature matrix
+  is byte-identical after a run and that test class support is unchanged by balancing.
+* The output vocabulary a model can emit is its *training* class set. A class with zero
+  training rows is treated explicitly as **unseen**, not as a learned class.
+
+### 16.7 What this protocol is and is not
+
+* **Random split = in-distribution baseline.**
+* **Temporal split = time-ordered distribution-shift test.**
+
+Temporal evaluation here is **not** cross-dataset validation, **not** leave-one-family-out,
+**not** zero-day detection, and **not** production validation. Those remain separate
+experiments. In particular, a model failing on DDoS and PortScan because those families
+occur only after the cutoff is an **unseen-label effect**; calling it zero-day detection
+would be wrong.
+
+### 16.8 Known limitations
+
+* The strict test period is a single Friday afternoon. It is one cut of one capture, not a
+  distribution over cutoffs.
+* The seen-class diagnostic covers **two classes** (BENIGN and Bot). Bot has 429 test rows.
+  This is a narrow diagnostic and must be described as such.
+* 10.88 % of the dataset's feature rows are exact duplicates of another row, and **3.26 %
+  of rows sit in duplicate groups that straddle the cutoff**. Under a chronological split
+  these are genuinely distinct flows, so this is not preprocessing leakage — but the test
+  period is not fully novel with respect to training, and the figure bounds how novel it is.
+* Any difference from the random baseline may reflect chronology, attack-family
+  composition, unseen labels, class-support changes, or day-specific capture conditions.
+  The design separates the unseen-label component; it does not isolate the others.
