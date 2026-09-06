@@ -1,0 +1,36 @@
+name: mlp-smote-cicids2017-temporal-v1
+version: temporal-1.0
+description: MLP me balancim, ndarje kohore globale. I vetmi qe kerkon scaler; scaler-i
+  pershtatet VETEM mbi particionin kohor te trajnimit.
+seed: 42
+dataset:
+  path: datasets/cicids2017_cleaned.parquet
+  label_column: Label
+  timestamp_column: Timestamp
+features:
+  reference: reports/training_feature_reference.json
+  feature_set: cicids2017-78-v1
+  columns: null
+split:
+  strategy: temporal_global
+  test_size: 0.2
+balancing:
+  enabled: true
+  benign_label: BENIGN
+  benign_cap: 200000
+  rare_class_min: 2000
+  oversampler: smote
+  smote_k_neighbors: 5
+model:
+  type: mlp
+  params:
+    hidden_layer_sizes:
+    - 64
+    - 32
+    max_iter: 50
+    early_stopping: true
+    n_iter_no_change: 5
+output:
+  models_dir: models
+  reports_dir: reports/temporal_evaluation/training
+  artifact_name: mlp_smote_temporal_v1
