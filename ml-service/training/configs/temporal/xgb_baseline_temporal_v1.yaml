@@ -1,0 +1,35 @@
+name: xgb-baseline-cicids2017-temporal-v1
+version: "temporal-1.0"
+description: >-
+  XGBoost pa balancim, ndarje kohore globale.
+
+seed: 42
+
+dataset:
+  path: datasets/cicids2017_cleaned.parquet
+  label_column: Label
+  timestamp_column: Timestamp
+
+features:
+  reference: reports/training_feature_reference.json
+  feature_set: cicids2017-78-v1
+
+split:
+  strategy: temporal_global
+  test_size: 0.2
+
+output:
+  models_dir: models
+  reports_dir: reports/temporal_evaluation/training
+  artifact_name: xgb_baseline_temporal_v1
+
+balancing:
+  enabled: false
+
+model:
+  type: xgboost
+  params:
+    n_estimators: 100
+    tree_method: hist
+    eval_metric: mlogloss
+    n_jobs: -1
