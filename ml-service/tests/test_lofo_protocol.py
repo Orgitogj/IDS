@@ -291,3 +291,34 @@ class TestKnownClassMetrics:
 
         assert report["n_classes"] == 2
         assert 0.0 < report["macro_f1"] < 1.0
+
+
+class TestMatchedBaseline:
+
+    def test_matched_metrics_come_from_the_frozen_confusion_matrix(self, tmp_path):
+        import pandas as pd
+
+        frame = pd.DataFrame([[90, 10, 0], [5, 45, 0], [0, 0, 20]],
+                             index=[BENIGN, "Bot", "DDoS"],
+                             columns=[BENIGN, "Bot", "DDoS"])
+        path = tmp_path / "confusion_matrix.csv"
+        frame.to_csv(path, index_label="true\\predicted")
+
+        matched = lofo.matched_baseline_from_confusion(path, [BENIGN, "Bot"])
+
+        assert matched["classes"] == [BENIGN, "Bot"]
+        assert matched["n_classes"] == 2
+        assert "DDoS" not in matched["classes"]
+        assert matched["accuracy_over_known_rows"] == pytest.approx(135 / 150)
+
+    def test_a_missing_class_is_skipped_not_invented(self, tmp_path):
+        import pandas as pd
+
+        frame = pd.DataFrame([[10, 0], [0, 10]], index=[BENIGN, "Bot"],
+                             columns=[BENIGN, "Bot"])
+        path = tmp_path / "confusion_matrix.csv"
+        frame.to_csv(path, index_label="true\\predicted")
+
+        matched = lofo.matched_baseline_from_confusion(path, [BENIGN, "Bot", "Nonexistent"])
+
+        assert matched["classes"] == [BENIGN, "Bot"]
