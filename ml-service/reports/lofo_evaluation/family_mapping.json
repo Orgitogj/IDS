@@ -1,0 +1,288 @@
+{
+ "schema_version": 1,
+ "experiment_type": "lofo",
+ "taxonomy_version": "cicids2017-families-v1",
+ "generated_at": "2026-09-06T22:26:40.852706Z",
+ "canonical_split": {
+  "strategy": "random",
+  "test_size": 0.2,
+  "seed": 42,
+  "train_rows": 2262300,
+  "test_rows": 565576,
+  "reference": "random-v2 canonical partition (reports/artifact_evaluation)"
+ },
+ "dataset": {
+  "name": "cicids2017_cleaned.parquet",
+  "sha256": "f5b393d646f69f990ffc48203debc7241f897eacde9870a351db6d264b9e3d1d",
+  "rows": 2827876
+ },
+ "validation": {
+  "taxonomy_version": "cicids2017-families-v1",
+  "labels_observed": [
+   "Bot",
+   "DDoS",
+   "DoS GoldenEye",
+   "DoS Hulk",
+   "DoS Slowhttptest",
+   "DoS slowloris",
+   "FTP-Patator",
+   "Heartbleed",
+   "Infiltration",
+   "PortScan",
+   "SSH-Patator",
+   "Web Attack - Brute Force",
+   "Web Attack - Sql Injection",
+   "Web Attack - XSS"
+  ],
+  "labels_mapped": [
+   "Bot",
+   "DDoS",
+   "DoS GoldenEye",
+   "DoS Hulk",
+   "DoS Slowhttptest",
+   "DoS slowloris",
+   "FTP-Patator",
+   "Heartbleed",
+   "Infiltration",
+   "PortScan",
+   "SSH-Patator",
+   "Web Attack - Brute Force",
+   "Web Attack - Sql Injection",
+   "Web Attack - XSS"
+  ],
+  "labels_in_taxonomy_but_absent_from_data": [],
+  "families": [
+   "Bot",
+   "Brute Force",
+   "DDoS",
+   "DoS",
+   "Heartbleed",
+   "Infiltration",
+   "PortScan",
+   "Web Attack"
+  ],
+  "complete": true
+ },
+ "related_families": [
+  {
+   "families": [
+    "DoS",
+    "DDoS"
+   ],
+   "note": "DoS and DDoS are treated as separate families because CICIDS2017 generated them as separate scenarios on separate days with different source models. They remain mechanically adjacent: when DDoS is held out, four DoS labels stay in training, and vice versa. Detection of a held-out DDoS family is therefore NOT evidence of generalisation to an unrelated attack type."
+  },
+  {
+   "families": [
+    "Brute Force",
+    "Web Attack"
+   ],
+   "note": "Web Attack - Brute Force is a web-form credential attack while the Brute Force family is FTP/SSH credential attack. They are separate families here because they target different protocols in different scenarios, but they share the notion of repeated authentication attempts."
+  }
+ ],
+ "support_tiers": {
+  "high_min": 1000,
+  "moderate_min": 100
+ },
+ "families": {
+  "Bot": {
+   "family": "Bot",
+   "member_labels": [
+    "Bot"
+   ],
+   "n_member_labels": 1,
+   "scenario": "Friday morning: botnet command-and-control activity (Ares).",
+   "rationale": "Single label, single scenario.",
+   "total_support": 1956,
+   "per_label_total": {
+    "Bot": 1956
+   },
+   "train_support": 1565,
+   "per_label_train": {
+    "Bot": 1565
+   },
+   "test_support": 391,
+   "per_label_test": {
+    "Bot": 391
+   },
+   "support_tier": "moderate"
+  },
+  "Brute Force": {
+   "family": "Brute Force",
+   "member_labels": [
+    "FTP-Patator",
+    "SSH-Patator"
+   ],
+   "n_member_labels": 2,
+   "scenario": "Tuesday: credential brute force driven by the Patator tool against FTP and SSH.",
+   "rationale": "Both labels are the same tool and the same attack mechanism against different services. Holding out only one would leave the other in training and the family would not be unseen.",
+   "total_support": 13832,
+   "per_label_total": {
+    "FTP-Patator": 7935,
+    "SSH-Patator": 5897
+   },
+   "train_support": 11065,
+   "per_label_train": {
+    "FTP-Patator": 6348,
+    "SSH-Patator": 4717
+   },
+   "test_support": 2767,
+   "per_label_test": {
+    "FTP-Patator": 1587,
+    "SSH-Patator": 1180
+   },
+   "support_tier": "high"
+  },
+  "DDoS": {
+   "family": "DDoS",
+   "member_labels": [
+    "DDoS"
+   ],
+   "n_member_labels": 1,
+   "scenario": "Friday afternoon: distributed denial of service (LOIC).",
+   "rationale": "Kept separate from DoS because CICIDS2017 generated it on a different day with a distributed source model. See the note on RELATED_FAMILIES - the two are mechanically adjacent and the DoS/DDoS folds are not independent of each other.",
+   "total_support": 128025,
+   "per_label_total": {
+    "DDoS": 128025
+   },
+   "train_support": 102420,
+   "per_label_train": {
+    "DDoS": 102420
+   },
+   "test_support": 25605,
+   "per_label_test": {
+    "DDoS": 25605
+   },
+   "support_tier": "high"
+  },
+  "DoS": {
+   "family": "DoS",
+   "member_labels": [
+    "DoS Hulk",
+    "DoS GoldenEye",
+    "DoS slowloris",
+    "DoS Slowhttptest"
+   ],
+   "n_member_labels": 4,
+   "scenario": "Wednesday morning: single-source application-layer denial of service.",
+   "rationale": "Four tools producing the same class of resource-exhaustion behaviour in one contiguous window. Removing one at a time leaves near-identical traffic in training.",
+   "total_support": 251712,
+   "per_label_total": {
+    "DoS Hulk": 230124,
+    "DoS GoldenEye": 10293,
+    "DoS slowloris": 5796,
+    "DoS Slowhttptest": 5499
+   },
+   "train_support": 201369,
+   "per_label_train": {
+    "DoS Hulk": 184099,
+    "DoS GoldenEye": 8234,
+    "DoS slowloris": 4637,
+    "DoS Slowhttptest": 4399
+   },
+   "test_support": 50343,
+   "per_label_test": {
+    "DoS Hulk": 46025,
+    "DoS GoldenEye": 2059,
+    "DoS slowloris": 1159,
+    "DoS Slowhttptest": 1100
+   },
+   "support_tier": "high"
+  },
+  "Heartbleed": {
+   "family": "Heartbleed",
+   "member_labels": [
+    "Heartbleed"
+   ],
+   "n_member_labels": 1,
+   "scenario": "Wednesday afternoon: Heartbleed exploitation.",
+   "rationale": "Single label. Kept out of the DoS family because it is an information-disclosure exploit, not resource exhaustion, despite sharing the Wednesday capture.",
+   "total_support": 11,
+   "per_label_total": {
+    "Heartbleed": 11
+   },
+   "train_support": 9,
+   "per_label_train": {
+    "Heartbleed": 9
+   },
+   "test_support": 2,
+   "per_label_test": {
+    "Heartbleed": 2
+   },
+   "support_tier": "low_exploratory"
+  },
+  "Infiltration": {
+   "family": "Infiltration",
+   "member_labels": [
+    "Infiltration"
+   ],
+   "n_member_labels": 1,
+   "scenario": "Thursday afternoon: infiltration from inside the network.",
+   "rationale": "Single label, single scenario.",
+   "total_support": 36,
+   "per_label_total": {
+    "Infiltration": 36
+   },
+   "train_support": 29,
+   "per_label_train": {
+    "Infiltration": 29
+   },
+   "test_support": 7,
+   "per_label_test": {
+    "Infiltration": 7
+   },
+   "support_tier": "low_exploratory"
+  },
+  "PortScan": {
+   "family": "PortScan",
+   "member_labels": [
+    "PortScan"
+   ],
+   "n_member_labels": 1,
+   "scenario": "Friday afternoon: port scanning (nmap).",
+   "rationale": "Single label, single scenario.",
+   "total_support": 158804,
+   "per_label_total": {
+    "PortScan": 158804
+   },
+   "train_support": 127043,
+   "per_label_train": {
+    "PortScan": 127043
+   },
+   "test_support": 31761,
+   "per_label_test": {
+    "PortScan": 31761
+   },
+   "support_tier": "high"
+  },
+  "Web Attack": {
+   "family": "Web Attack",
+   "member_labels": [
+    "Web Attack - Brute Force",
+    "Web Attack - XSS",
+    "Web Attack - Sql Injection"
+   ],
+   "n_member_labels": 3,
+   "scenario": "Thursday morning: web application attacks against DVWA.",
+   "rationale": "Three sub-labels of one scenario against one target in one window.",
+   "total_support": 2180,
+   "per_label_total": {
+    "Web Attack - Brute Force": 1507,
+    "Web Attack - XSS": 652,
+    "Web Attack - Sql Injection": 21
+   },
+   "train_support": 1745,
+   "per_label_train": {
+    "Web Attack - Brute Force": 1206,
+    "Web Attack - XSS": 522,
+    "Web Attack - Sql Injection": 17
+   },
+   "test_support": 435,
+   "per_label_test": {
+    "Web Attack - Brute Force": 301,
+    "Web Attack - XSS": 130,
+    "Web Attack - Sql Injection": 4
+   },
+   "support_tier": "moderate"
+  }
+ }
+}
