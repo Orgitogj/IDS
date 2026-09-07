@@ -1,0 +1,269 @@
+{
+ "schema_version": 1,
+ "experiment_type": "lofo",
+ "protocol_version": "lofo-v1",
+ "taxonomy_version": "cicids2017-families-v1",
+ "generated_at": "2026-09-07T10:50:51.425045Z",
+ "git_commit": "103c4f07ab61c79cae86e449ff283d7c723df35f",
+ "library_versions": {
+  "python": "3.11.9",
+  "numpy": "2.1.1",
+  "pandas": "2.2.3",
+  "scikit-learn": "1.5.2",
+  "xgboost": "2.1.1"
+ },
+ "canonical_split": {
+  "strategy": "random",
+  "test_size": 0.2,
+  "seed": 42
+ },
+ "dataset": {
+  "name": "cicids2017_cleaned.parquet",
+  "sha256": "f5b393d646f69f990ffc48203debc7241f897eacde9870a351db6d264b9e3d1d",
+  "rows": 2827876
+ },
+ "families_run": [
+  "Bot",
+  "Brute Force",
+  "DDoS",
+  "DoS",
+  "Heartbleed",
+  "Infiltration",
+  "PortScan",
+  "Web Attack"
+ ],
+ "models_run": [
+  "rf_balanced",
+  "rf_baseline",
+  "xgb_balanced",
+  "xgb_baseline"
+ ],
+ "n_folds": 32,
+ "index_source": "derived from every lofo_*/metrics.json present on disk, so the summary fields always describe the complete accumulated experiment rather than the most recent invocation",
+ "folds": {
+  "lofo_rf_balanced_bot": {
+   "held_out_family": "Bot",
+   "model_key": "rf_balanced",
+   "held_out_family_test_support": 391,
+   "attack_detection_rate": 0.0,
+   "known_macro_f1": 0.8750467772321617
+  },
+  "lofo_rf_balanced_brute_force": {
+   "held_out_family": "Brute Force",
+   "model_key": "rf_balanced",
+   "held_out_family_test_support": 2767,
+   "attack_detection_rate": 0.01084206722081677,
+   "known_macro_f1": 0.8295175567745411
+  },
+  "lofo_rf_balanced_ddos": {
+   "held_out_family": "DDoS",
+   "model_key": "rf_balanced",
+   "held_out_family_test_support": 25605,
+   "attack_detection_rate": 0.6321031048623316,
+   "known_macro_f1": 0.8341530307663546
+  },
+  "lofo_rf_balanced_dos": {
+   "held_out_family": "DoS",
+   "model_key": "rf_balanced",
+   "held_out_family_test_support": 50343,
+   "attack_detection_rate": 0.01237510676757444,
+   "known_macro_f1": 0.7862075642304673
+  },
+  "lofo_rf_balanced_heartbleed": {
+   "held_out_family": "Heartbleed",
+   "model_key": "rf_balanced",
+   "held_out_family_test_support": 2,
+   "attack_detection_rate": 0.0,
+   "known_macro_f1": 0.8588178987674349
+  },
+  "lofo_rf_balanced_infiltration": {
+   "held_out_family": "Infiltration",
+   "model_key": "rf_balanced",
+   "held_out_family_test_support": 7,
+   "attack_detection_rate": 0.0,
+   "known_macro_f1": 0.8805657763917696
+  },
+  "lofo_rf_balanced_portscan": {
+   "held_out_family": "PortScan",
+   "model_key": "rf_balanced",
+   "held_out_family_test_support": 31761,
+   "attack_detection_rate": 0.0008815843329869966,
+   "known_macro_f1": 0.8535693615184138
+  },
+  "lofo_rf_balanced_web_attack": {
+   "held_out_family": "Web Attack",
+   "model_key": "rf_balanced",
+   "held_out_family_test_support": 435,
+   "attack_detection_rate": 0.0367816091954023,
+   "known_macro_f1": 0.9542726991553625
+  },
+  "lofo_rf_baseline_bot": {
+   "held_out_family": "Bot",
+   "model_key": "rf_baseline",
+   "held_out_family_test_support": 391,
+   "attack_detection_rate": 0.0,
+   "known_macro_f1": 0.8752377098451136
+  },
+  "lofo_rf_baseline_brute_force": {
+   "held_out_family": "Brute Force",
+   "model_key": "rf_baseline",
+   "held_out_family_test_support": 2767,
+   "attack_detection_rate": 0.0003614022406938923,
+   "known_macro_f1": 0.850823183198313
+  },
+  "lofo_rf_baseline_ddos": {
+   "held_out_family": "DDoS",
+   "model_key": "rf_baseline",
+   "held_out_family_test_support": 25605,
+   "attack_detection_rate": 0.6287834407342316,
+   "known_macro_f1": 0.8415844623413863
+  },
+  "lofo_rf_baseline_dos": {
+   "held_out_family": "DoS",
+   "model_key": "rf_baseline",
+   "held_out_family_test_support": 50343,
+   "attack_detection_rate": 0.006674214885882844,
+   "known_macro_f1": 0.814568857626666
+  },
+  "lofo_rf_baseline_heartbleed": {
+   "held_out_family": "Heartbleed",
+   "model_key": "rf_baseline",
+   "held_out_family_test_support": 2,
+   "attack_detection_rate": 0.0,
+   "known_macro_f1": 0.8559494611079715
+  },
+  "lofo_rf_baseline_infiltration": {
+   "held_out_family": "Infiltration",
+   "model_key": "rf_baseline",
+   "held_out_family_test_support": 7,
+   "attack_detection_rate": 0.0,
+   "known_macro_f1": 0.8829481177213226
+  },
+  "lofo_rf_baseline_portscan": {
+   "held_out_family": "PortScan",
+   "model_key": "rf_baseline",
+   "held_out_family_test_support": 31761,
+   "attack_detection_rate": 0.000850099178237461,
+   "known_macro_f1": 0.854337821964081
+  },
+  "lofo_rf_baseline_web_attack": {
+   "held_out_family": "Web Attack",
+   "model_key": "rf_baseline",
+   "held_out_family_test_support": 435,
+   "attack_detection_rate": 0.06206896551724138,
+   "known_macro_f1": 0.9546036849573748
+  },
+  "lofo_xgb_balanced_bot": {
+   "held_out_family": "Bot",
+   "model_key": "xgb_balanced",
+   "held_out_family_test_support": 391,
+   "attack_detection_rate": 0.0,
+   "known_macro_f1": 0.888450818942565
+  },
+  "lofo_xgb_balanced_brute_force": {
+   "held_out_family": "Brute Force",
+   "model_key": "xgb_balanced",
+   "held_out_family_test_support": 2767,
+   "attack_detection_rate": 0.0018070112034694614,
+   "known_macro_f1": 0.8663648366101022
+  },
+  "lofo_xgb_balanced_ddos": {
+   "held_out_family": "DDoS",
+   "model_key": "xgb_balanced",
+   "held_out_family_test_support": 25605,
+   "attack_detection_rate": 0.5136106229252099,
+   "known_macro_f1": 0.8446641246294907
+  },
+  "lofo_xgb_balanced_dos": {
+   "held_out_family": "DoS",
+   "model_key": "xgb_balanced",
+   "held_out_family_test_support": 50343,
+   "attack_detection_rate": 0.03768150487654689,
+   "known_macro_f1": 0.7581836189046111
+  },
+  "lofo_xgb_balanced_heartbleed": {
+   "held_out_family": "Heartbleed",
+   "model_key": "xgb_balanced",
+   "held_out_family_test_support": 2,
+   "attack_detection_rate": 0.0,
+   "known_macro_f1": 0.8750563705363315
+  },
+  "lofo_xgb_balanced_infiltration": {
+   "held_out_family": "Infiltration",
+   "model_key": "xgb_balanced",
+   "held_out_family_test_support": 7,
+   "attack_detection_rate": 0.0,
+   "known_macro_f1": 0.8860286302294957
+  },
+  "lofo_xgb_balanced_portscan": {
+   "held_out_family": "PortScan",
+   "model_key": "xgb_balanced",
+   "held_out_family_test_support": 31761,
+   "attack_detection_rate": 0.008658417556122289,
+   "known_macro_f1": 0.8269843690988947
+  },
+  "lofo_xgb_balanced_web_attack": {
+   "held_out_family": "Web Attack",
+   "model_key": "xgb_balanced",
+   "held_out_family_test_support": 435,
+   "attack_detection_rate": 0.6620689655172414,
+   "known_macro_f1": 0.9694651824754833
+  },
+  "lofo_xgb_baseline_bot": {
+   "held_out_family": "Bot",
+   "model_key": "xgb_baseline",
+   "held_out_family_test_support": 391,
+   "attack_detection_rate": 0.0,
+   "known_macro_f1": 0.8858207452302691
+  },
+  "lofo_xgb_baseline_brute_force": {
+   "held_out_family": "Brute Force",
+   "model_key": "xgb_baseline",
+   "held_out_family_test_support": 2767,
+   "attack_detection_rate": 0.07661727502710516,
+   "known_macro_f1": 0.8545337719172355
+  },
+  "lofo_xgb_baseline_ddos": {
+   "held_out_family": "DDoS",
+   "model_key": "xgb_baseline",
+   "held_out_family_test_support": 25605,
+   "attack_detection_rate": 0.6275727396992775,
+   "known_macro_f1": 0.8696247548622373
+  },
+  "lofo_xgb_baseline_dos": {
+   "held_out_family": "DoS",
+   "model_key": "xgb_baseline",
+   "held_out_family_test_support": 50343,
+   "attack_detection_rate": 0.018532864549192538,
+   "known_macro_f1": 0.7768760153154323
+  },
+  "lofo_xgb_baseline_heartbleed": {
+   "held_out_family": "Heartbleed",
+   "model_key": "xgb_baseline",
+   "held_out_family_test_support": 2,
+   "attack_detection_rate": 0.0,
+   "known_macro_f1": 0.8720659309110886
+  },
+  "lofo_xgb_baseline_infiltration": {
+   "held_out_family": "Infiltration",
+   "model_key": "xgb_baseline",
+   "held_out_family_test_support": 7,
+   "attack_detection_rate": 0.0,
+   "known_macro_f1": 0.8945144589185057
+  },
+  "lofo_xgb_baseline_portscan": {
+   "held_out_family": "PortScan",
+   "model_key": "xgb_baseline",
+   "held_out_family_test_support": 31761,
+   "attack_detection_rate": 0.002424356915714241,
+   "known_macro_f1": 0.8796698117865448
+  },
+  "lofo_xgb_baseline_web_attack": {
+   "held_out_family": "Web Attack",
+   "model_key": "xgb_baseline",
+   "held_out_family_test_support": 435,
+   "attack_detection_rate": 0.4068965517241379,
+   "known_macro_f1": 0.9624402273381231
+  }
+ }
+}
