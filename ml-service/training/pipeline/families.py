@@ -132,3 +132,57 @@ def validate_against(labels):
         "families": all_families(),
         "complete": True,
     }
+
+
+def describe(labels, train_idx=None, test_idx=None):
+    import numpy as np
+
+    labels = np.asarray(labels, dtype=object)
+    entries = {}
+
+    for family in all_families():
+        members = member_labels(family)
+        mask = np.isin(labels, members)
+
+        entry = {
+            "family": family,
+            "member_labels": members,
+            "n_member_labels": len(members),
+            "scenario": FAMILIES[family]["scenario"],
+            "rationale": FAMILIES[family]["rationale"],
+            "total_support": int(mask.sum()),
+            "per_label_total": {label: int((labels == label).sum())
+                                for label in members},
+        }
+
+        if train_idx is not None:
+            train_mask = np.isin(labels[train_idx], members)
+            entry["train_support"] = int(train_mask.sum())
+            entry["per_label_train"] = {
+                label: int((labels[train_idx] == label).sum()) for label in members}
+
+        if test_idx is not None:
+            test_mask = np.isin(labels[test_idx], members)
+            entry["test_support"] = int(test_mask.sum())
+            entry["per_label_test"] = {
+                label: int((labels[test_idx] == label).sum()) for label in members}
+
+        entries[family] = entry
+
+    return entries
+
+
+SUPPORT_HIGH = "high"
+SUPPORT_MODERATE = "moderate"
+SUPPORT_LOW = "low_exploratory"
+
+HIGH_SUPPORT_MIN = 1000
+MODERATE_SUPPORT_MIN = 100
+
+
+def support_tier(test_support):
+    if test_support >= HIGH_SUPPORT_MIN:
+        return SUPPORT_HIGH
+    if test_support >= MODERATE_SUPPORT_MIN:
+        return SUPPORT_MODERATE
+    return SUPPORT_LOW
