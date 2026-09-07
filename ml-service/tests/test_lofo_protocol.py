@@ -357,3 +357,64 @@ class TestNamespaceIsolation:
         for key in run_lofo.PRIMARY_MODELS:
             assert "top" not in key
             assert "mlp" not in key
+
+
+@pytest.mark.dataset
+class TestAgainstTheRealDataset:
+
+    def test_the_taxonomy_covers_every_label_in_the_cleaned_dataset(self):
+        import pandas as pd
+
+        from tests.conftest import DATASET_PATH
+        from training.pipeline.data import clean_labels
+
+        labels = clean_labels(
+            pd.read_parquet(DATASET_PATH, columns=["Label"])["Label"].to_numpy())
+        report = families.validate_against(labels)
+
+        assert report["complete"] is True
+        assert len(report["labels_observed"]) == 14
+
+    def test_the_family_mapping_report_is_consistent(self):
+        path = (Path(__file__).resolve().parent.parent / "reports" / "lofo_evaluation"
+                / "family_mapping.json")
+        if not path.exists():
+            pytest.skip("family_mapping.json mungon")
+
+        with open(path, encoding="utf-8") as handle:
+            mapping = json.load(handle)
+
+        assert mapping["taxonomy_version"] == families.TAXONOMY_VERSION
+        assert len(mapping["families"]) == 8
+
+        total = sum(entry["test_support"] for entry in mapping["families"].values())
+        assert total == 111_311
+
+        for name, entry in mapping["families"].items():
+            assert entry["member_labels"] == families.member_labels(name)
+            assert entry["train_support"] > 0
+
+    def test_the_canonical_random_v2_reports_are_untouched(self):
+        reports = Path(__file__).resolve().parent.parent / "reports"
+        index = reports / "artifact_evaluation" / "index.json"
+        if not index.exists():
+            pytest.skip("random-v2 index mungon")
+
+        with open(index, encoding="utf-8") as handle:
+            payload = json.load(handle)
+
+        names = [record["registry_name"] for record in payload["artifacts"]]
+        assert not any("lofo" in name for name in names)
+        assert not any("temporal" in name for name in names)
+
+    def test_the_temporal_namespace_is_untouched(self):
+        reports = Path(__file__).resolve().parent.parent / "reports"
+        index = reports / "temporal_evaluation" / "index.json"
+        if not index.exists():
+            pytest.skip("temporal index mungon")
+
+        with open(index, encoding="utf-8") as handle:
+            payload = json.load(handle)
+
+        assert payload["experiment_type"] == "temporal"
+        assert not any("lofo" in stem for stem in payload["models"])
