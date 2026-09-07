@@ -108,3 +108,45 @@ def attribution_report(y_pred_held):
                  "as malicious. A dominant label here is a misattribution, not a correct "
                  "detection of that class."),
     }
+
+
+def binary_diagnostic(y_true, y_pred):
+    y_true = np.asarray(y_true, dtype=object)
+    y_pred = np.asarray(y_pred, dtype=object)
+
+    true_attack = y_true != BENIGN
+    pred_attack = y_pred != BENIGN
+
+    true_positive = int((true_attack & pred_attack).sum())
+    false_positive = int((~true_attack & pred_attack).sum())
+    false_negative = int((true_attack & ~pred_attack).sum())
+    true_negative = int((~true_attack & ~pred_attack).sum())
+
+    benign_rows = true_negative + false_positive
+    attack_rows = true_positive + false_negative
+
+    precision = true_positive / (true_positive + false_positive) \
+        if (true_positive + false_positive) else None
+    recall = true_positive / attack_rows if attack_rows else None
+    f1 = (2 * precision * recall / (precision + recall)) \
+        if precision and recall else 0.0
+
+    return {
+        "binary_accuracy": float((true_positive + true_negative) / len(y_true)),
+        "attack_precision": float(precision) if precision is not None else None,
+        "attack_recall": float(recall) if recall is not None else None,
+        "attack_f1": float(f1),
+        "benign_false_positive_rate": (
+            float(false_positive / benign_rows) if benign_rows else None),
+        "attack_false_negative_rate": (
+            float(false_negative / attack_rows) if attack_rows else None),
+        "attack_rows_predicted_as_benign_rate": (
+            float(false_negative / attack_rows) if attack_rows else None),
+        "true_positive": true_positive,
+        "false_positive": false_positive,
+        "false_negative": false_negative,
+        "true_negative": true_negative,
+        "benign_rows": benign_rows,
+        "attack_rows": attack_rows,
+        "benign_fpr_definition": BENIGN_FPR_DEFINITION,
+    }
