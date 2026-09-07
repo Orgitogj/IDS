@@ -43,3 +43,68 @@ def assert_absent_after_balancing(balanced_labels, member_labels):
             f"{present} rreshta te familjes se hequr u shfaqen pas balancimit. SMOTE ose "
             "undersampling po prek familjen e mbajtur jashte.")
     return True
+
+
+def detection_report(y_true_held, y_pred_held):
+    y_pred_held = np.asarray(y_pred_held, dtype=object)
+    support = int(len(y_pred_held))
+
+    if not support:
+        return {"held_out_support": 0, "note": "no held-out rows in the canonical test set"}
+
+    predicted_benign = int((y_pred_held == BENIGN).sum())
+    predicted_attack = support - predicted_benign
+
+    return {
+        "held_out_support": support,
+        "predicted_attack_count": predicted_attack,
+        "predicted_benign_count": predicted_benign,
+        "attack_detection_rate": float(predicted_attack / support),
+        "attack_miss_rate": float(predicted_benign / support),
+        "definition": ("attack_detection_rate is the fraction of held-out-family rows "
+                       "predicted as ANY non-BENIGN class. It says the traffic was "
+                       "flagged as malicious; it says nothing about whether the label "
+                       "was correct. Attribution is reported separately."),
+    }
+
+
+def attribution_report(y_pred_held):
+    y_pred_held = np.asarray(y_pred_held, dtype=object)
+    attack_predictions = y_pred_held[y_pred_held != BENIGN]
+
+    if not len(attack_predictions):
+        return {
+            "attack_predictions": 0,
+            "predicted_label_distribution": {},
+            "predicted_family_distribution": {},
+            "dominant_predicted_label": None,
+            "dominant_predicted_family": None,
+            "note": "no held-out row was predicted as an attack",
+        }
+
+    labels, counts = np.unique(attack_predictions, return_counts=True)
+    label_distribution = {str(name): int(count) for name, count in zip(labels, counts)}
+
+    family_distribution = {}
+    for name, count in label_distribution.items():
+        family = families.family_of(name) or "unmapped"
+        family_distribution[family] = family_distribution.get(family, 0) + count
+
+    dominant_label = max(label_distribution.items(), key=lambda item: item[1])
+    dominant_family = max(family_distribution.items(), key=lambda item: item[1])
+
+    return {
+        "attack_predictions": int(len(attack_predictions)),
+        "predicted_label_distribution": dict(sorted(
+            label_distribution.items(), key=lambda item: -item[1])),
+        "predicted_family_distribution": dict(sorted(
+            family_distribution.items(), key=lambda item: -item[1])),
+        "dominant_predicted_label": dominant_label[0],
+        "dominant_predicted_label_share": float(dominant_label[1] / len(attack_predictions)),
+        "dominant_predicted_family": dominant_family[0],
+        "dominant_predicted_family_share": float(
+            dominant_family[1] / len(attack_predictions)),
+        "note": ("These are the labels the model assigned to held-out traffic it flagged "
+                 "as malicious. A dominant label here is a misattribution, not a correct "
+                 "detection of that class."),
+    }
