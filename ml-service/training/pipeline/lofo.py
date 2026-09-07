@@ -178,3 +178,70 @@ def known_class_metrics(y_true, y_pred, known_labels):
         "note": ("Computed over test rows whose true label was still represented in "
                  "training after the family was removed. BENIGN is included."),
     }
+
+
+def matched_baseline_from_confusion(csv_path, known_labels):
+    frame = pd.read_csv(csv_path, index_col=0)
+    frame.index = [str(name) for name in frame.index]
+    frame.columns = [str(name) for name in frame.columns]
+
+    known = [name for name in sorted(str(n) for n in known_labels) if name in frame.index]
+    if not known:
+        return None
+
+    per_class = per_class_metrics(frame)
+
+    scores = [per_class[name]["f1"] for name in known]
+    precisions = [per_class[name]["precision"] or 0.0 for name in known]
+    recalls = [per_class[name]["recall"] or 0.0 for name in known]
+
+    true_positive = sum(per_class[name]["true_positive"] for name in known)
+    support = sum(per_class[name]["support"] for name in known)
+
+    values = frame.to_numpy(dtype="int64")
+    labels = list(frame.index)
+    benign_position = labels.index(BENIGN) if BENIGN in labels else None
+    benign_fpr = None
+    if benign_position is not None:
+        benign_row = values[benign_position]
+        benign_total = int(benign_row.sum())
+        benign_flagged = benign_total - int(benign_row[benign_position])
+        benign_fpr = float(benign_flagged / benign_total) if benign_total else None
+
+    return {
+        "source": str(csv_path.name),
+        "classes": known,
+        "n_classes": len(known),
+        "macro_f1": float(np.mean(scores)) if scores else None,
+        "macro_precision": float(np.mean(precisions)) if precisions else None,
+        "macro_recall": float(np.mean(recalls)) if recalls else None,
+        "accuracy_over_known_rows": float(true_positive / support) if support else None,
+        "benign_false_positive_rate_full_test": benign_fpr,
+        "note": ("Recomputed from the frozen random-v2 confusion matrix over exactly the "
+                 "class subset that survived family removal, so the comparison is "
+                 "like-for-like. The random-v2 report itself is not modified."),
+    }
+
+
+def fold_report(family, member_labels, y_true, y_pred, known_labels, held_mask):
+    held_true = np.asarray(y_true, dtype=object)[held_mask]
+    held_pred = np.asarray(y_pred, dtype=object)[held_mask]
+
+    classes = sorted(set(np.asarray(y_true, dtype=object)) |
+                     set(np.asarray(y_pred, dtype=object)))
+    matrix = confusion_matrix_frame(y_true, y_pred, classes)
+
+    return {
+        "protocol_version": PROTOCOL_VERSION,
+        "experiment_type": "lofo",
+        "taxonomy_version": families.TAXONOMY_VERSION,
+        "held_out_family": family,
+        "member_labels": list(member_labels),
+        "primary_metric": "attack_detection_rate",
+        "detection": detection_report(held_true, held_pred),
+        "attribution": attribution_report(held_pred),
+        "binary": binary_diagnostic(y_true, y_pred),
+        "known_class": known_class_metrics(y_true, y_pred, known_labels),
+        "per_class": per_class_metrics(matrix),
+        "confusion_matrix": matrix,
+    }
