@@ -157,3 +157,56 @@ class TestFamilyRemoval:
              "rare_class_min": 20, "oversampler": "smote", "smote_k_neighbors": 2}, 42)
 
         assert lofo.assert_absent_after_balancing(y_balanced, members)
+
+
+class TestDetectionAndAttribution:
+
+    def test_detection_counts_any_non_benign_prediction(self):
+        held_pred = np.array([BENIGN, "DoS Hulk", "PortScan", BENIGN], dtype=object)
+        report = lofo.detection_report(np.array(["DDoS"] * 4, dtype=object), held_pred)
+
+        assert report["held_out_support"] == 4
+        assert report["predicted_attack_count"] == 2
+        assert report["predicted_benign_count"] == 2
+        assert report["attack_detection_rate"] == 0.5
+        assert report["attack_miss_rate"] == 0.5
+
+    def test_detection_and_miss_rates_sum_to_one(self):
+        held_pred = np.array([BENIGN] * 3 + ["Bot"] * 7, dtype=object)
+        report = lofo.detection_report(np.array(["DDoS"] * 10, dtype=object), held_pred)
+
+        assert report["attack_detection_rate"] + report["attack_miss_rate"] == 1.0
+
+    def test_detection_says_nothing_about_correctness(self):
+        report = lofo.detection_report(np.array(["DDoS"], dtype=object),
+                                       np.array(["PortScan"], dtype=object))
+
+        assert report["attack_detection_rate"] == 1.0
+        assert "says nothing about whether the label was correct" in report["definition"]
+
+    def test_attribution_distribution_sums_to_the_attack_predictions(self):
+        held_pred = np.array([BENIGN, "DoS Hulk", "DoS Hulk", "PortScan"], dtype=object)
+        report = lofo.attribution_report(held_pred)
+
+        assert report["attack_predictions"] == 3
+        assert sum(report["predicted_label_distribution"].values()) == 3
+        assert sum(report["predicted_family_distribution"].values()) == 3
+
+    def test_attribution_reports_the_dominant_label_and_family(self):
+        held_pred = np.array(["DoS Hulk"] * 7 + ["PortScan"] * 3, dtype=object)
+        report = lofo.attribution_report(held_pred)
+
+        assert report["dominant_predicted_label"] == "DoS Hulk"
+        assert report["dominant_predicted_family"] == "DoS"
+        assert report["dominant_predicted_label_share"] == pytest.approx(0.7)
+
+    def test_attribution_handles_nothing_being_flagged(self):
+        report = lofo.attribution_report(np.array([BENIGN, BENIGN], dtype=object))
+
+        assert report["attack_predictions"] == 0
+        assert report["dominant_predicted_label"] is None
+
+    def test_attribution_warns_that_a_dominant_label_is_a_misattribution(self):
+        report = lofo.attribution_report(np.array(["Bot"], dtype=object))
+
+        assert "misattribution" in report["note"]
