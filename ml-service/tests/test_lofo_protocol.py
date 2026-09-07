@@ -262,3 +262,32 @@ class TestBinaryDiagnostic:
 
         assert temporal_binary["benign_false_positive_rate"] == pytest.approx(
             lofo_binary["benign_false_positive_rate"])
+
+
+class TestKnownClassMetrics:
+
+    def test_only_rows_of_known_classes_are_scored(self):
+        y_true = np.array([BENIGN] * 4 + ["DDoS"] * 2, dtype=object)
+        y_pred = np.array([BENIGN] * 4 + [BENIGN] * 2, dtype=object)
+
+        report = lofo.known_class_metrics(y_true, y_pred, [BENIGN])
+
+        assert report["classes"] == [BENIGN]
+        assert report["rows"] == 4
+        assert report["accuracy_over_known_rows"] == 1.0
+
+    def test_the_held_out_family_is_excluded_from_the_known_subset(self):
+        y_true = np.array([BENIGN, "Bot", "DDoS"], dtype=object)
+        report = lofo.known_class_metrics(y_true, y_true, [BENIGN, "Bot"])
+
+        assert "DDoS" not in report["classes"]
+        assert report["rows"] == 2
+
+    def test_macro_f1_covers_exactly_the_declared_class_set(self):
+        y_true = np.array([BENIGN] * 3 + ["Bot"] * 3, dtype=object)
+        y_pred = np.array([BENIGN] * 3 + ["Bot"] * 2 + [BENIGN], dtype=object)
+
+        report = lofo.known_class_metrics(y_true, y_pred, [BENIGN, "Bot"])
+
+        assert report["n_classes"] == 2
+        assert 0.0 < report["macro_f1"] < 1.0
