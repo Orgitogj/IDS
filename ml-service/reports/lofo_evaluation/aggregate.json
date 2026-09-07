@@ -1,0 +1,590 @@
+{
+ "schema_version": 1,
+ "experiment_type": "lofo",
+ "families": [
+  "Bot",
+  "Brute Force",
+  "DDoS",
+  "DoS",
+  "Heartbleed",
+  "Infiltration",
+  "PortScan",
+  "Web Attack"
+ ],
+ "models": [
+  "xgb_baseline",
+  "xgb_balanced",
+  "rf_baseline",
+  "rf_balanced"
+ ],
+ "rows": [
+  {
+   "family": "Bot",
+   "member_labels": [
+    "Bot"
+   ],
+   "test_support": 391,
+   "support_tier": "moderate",
+   "model": "xgb_baseline",
+   "attack_detection_rate": 0.0,
+   "attack_miss_rate": 1.0,
+   "known_macro_f1": 0.8858207452302691,
+   "matched_random_v2_macro_f1": 0.8827379546380442,
+   "binary_attack_f1": 0.9969568246690491,
+   "benign_false_positive_rate": 0.0005723531418885452,
+   "dominant_predicted_label": null,
+   "dominant_predicted_family": null
+  },
+  {
+   "family": "Bot",
+   "member_labels": [
+    "Bot"
+   ],
+   "test_support": 391,
+   "support_tier": "moderate",
+   "model": "xgb_balanced",
+   "attack_detection_rate": 0.0,
+   "attack_miss_rate": 1.0,
+   "known_macro_f1": 0.888450818942565,
+   "matched_random_v2_macro_f1": 0.8820070093980464,
+   "binary_attack_f1": 0.9968183779119931,
+   "benign_false_positive_rate": 0.0006758169790760899,
+   "dominant_predicted_label": null,
+   "dominant_predicted_family": null
+  },
+  {
+   "family": "Bot",
+   "member_labels": [
+    "Bot"
+   ],
+   "test_support": 391,
+   "support_tier": "moderate",
+   "model": "rf_baseline",
+   "attack_detection_rate": 0.0,
+   "attack_miss_rate": 1.0,
+   "known_macro_f1": 0.8752377098451136,
+   "matched_random_v2_macro_f1": 0.8743830537006166,
+   "binary_attack_f1": 0.9961128357403157,
+   "benign_false_positive_rate": 0.0005635477089364138,
+   "dominant_predicted_label": null,
+   "dominant_predicted_family": null
+  },
+  {
+   "family": "Bot",
+   "member_labels": [
+    "Bot"
+   ],
+   "test_support": 391,
+   "support_tier": "moderate",
+   "model": "rf_balanced",
+   "attack_detection_rate": 0.0,
+   "attack_miss_rate": 1.0,
+   "known_macro_f1": 0.8750467772321617,
+   "matched_random_v2_macro_f1": 0.8679017078710306,
+   "binary_attack_f1": 0.9962128529391945,
+   "benign_false_positive_rate": 0.0008981541611174094,
+   "dominant_predicted_label": null,
+   "dominant_predicted_family": null
+  },
+  {
+   "family": "Heartbleed",
+   "member_labels": [
+    "Heartbleed"
+   ],
+   "test_support": 2,
+   "support_tier": "low_exploratory",
+   "model": "xgb_baseline",
+   "attack_detection_rate": 0.0,
+   "attack_miss_rate": 1.0,
+   "known_macro_f1": 0.8720659309110886,
+   "matched_random_v2_macro_f1": 0.8720285814802529,
+   "binary_attack_f1": 0.9982000745106312,
+   "benign_false_positive_rate": 0.0006229843813633011,
+   "dominant_predicted_label": null,
+   "dominant_predicted_family": null
+  },
+  {
+   "family": "Heartbleed",
+   "member_labels": [
+    "Heartbleed"
+   ],
+   "test_support": 2,
+   "support_tier": "low_exploratory",
+   "model": "xgb_balanced",
+   "attack_detection_rate": 0.0,
+   "attack_miss_rate": 1.0,
+   "known_macro_f1": 0.8750563705363315,
+   "matched_random_v2_macro_f1": 0.8685714545172205,
+   "binary_attack_f1": 0.9978168581585399,
+   "benign_false_positive_rate": 0.0010324370136374143,
+   "dominant_predicted_label": null,
+   "dominant_predicted_family": null
+  },
+  {
+   "family": "Heartbleed",
+   "member_labels": [
+    "Heartbleed"
+   ],
+   "test_support": 2,
+   "support_tier": "low_exploratory",
+   "model": "rf_baseline",
+   "attack_detection_rate": 0.0,
+   "attack_miss_rate": 1.0,
+   "known_macro_f1": 0.8559494611079715,
+   "matched_random_v2_macro_f1": 0.861731131006853,
+   "binary_attack_f1": 0.9972866615155164,
+   "benign_false_positive_rate": 0.0006449979637436298,
+   "dominant_predicted_label": null,
+   "dominant_predicted_family": null
+  },
+  {
+   "family": "Heartbleed",
+   "member_labels": [
+    "Heartbleed"
+   ],
+   "test_support": 2,
+   "support_tier": "low_exploratory",
+   "model": "rf_balanced",
+   "attack_detection_rate": 0.0,
+   "attack_miss_rate": 1.0,
+   "known_macro_f1": 0.8588178987674349,
+   "matched_random_v2_macro_f1": 0.8548788191575342,
+   "binary_attack_f1": 0.9972343868362191,
+   "benign_false_positive_rate": 0.001201941597965945,
+   "dominant_predicted_label": null,
+   "dominant_predicted_family": null
+  },
+  {
+   "family": "Infiltration",
+   "member_labels": [
+    "Infiltration"
+   ],
+   "test_support": 7,
+   "support_tier": "low_exploratory",
+   "model": "xgb_baseline",
+   "attack_detection_rate": 0.0,
+   "attack_miss_rate": 1.0,
+   "known_macro_f1": 0.8945144589185057,
+   "matched_random_v2_macro_f1": 0.8915091009607724,
+   "binary_attack_f1": 0.9982046033968903,
+   "benign_false_positive_rate": 0.0006273870978393669,
+   "dominant_predicted_label": null,
+   "dominant_predicted_family": null
+  },
+  {
+   "family": "Infiltration",
+   "member_labels": [
+    "Infiltration"
+   ],
+   "test_support": 7,
+   "support_tier": "low_exploratory",
+   "model": "xgb_balanced",
+   "attack_detection_rate": 0.0,
+   "attack_miss_rate": 1.0,
+   "known_macro_f1": 0.8860286302294957,
+   "matched_random_v2_macro_f1": 0.8864285973743634,
+   "binary_attack_f1": 0.9977944143094097,
+   "benign_false_positive_rate": 0.0010346383718754472,
+   "dominant_predicted_label": null,
+   "dominant_predicted_family": null
+  },
+  {
+   "family": "Infiltration",
+   "member_labels": [
+    "Infiltration"
+   ],
+   "test_support": 7,
+   "support_tier": "low_exploratory",
+   "model": "rf_baseline",
+   "attack_detection_rate": 0.0,
+   "attack_miss_rate": 1.0,
+   "known_macro_f1": 0.8829481177213226,
+   "matched_random_v2_macro_f1": 0.8812116504873725,
+   "binary_attack_f1": 0.9973406405821841,
+   "benign_false_positive_rate": 0.0006383938890295312,
+   "dominant_predicted_label": null,
+   "dominant_predicted_family": null
+  },
+  {
+   "family": "Infiltration",
+   "member_labels": [
+    "Infiltration"
+   ],
+   "test_support": 7,
+   "support_tier": "low_exploratory",
+   "model": "rf_balanced",
+   "attack_detection_rate": 0.0,
+   "attack_miss_rate": 1.0,
+   "known_macro_f1": 0.8805657763917696,
+   "matched_random_v2_macro_f1": 0.8786883429670579,
+   "binary_attack_f1": 0.9971493370864074,
+   "benign_false_positive_rate": 0.0012327606132984052,
+   "dominant_predicted_label": null,
+   "dominant_predicted_family": null
+  },
+  {
+   "family": "Brute Force",
+   "member_labels": [
+    "FTP-Patator",
+    "SSH-Patator"
+   ],
+   "test_support": 2767,
+   "support_tier": "high",
+   "model": "xgb_baseline",
+   "attack_detection_rate": 0.07661727502710516,
+   "attack_miss_rate": 0.9233827249728949,
+   "known_macro_f1": 0.8545337719172355,
+   "matched_random_v2_macro_f1": 0.8622331275190385,
+   "binary_attack_f1": 0.9866146022520886,
+   "benign_false_positive_rate": 0.0006229843813633011,
+   "dominant_predicted_label": "DoS slowloris",
+   "dominant_predicted_family": "DoS"
+  },
+  {
+   "family": "Brute Force",
+   "member_labels": [
+    "FTP-Patator",
+    "SSH-Patator"
+   ],
+   "test_support": 2767,
+   "support_tier": "high",
+   "model": "xgb_balanced",
+   "attack_detection_rate": 0.0018070112034694614,
+   "attack_miss_rate": 0.9981929887965305,
+   "known_macro_f1": 0.8663648366101022,
+   "matched_random_v2_macro_f1": 0.8585584468526858,
+   "binary_attack_f1": 0.9852346434391072,
+   "benign_false_positive_rate": 0.0010390410883515128,
+   "dominant_predicted_label": "PortScan",
+   "dominant_predicted_family": "PortScan"
+  },
+  {
+   "family": "Brute Force",
+   "member_labels": [
+    "FTP-Patator",
+    "SSH-Patator"
+   ],
+   "test_support": 2767,
+   "support_tier": "high",
+   "model": "rf_baseline",
+   "attack_detection_rate": 0.0003614022406938923,
+   "attack_miss_rate": 0.9996385977593061,
+   "known_macro_f1": 0.850823183198313,
+   "matched_random_v2_macro_f1": 0.8512088098108153,
+   "binary_attack_f1": 0.9846983797749332,
+   "benign_false_positive_rate": 0.0006471993219816627,
+   "dominant_predicted_label": "Web Attack - XSS",
+   "dominant_predicted_family": "Web Attack"
+  },
+  {
+   "family": "Brute Force",
+   "member_labels": [
+    "FTP-Patator",
+    "SSH-Patator"
+   ],
+   "test_support": 2767,
+   "support_tier": "high",
+   "model": "rf_balanced",
+   "attack_detection_rate": 0.01084206722081677,
+   "attack_miss_rate": 0.9891579327791832,
+   "known_macro_f1": 0.8295175567745411,
+   "matched_random_v2_macro_f1": 0.8437398944123731,
+   "binary_attack_f1": 0.9847756737501758,
+   "benign_false_positive_rate": 0.0012151497473941422,
+   "dominant_predicted_label": "Web Attack - XSS",
+   "dominant_predicted_family": "Web Attack"
+  },
+  {
+   "family": "PortScan",
+   "member_labels": [
+    "PortScan"
+   ],
+   "test_support": 31761,
+   "support_tier": "high",
+   "model": "xgb_baseline",
+   "attack_detection_rate": 0.002424356915714241,
+   "attack_miss_rate": 0.9975756430842858,
+   "known_macro_f1": 0.8796698117865448,
+   "matched_random_v2_macro_f1": 0.8722606780862605,
+   "binary_attack_f1": 0.832995500803989,
+   "benign_false_positive_rate": 0.00020472631613705657,
+   "dominant_predicted_label": "SSH-Patator",
+   "dominant_predicted_family": "Brute Force"
+  },
+  {
+   "family": "PortScan",
+   "member_labels": [
+    "PortScan"
+   ],
+   "test_support": 31761,
+   "support_tier": "high",
+   "model": "xgb_balanced",
+   "attack_detection_rate": 0.008658417556122289,
+   "attack_miss_rate": 0.9913415824438777,
+   "known_macro_f1": 0.8269843690988947,
+   "matched_random_v2_macro_f1": 0.8688091162841683,
+   "binary_attack_f1": 0.833975099138449,
+   "benign_false_positive_rate": 0.000609776231935104,
+   "dominant_predicted_label": "FTP-Patator",
+   "dominant_predicted_family": "Brute Force"
+  },
+  {
+   "family": "PortScan",
+   "member_labels": [
+    "PortScan"
+   ],
+   "test_support": 31761,
+   "support_tier": "high",
+   "model": "rf_baseline",
+   "attack_detection_rate": 0.000850099178237461,
+   "attack_miss_rate": 0.9991499008217626,
+   "known_macro_f1": 0.854337821964081,
+   "matched_random_v2_macro_f1": 0.8620849657895983,
+   "binary_attack_f1": 0.8321610884581923,
+   "benign_false_positive_rate": 0.00022453854027935235,
+   "dominant_predicted_label": "DoS Hulk",
+   "dominant_predicted_family": "DoS"
+  },
+  {
+   "family": "PortScan",
+   "member_labels": [
+    "PortScan"
+   ],
+   "test_support": 31761,
+   "support_tier": "high",
+   "model": "rf_balanced",
+   "attack_detection_rate": 0.0008815843329869966,
+   "attack_miss_rate": 0.999118415667013,
+   "known_macro_f1": 0.8535693615184138,
+   "matched_random_v2_macro_f1": 0.8551187832750492,
+   "binary_attack_f1": 0.8318487794927585,
+   "benign_false_positive_rate": 0.000790287607453799,
+   "dominant_predicted_label": "DDoS",
+   "dominant_predicted_family": "DDoS"
+  },
+  {
+   "family": "DoS",
+   "member_labels": [
+    "DoS Hulk",
+    "DoS GoldenEye",
+    "DoS slowloris",
+    "DoS Slowhttptest"
+   ],
+   "test_support": 50343,
+   "support_tier": "high",
+   "model": "xgb_baseline",
+   "attack_detection_rate": 0.018532864549192538,
+   "attack_miss_rate": 0.9814671354508074,
+   "known_macro_f1": 0.7768760153154323,
+   "matched_random_v2_macro_f1": 0.8384676552782178,
+   "binary_attack_f1": 0.7130418727028289,
+   "benign_false_positive_rate": 0.0004644865882249348,
+   "dominant_predicted_label": "PortScan",
+   "dominant_predicted_family": "PortScan"
+  },
+  {
+   "family": "DoS",
+   "member_labels": [
+    "DoS Hulk",
+    "DoS GoldenEye",
+    "DoS slowloris",
+    "DoS Slowhttptest"
+   ],
+   "test_support": 50343,
+   "support_tier": "high",
+   "model": "xgb_balanced",
+   "attack_detection_rate": 0.03768150487654689,
+   "attack_miss_rate": 0.9623184951234531,
+   "known_macro_f1": 0.7581836189046111,
+   "matched_random_v2_macro_f1": 0.8345588709888052,
+   "binary_attack_f1": 0.7201182381146061,
+   "benign_false_positive_rate": 0.0008783419369751136,
+   "dominant_predicted_label": "PortScan",
+   "dominant_predicted_family": "PortScan"
+  },
+  {
+   "family": "DoS",
+   "member_labels": [
+    "DoS Hulk",
+    "DoS GoldenEye",
+    "DoS slowloris",
+    "DoS Slowhttptest"
+   ],
+   "test_support": 50343,
+   "support_tier": "high",
+   "model": "rf_baseline",
+   "attack_detection_rate": 0.006674214885882844,
+   "attack_miss_rate": 0.9933257851141172,
+   "known_macro_f1": 0.814568857626666,
+   "matched_random_v2_macro_f1": 0.8255890517705176,
+   "binary_attack_f1": 0.7075441635717886,
+   "benign_false_positive_rate": 0.0004975069617954278,
+   "dominant_predicted_label": "PortScan",
+   "dominant_predicted_family": "PortScan"
+  },
+  {
+   "family": "DoS",
+   "member_labels": [
+    "DoS Hulk",
+    "DoS GoldenEye",
+    "DoS slowloris",
+    "DoS Slowhttptest"
+   ],
+   "test_support": 50343,
+   "support_tier": "high",
+   "model": "rf_balanced",
+   "attack_detection_rate": 0.01237510676757444,
+   "attack_miss_rate": 0.9876248932324255,
+   "known_macro_f1": 0.7862075642304673,
+   "matched_random_v2_macro_f1": 0.8173471304698109,
+   "binary_attack_f1": 0.7105802481252057,
+   "benign_false_positive_rate": 0.0008034957568819962,
+   "dominant_predicted_label": "PortScan",
+   "dominant_predicted_family": "PortScan"
+  },
+  {
+   "family": "Web Attack",
+   "member_labels": [
+    "Web Attack - Brute Force",
+    "Web Attack - XSS",
+    "Web Attack - Sql Injection"
+   ],
+   "test_support": 435,
+   "support_tier": "moderate",
+   "model": "xgb_baseline",
+   "attack_detection_rate": 0.4068965517241379,
+   "attack_miss_rate": 0.593103448275862,
+   "known_macro_f1": 0.9624402273381231,
+   "matched_random_v2_macro_f1": 0.9631819971767271,
+   "binary_attack_f1": 0.9971196060016447,
+   "benign_false_positive_rate": 0.0006141789484111696,
+   "dominant_predicted_label": "PortScan",
+   "dominant_predicted_family": "PortScan"
+  },
+  {
+   "family": "Web Attack",
+   "member_labels": [
+    "Web Attack - Brute Force",
+    "Web Attack - XSS",
+    "Web Attack - Sql Injection"
+   ],
+   "test_support": 435,
+   "support_tier": "moderate",
+   "model": "xgb_balanced",
+   "attack_detection_rate": 0.6620689655172414,
+   "attack_miss_rate": 0.33793103448275863,
+   "known_macro_f1": 0.9694651824754833,
+   "matched_random_v2_macro_f1": 0.9613553403028269,
+   "binary_attack_f1": 0.9971560579554121,
+   "benign_false_positive_rate": 0.00103683973011348,
+   "dominant_predicted_label": "PortScan",
+   "dominant_predicted_family": "PortScan"
+  },
+  {
+   "family": "Web Attack",
+   "member_labels": [
+    "Web Attack - Brute Force",
+    "Web Attack - XSS",
+    "Web Attack - Sql Injection"
+   ],
+   "test_support": 435,
+   "support_tier": "moderate",
+   "model": "rf_baseline",
+   "attack_detection_rate": 0.06206896551724138,
+   "attack_miss_rate": 0.9379310344827586,
+   "known_macro_f1": 0.9546036849573748,
+   "matched_random_v2_macro_f1": 0.9604673966064464,
+   "binary_attack_f1": 0.9955131926536968,
+   "benign_false_positive_rate": 0.000640595247267564,
+   "dominant_predicted_label": "PortScan",
+   "dominant_predicted_family": "PortScan"
+  },
+  {
+   "family": "Web Attack",
+   "member_labels": [
+    "Web Attack - Brute Force",
+    "Web Attack - XSS",
+    "Web Attack - Sql Injection"
+   ],
+   "test_support": 435,
+   "support_tier": "moderate",
+   "model": "rf_balanced",
+   "attack_detection_rate": 0.0367816091954023,
+   "attack_miss_rate": 0.9632183908045977,
+   "known_macro_f1": 0.9542726991553625,
+   "matched_random_v2_macro_f1": 0.9547604436760139,
+   "binary_attack_f1": 0.9953701832617081,
+   "benign_false_positive_rate": 0.0012063443144420107,
+   "dominant_predicted_label": "DoS slowloris",
+   "dominant_predicted_family": "DoS"
+  },
+  {
+   "family": "DDoS",
+   "member_labels": [
+    "DDoS"
+   ],
+   "test_support": 25605,
+   "support_tier": "high",
+   "model": "xgb_baseline",
+   "attack_detection_rate": 0.6275727396992775,
+   "attack_miss_rate": 0.37242726030072254,
+   "known_macro_f1": 0.8696247548622373,
+   "matched_random_v2_macro_f1": 0.8720355562455521,
+   "binary_attack_f1": 0.9534451874290751,
+   "benign_false_positive_rate": 0.0006163803066492026,
+   "dominant_predicted_label": "PortScan",
+   "dominant_predicted_family": "PortScan"
+  },
+  {
+   "family": "DDoS",
+   "member_labels": [
+    "DDoS"
+   ],
+   "test_support": 25605,
+   "support_tier": "high",
+   "model": "xgb_balanced",
+   "attack_detection_rate": 0.5136106229252099,
+   "attack_miss_rate": 0.4863893770747901,
+   "known_macro_f1": 0.8446641246294907,
+   "matched_random_v2_macro_f1": 0.8685965543588126,
+   "binary_attack_f1": 0.9385439317830045,
+   "benign_false_positive_rate": 0.0010390410883515128,
+   "dominant_predicted_label": "DoS Hulk",
+   "dominant_predicted_family": "DoS"
+  },
+  {
+   "family": "DDoS",
+   "member_labels": [
+    "DDoS"
+   ],
+   "test_support": 25605,
+   "support_tier": "high",
+   "model": "rf_baseline",
+   "attack_detection_rate": 0.6287834407342316,
+   "attack_miss_rate": 0.3712165592657684,
+   "known_macro_f1": 0.8415844623413863,
+   "matched_random_v2_macro_f1": 0.8617464772887279,
+   "binary_attack_f1": 0.9526575851567523,
+   "benign_false_positive_rate": 0.0006317898143154326,
+   "dominant_predicted_label": "PortScan",
+   "dominant_predicted_family": "PortScan"
+  },
+  {
+   "family": "DDoS",
+   "member_labels": [
+    "DDoS"
+   ],
+   "test_support": 25605,
+   "support_tier": "high",
+   "model": "rf_balanced",
+   "attack_detection_rate": 0.6321031048623316,
+   "attack_miss_rate": 0.36789689513766843,
+   "known_macro_f1": 0.8341530307663546,
+   "matched_random_v2_macro_f1": 0.8549025305811401,
+   "binary_attack_f1": 0.9529946326374948,
+   "benign_false_positive_rate": 0.001234961971536438,
+   "dominant_predicted_label": "PortScan",
+   "dominant_predicted_family": "PortScan"
+  }
+ ]
+}
