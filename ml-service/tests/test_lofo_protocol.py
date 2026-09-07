@@ -418,3 +418,86 @@ class TestAgainstTheRealDataset:
 
         assert payload["experiment_type"] == "temporal"
         assert not any("lofo" in stem for stem in payload["models"])
+
+
+class TestIndexSummary:
+
+    def _fold(self, tmp_path, name, family, model_key, support=100, rate=0.5):
+        directory = tmp_path / name
+        directory.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "name": name,
+            "held_out_family": family,
+            "model_key": model_key,
+            "held_out_family_test_support": support,
+            "metrics": {"detection": {"attack_detection_rate": rate},
+                        "known_class": {"macro_f1": 0.8}},
+        }
+        (directory / "metrics.json").write_text(json.dumps(payload), encoding="utf-8")
+
+    def test_summary_fields_cover_every_fold_not_the_last_invocation(self, tmp_path):
+        from training import run_lofo
+
+        self._fold(tmp_path, "lofo_xgb_baseline_dos", "DoS", "xgb_baseline")
+        self._fold(tmp_path, "lofo_rf_baseline_ddos", "DDoS", "rf_baseline")
+        self._fold(tmp_path, "lofo_rf_balanced_bot", "Bot", "rf_balanced")
+
+        summary = run_lofo.summarise_folds(run_lofo.collect_folds_from_disk(tmp_path))
+
+        assert summary["families_run"] == ["Bot", "DDoS", "DoS"]
+        assert summary["models_run"] == ["rf_balanced", "rf_baseline", "xgb_baseline"]
+        assert summary["n_folds"] == 3
+
+    def test_collecting_from_disk_reads_every_fold_directory(self, tmp_path):
+        from training import run_lofo
+
+        self._fold(tmp_path, "lofo_a", "DoS", "xgb_baseline", support=42, rate=0.25)
+        folds = run_lofo.collect_folds_from_disk(tmp_path)
+
+        assert set(folds) == {"lofo_a"}
+        assert folds["lofo_a"]["held_out_family_test_support"] == 42
+        assert folds["lofo_a"]["attack_detection_rate"] == 0.25
+
+    def test_an_empty_directory_yields_no_folds(self, tmp_path):
+        from training import run_lofo
+
+        assert run_lofo.collect_folds_from_disk(tmp_path) == {}
+
+    def test_the_written_index_is_self_consistent(self, tmp_path):
+        from training import run_lofo
+
+        reports = tmp_path / "reports"
+        self._fold(reports, "lofo_xgb_baseline_dos", "DoS", "xgb_baseline")
+        self._fold(reports, "lofo_xgb_balanced_dos", "DoS", "xgb_balanced")
+
+        dataset = tmp_path / "cicids2017_cleaned.parquet"
+        dataset.write_bytes(b"placeholder")
+
+        index = run_lofo.write_index(reports / "index.json",
+                                     run_lofo.collect_folds_from_disk(reports),
+                                     dataset, 100)
+
+        assert index["n_folds"] == len(index["folds"]) == 2
+        assert index["families_run"] == ["DoS"]
+        assert sorted(index["models_run"]) == ["xgb_balanced", "xgb_baseline"]
+        assert "most recent invocation" in index["index_source"]
+
+    @pytest.mark.dataset
+    def test_the_real_index_describes_the_complete_experiment(self):
+        path = (Path(__file__).resolve().parent.parent / "reports" / "lofo_evaluation"
+                / "index.json")
+        if not path.exists():
+            pytest.skip("lofo index mungon")
+
+        with open(path, encoding="utf-8") as handle:
+            index = json.load(handle)
+
+        assert index["n_folds"] == len(index["folds"])
+        assert set(index["families_run"]) == set(families.all_families())
+        assert sorted(index["models_run"]) == ["rf_balanced", "rf_baseline",
+                                               "xgb_balanced", "xgb_baseline"]
+
+        observed_families = {entry["held_out_family"] for entry in index["folds"].values()}
+        observed_models = {entry["model_key"] for entry in index["folds"].values()}
+        assert set(index["families_run"]) == observed_families
+        assert set(index["models_run"]) == observed_models
