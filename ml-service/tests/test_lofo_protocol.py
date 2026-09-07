@@ -92,3 +92,68 @@ class TestFamilyMapping:
     def test_rare_families_are_retained_in_the_taxonomy(self):
         assert "Heartbleed" in families.all_families()
         assert "Infiltration" in families.all_families()
+
+
+class TestFamilyRemoval:
+
+    def test_all_member_labels_leave_the_training_partition(self, labelled):
+        train_idx = np.arange(0, 300)
+        members = families.member_labels("DoS")
+
+        kept, removed = lofo.remove_family_from_train(labelled, train_idx, members)
+
+        assert removed > 0
+        assert not np.isin(labelled[kept], members).any()
+
+    def test_removal_only_touches_the_supplied_indices(self, labelled):
+        train_idx = np.arange(0, 300)
+        members = families.member_labels("DoS")
+
+        kept, _ = lofo.remove_family_from_train(labelled, train_idx, members)
+
+        assert set(kept.tolist()) <= set(train_idx.tolist())
+        assert np.isin(labelled, members).sum() > 0
+
+    def test_removal_is_deterministic(self, labelled):
+        train_idx = np.arange(0, 300)
+        members = families.member_labels("Web Attack")
+
+        first, _ = lofo.remove_family_from_train(labelled, train_idx, members)
+        second, _ = lofo.remove_family_from_train(labelled, train_idx, members)
+
+        np.testing.assert_array_equal(first, second)
+
+    def test_a_family_absent_from_train_removes_nothing(self, labelled):
+        train_idx = np.arange(0, 200)
+        kept, removed = lofo.remove_family_from_train(
+            labelled, train_idx, families.member_labels("DDoS"))
+
+        assert removed == 0
+        np.testing.assert_array_equal(kept, train_idx)
+
+    def test_balancing_output_containing_the_family_is_refused(self):
+        balanced = make_labels({BENIGN: 10, "DoS Hulk": 2})
+
+        with pytest.raises(lofo.LofoError, match="pas balancimit"):
+            lofo.assert_absent_after_balancing(balanced, families.member_labels("DoS"))
+
+    def test_clean_balancing_output_passes(self):
+        balanced = make_labels({BENIGN: 10, "PortScan": 5})
+
+        assert lofo.assert_absent_after_balancing(balanced,
+                                                  families.member_labels("DoS"))
+
+    def test_removal_then_balancing_is_the_required_order(self, labelled):
+        from training.pipeline import balancing as balancing_module
+
+        train_idx = np.arange(0, 300)
+        members = families.member_labels("DoS")
+        kept, _ = lofo.remove_family_from_train(labelled, train_idx, members)
+
+        features = np.zeros((len(labelled), 3), dtype="float32")
+        _, y_balanced, _ = balancing_module.balance_training_set(
+            features, labelled, kept,
+            {"enabled": True, "benign_label": BENIGN, "benign_cap": 100,
+             "rare_class_min": 20, "oversampler": "smote", "smote_k_neighbors": 2}, 42)
+
+        assert lofo.assert_absent_after_balancing(y_balanced, members)
