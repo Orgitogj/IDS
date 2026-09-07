@@ -210,3 +210,55 @@ class TestDetectionAndAttribution:
         report = lofo.attribution_report(np.array(["Bot"], dtype=object))
 
         assert "misattribution" in report["note"]
+
+
+class TestBinaryDiagnostic:
+
+    @pytest.fixture
+    def scored(self):
+        y_true = np.array([BENIGN] * 6 + ["DDoS"] * 4, dtype=object)
+        y_pred = np.array([BENIGN] * 5 + ["Bot"] + ["Bot"] * 3 + [BENIGN], dtype=object)
+        return lofo.binary_diagnostic(y_true, y_pred)
+
+    def test_benign_fpr_is_benign_rows_flagged_as_attack(self, scored):
+        assert scored["benign_rows"] == 6
+        assert scored["false_positive"] == 1
+        assert scored["benign_false_positive_rate"] == pytest.approx(1 / 6)
+
+    def test_the_definition_matches_random_and_temporal(self, scored):
+        assert "fraction of true BENIGN rows predicted as some attack" in \
+            scored["benign_fpr_definition"]
+        assert "NOT the per-class BENIGN fpr" in scored["benign_fpr_definition"]
+
+    def test_the_opposite_direction_is_stored_under_its_own_name(self, scored):
+        assert scored["attack_rows_predicted_as_benign_rate"] == pytest.approx(1 / 4)
+        assert scored["attack_false_negative_rate"] == \
+            scored["attack_rows_predicted_as_benign_rate"]
+        assert scored["benign_false_positive_rate"] != \
+            scored["attack_rows_predicted_as_benign_rate"]
+
+    def test_attack_recall_and_precision(self, scored):
+        assert scored["attack_recall"] == pytest.approx(3 / 4)
+        assert scored["attack_precision"] == pytest.approx(3 / 4)
+
+    def test_counts_are_internally_consistent(self, scored):
+        total = (scored["true_positive"] + scored["false_positive"]
+                 + scored["false_negative"] + scored["true_negative"])
+        assert total == 10
+        assert scored["benign_rows"] + scored["attack_rows"] == 10
+
+    def test_the_definition_agrees_with_the_temporal_implementation(self):
+        from training.pipeline import temporal
+
+        y_true = np.array([BENIGN] * 6 + ["DDoS"] * 4, dtype=object)
+        y_pred = np.array([BENIGN] * 5 + ["Bot"] + ["Bot"] * 3 + [BENIGN], dtype=object)
+
+        from training.evaluate import confusion_matrix_frame
+        classes = sorted(set(y_true) | set(y_pred))
+        matrix = confusion_matrix_frame(y_true, y_pred, classes)
+
+        temporal_binary = temporal.binary_benign_vs_attack(matrix)
+        lofo_binary = lofo.binary_diagnostic(y_true, y_pred)
+
+        assert temporal_binary["benign_false_positive_rate"] == pytest.approx(
+            lofo_binary["benign_false_positive_rate"])
