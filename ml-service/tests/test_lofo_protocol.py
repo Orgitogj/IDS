@@ -322,3 +322,38 @@ class TestMatchedBaseline:
         matched = lofo.matched_baseline_from_confusion(path, [BENIGN, "Bot", "Nonexistent"])
 
         assert matched["classes"] == [BENIGN, "Bot"]
+
+
+class TestNamespaceIsolation:
+
+    def test_lofo_reports_live_in_their_own_namespace(self):
+        from training import run_lofo
+
+        assert "lofo_evaluation" in run_lofo.DEFAULT_REPORTS_DIR
+        assert run_lofo.DEFAULT_REPORTS_DIR != "reports/artifact_evaluation"
+        assert "temporal" not in run_lofo.DEFAULT_REPORTS_DIR
+        assert run_lofo.DEFAULT_MODELS_DIR.startswith("models/lofo")
+
+    def test_lofo_artifacts_are_invisible_to_the_random_v2_discovery(self, tmp_path):
+        from training import evaluate_artifacts as ea
+
+        nested = tmp_path / "lofo"
+        nested.mkdir()
+        (nested / "lofo_xgb_baseline_dos_bundle.json").write_text(
+            json.dumps({"artifact_file": "x.joblib", "name": "lofo-x"}), encoding="utf-8")
+
+        assert ea.discover_artifacts(tmp_path) == []
+
+    def test_the_canonical_split_is_the_random_v2_one(self):
+        from training import run_lofo
+
+        assert run_lofo.CANONICAL_SPLIT == {"strategy": "random", "test_size": 0.2,
+                                            "seed": 42}
+
+    def test_primary_models_exclude_reduced_feature_and_mlp_variants(self):
+        from training import run_lofo
+
+        assert run_lofo.PRIMARY_MODELS == ["xgb_baseline", "xgb_balanced", "rf_baseline"]
+        for key in run_lofo.PRIMARY_MODELS:
+            assert "top" not in key
+            assert "mlp" not in key
