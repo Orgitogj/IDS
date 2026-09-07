@@ -88,3 +88,47 @@ RELATED_FAMILIES = [
 LABEL_TO_FAMILY = {label: family
                    for family, entry in FAMILIES.items()
                    for label in entry["labels"]}
+
+
+class TaxonomyError(ValueError):
+    pass
+
+
+def family_of(label):
+    if label == BENIGN:
+        return BENIGN
+    return LABEL_TO_FAMILY.get(label)
+
+
+def member_labels(family):
+    if family not in FAMILIES:
+        raise TaxonomyError(f"Familje e panjohur: {family}")
+    return list(FAMILIES[family]["labels"])
+
+
+def all_families():
+    return sorted(FAMILIES)
+
+
+def validate_against(labels):
+    observed = set(str(name) for name in labels)
+    observed.discard(BENIGN)
+
+    mapped = set(LABEL_TO_FAMILY)
+    unmapped = sorted(observed - mapped)
+    unknown = sorted(mapped - observed)
+
+    if unmapped:
+        raise TaxonomyError(
+            f"Etiketa pa familje ne taksonomi: {unmapped}. Cdo etikete sulmi duhet t'i "
+            "perkase nje familjeje; perndryshe nje fold LOFO do te linte trafik te lidhur "
+            "ne trajnim.")
+
+    return {
+        "taxonomy_version": TAXONOMY_VERSION,
+        "labels_observed": sorted(observed),
+        "labels_mapped": sorted(mapped),
+        "labels_in_taxonomy_but_absent_from_data": unknown,
+        "families": all_families(),
+        "complete": True,
+    }
