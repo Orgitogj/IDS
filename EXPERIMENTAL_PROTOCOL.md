@@ -826,3 +826,41 @@ adjacent: holding out DDoS leaves four DoS labels in training and vice versa, so
 of a held-out DDoS family is **not** evidence of generalisation to an unrelated attack
 type. This is recorded in `RELATED_FAMILIES` and must be stated wherever those two folds
 are discussed.
+
+### 17.4 Fold construction
+
+For each family F, starting from the **canonical random-v2 partition**
+(`test_size=0.2, random_state=42, stratified`):
+
+1. remove every row whose label is in F **from TRAIN only**;
+2. balance (when the model is a balanced variant) **after** removal;
+3. fit the scaler, when used, on the resulting training rows only;
+4. fit the label encoder on the surviving training labels only;
+5. train;
+6. evaluate on the **unchanged** canonical test set.
+
+Asserted programmatically each fold: `held_out_family_rows_in_train == 0` after removal,
+and `held_out_family_rows_after_balancing == 0`. Both raise `LofoError` rather than warn.
+
+### 17.5 Metrics — detection is the primary question
+
+A multiclass classifier that never saw family F cannot emit F's label. **Held-out-family
+multiclass F1 is therefore not used as the success metric.** Instead:
+
+* **Attack detection** (primary): `prediction != BENIGN` over held-out rows →
+  `attack_detection_rate`, `attack_miss_rate`. This says the traffic was flagged as
+  malicious; it says nothing about the label being right.
+* **Attack attribution** (separate): over held-out rows flagged as attack, the predicted
+  label and predicted family distribution, plus the dominant label/family. A dominant label
+  here is a **misattribution**, not a correct detection of that class.
+* **Binary diagnostic** over the whole canonical test set: binary accuracy, attack
+  precision/recall/F1, BENIGN FPR, attack FNR.
+* **Known-class stability**: metrics over test rows whose labels survived removal,
+  compared against a **matched** random-v2 baseline recomputed from the frozen random-v2
+  confusion matrix over exactly the same class subset. Comparing different class sets and
+  calling the difference degradation is not permitted.
+
+`benign_false_positive_rate` uses the **same definition** as random-v2 and corrected
+temporal: the fraction of true BENIGN rows predicted as some attack class. The opposite
+direction is stored separately as `attack_rows_predicted_as_benign_rate`. A regression
+test asserts the LOFO and temporal implementations agree numerically.
