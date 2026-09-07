@@ -770,3 +770,59 @@ would be wrong.
 * Any difference from the random baseline may reflect chronology, attack-family
   composition, unseen labels, class-support changes, or day-specific capture conditions.
   The design separates the unseen-label component; it does not isolate the others.
+
+---
+
+## 17. Leave-One-Family-Out protocol *(PK2 / H2)*
+
+**Namespace:** `ml-service/reports/lofo_evaluation/`, artifacts `models/lofo/`, taxonomy
+`cicids2017-families-v1`, protocol `lofo-v1`. Random-v2 (§0–§14) and temporal-v1 (§16)
+are **frozen and untouched**.
+
+### 17.1 Why LOFO is needed after the temporal experiment
+
+§16 showed that chronology and unseen-family effects are confounded in CICIDS2017: the
+temporal test period contained DDoS and PortScan, both entirely absent from training, and
+they were 50.8 % of the test set. Roughly half the temporal macro-F1 drop was unseen-label
+arithmetic rather than drift. LOFO isolates the unseen-family effect by holding a family
+out deliberately while keeping the split, the test set and everything else fixed.
+
+### 17.2 The existing implementation was Leave-One-*Class*-Out
+
+`training/leave_one_family_out.py` removes a single raw label per fold
+(`labels[train_idx] != excluded_family`) and iterates over raw labels. It also drops any
+label with test support below 100, which silently excluded Heartbleed, Infiltration and
+SQL Injection.
+
+That is not leave-one-*family*-out, and it overstates unseen-family generalisation: holding
+out `DoS Hulk` leaves GoldenEye, slowloris and Slowhttptest in training, so near-identical
+traffic remains. Measured directly — the old code reported ~31 % of held-out DoS Hulk
+detected; with the whole DoS family removed, detection falls to 0.7–3.8 %. The earlier
+figure was measuring interpolation inside a family. That script is left in place as the
+historical record and is **not** used for these results.
+
+### 17.3 Family taxonomy (`cicids2017-families-v1`)
+
+Derived from the CICIDS2017 capture scenarios; all 14 attack labels map to exactly one
+family, and no label is unmapped.
+
+| Family | Member labels | Scenario | Test support | Tier |
+|---|---|---|---:|---|
+| DoS | Hulk, GoldenEye, slowloris, Slowhttptest | Wed morning, single-source app-layer DoS | 50,343 | high |
+| PortScan | PortScan | Fri afternoon, nmap | 31,761 | high |
+| DDoS | DDoS | Fri afternoon, LOIC | 25,605 | high |
+| Brute Force | FTP-Patator, SSH-Patator | Tue, Patator credential attack | 2,767 | high |
+| Web Attack | Brute Force, XSS, Sql Injection | Thu morning, DVWA | 435 | moderate |
+| Bot | Bot | Fri morning, Ares C2 | 391 | moderate |
+| Infiltration | Infiltration | Thu afternoon | 7 | low / exploratory |
+| Heartbleed | Heartbleed | Wed afternoon | 2 | low / exploratory |
+
+**No family is dropped for low support.** Infiltration and Heartbleed are retained and
+explicitly tiered `low_exploratory`; no strong conclusion is drawn from them.
+
+**DoS and DDoS are separate families** because CICIDS2017 generated them as separate
+scenarios on separate days with different source models. They remain mechanically
+adjacent: holding out DDoS leaves four DoS labels in training and vice versa, so detection
+of a held-out DDoS family is **not** evidence of generalisation to an unrelated attack
+type. This is recorded in `RELATED_FAMILIES` and must be stated wherever those two folds
+are discussed.
