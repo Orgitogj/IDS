@@ -78,3 +78,54 @@ def library_versions():
     return {"python": sys.version.split()[0], "numpy": np.__version__,
             "pandas": pd.__version__, "scikit-learn": sklearn.__version__,
             "xgboost": xgboost.__version__}
+
+
+def collect_folds_from_disk(reports_dir):
+    folds = {}
+    for path in sorted(Path(reports_dir).glob("lofo_*/metrics.json")):
+        with open(path, encoding="utf-8") as handle:
+            payload = json.load(handle)
+        folds[payload["name"]] = {
+            "held_out_family": payload["held_out_family"],
+            "model_key": payload["model_key"],
+            "held_out_family_test_support": payload["held_out_family_test_support"],
+            "attack_detection_rate": payload["metrics"]["detection"].get(
+                "attack_detection_rate"),
+            "known_macro_f1": payload["metrics"]["known_class"].get("macro_f1"),
+        }
+    return folds
+
+
+def summarise_folds(folds):
+    return {
+        "families_run": sorted({entry["held_out_family"] for entry in folds.values()}),
+        "models_run": sorted({entry["model_key"] for entry in folds.values()}),
+        "n_folds": len(folds),
+    }
+
+
+def write_index(index_path, folds, dataset_path, dataset_rows):
+    summary = summarise_folds(folds)
+    index = {
+        "schema_version": 1,
+        "experiment_type": "lofo",
+        "protocol_version": lofo.PROTOCOL_VERSION,
+        "taxonomy_version": families.TAXONOMY_VERSION,
+        "generated_at": utc_now(),
+        "git_commit": git_commit(),
+        "library_versions": library_versions(),
+        "canonical_split": CANONICAL_SPLIT,
+        "dataset": {"name": dataset_path.name, "sha256": sha256_of(dataset_path),
+                    "rows": int(dataset_rows)},
+        "families_run": summary["families_run"],
+        "models_run": summary["models_run"],
+        "n_folds": summary["n_folds"],
+        "index_source": ("derived from every lofo_*/metrics.json present on disk, so the "
+                         "summary fields always describe the complete accumulated "
+                         "experiment rather than the most recent invocation"),
+        "folds": folds,
+    }
+    index_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(index_path, "w", encoding="utf-8") as handle:
+        json.dump(index, handle, indent=1)
+    return index
