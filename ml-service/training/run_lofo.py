@@ -255,3 +255,91 @@ def run_fold(family, model_key, dataset, train_idx, test_idx, reports_dir, model
         json.dump(payload, handle, indent=1)
 
     return stem, payload
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Leave-One-Family-Out mbi particionin kanonik random-v2.")
+    parser.add_argument("--dataset", default=DEFAULT_DATASET)
+    parser.add_argument("--reference", default=DEFAULT_REFERENCE)
+    parser.add_argument("--reports-dir", default=DEFAULT_REPORTS_DIR)
+    parser.add_argument("--models-dir", default=DEFAULT_MODELS_DIR)
+    parser.add_argument("--families", nargs="*", default=None)
+    parser.add_argument("--models", nargs="*", default=PRIMARY_MODELS)
+    parser.add_argument("--no-save-model", action="store_true")
+    parser.add_argument("--rebuild-index", action="store_true",
+                        help="Rigjeneron index.json nga raportet ne disk pa trajnuar asgje")
+    args = parser.parse_args()
+
+    reports_dir = resolve(args.reports_dir)
+    models_dir = resolve(args.models_dir)
+    dataset_path = resolve(args.dataset)
+
+    if args.rebuild_index:
+        folds = collect_folds_from_disk(reports_dir)
+        if not folds:
+            print("Asnje raport fold s'u gjet.", file=sys.stderr)
+            return 1
+        rows = len(pd.read_parquet(dataset_path, columns=["Label"]))
+        index = write_index(reports_dir / "index.json", folds, dataset_path, rows)
+        print(f"Indeksi u rigjenerua nga disku: {index['n_folds']} folds, "
+              f"{len(index['families_run'])} familje, {len(index['models_run'])} modele.")
+        print(f"  families_run: {index['families_run']}")
+        print(f"  models_run  : {index['models_run']}")
+        return 0
+
+    with open(resolve(args.reference), encoding="utf-8") as handle:
+        reference = json.load(handle)
+    columns = list(reference["feature_sets"][FEATURE_SET])
+
+    print(f"Duke lexuar {dataset_path.name} ...")
+    labels = clean_labels(
+        pd.read_parquet(dataset_path, columns=["Label"])["Label"].to_numpy())
+    frame = pd.read_parquet(dataset_path, columns=columns)
+    features = frame[columns].to_numpy(dtype="float32")
+    del frame
+
+    dataset = LoadedDataset(features, labels, columns)
+    train_idx, test_idx = splitting.split_indices(
+        dataset, CANONICAL_SPLIT["strategy"], CANONICAL_SPLIT["test_size"],
+        CANONICAL_SPLIT["seed"])
+    splitting.assert_disjoint(train_idx, test_idx)
+    families.validate_against(labels)
+
+    print(f"  particioni kanonik: train {len(train_idx):,} | test {len(test_idx):,}")
+
+    selected = args.families or families.all_families()
+    results = {}
+
+    for family in selected:
+        support = int(np.isin(labels[test_idx], families.member_labels(family)).sum())
+        print(f"\n### {family}  (test support {support:,}, "
+              f"{families.support_tier(support)}) ###")
+        for model_key in args.models:
+            started = time.perf_counter()
+            stem, payload = run_fold(family, model_key, dataset, train_idx, test_idx,
+                                     reports_dir, models_dir,
+                                     save_model=not args.no_save_model)
+            elapsed = time.perf_counter() - started
+            results[stem] = payload
+            detection = payload["metrics"]["detection"]
+            attribution = payload["metrics"]["attribution"]
+            known = payload["metrics"]["known_class"]
+            print(f"  {model_key:<14} removed {payload['rows_removed_from_train']:>7,} | "
+                  f"detect {detection.get('attack_detection_rate', 0):.4f} | "
+                  f"miss {detection.get('attack_miss_rate', 0):.4f} | "
+                  f"known MF1 {known.get('macro_f1', 0):.4f} | "
+                  f"-> {attribution.get('dominant_predicted_label')} | {elapsed:.0f}s")
+
+    index_path = reports_dir / "index.json"
+    index = write_index(index_path, collect_folds_from_disk(reports_dir), dataset_path,
+                        len(labels))
+
+    print(f"\nU ekzekutuan {len(results)} folds ne kete xhirim. Indeksi mban "
+          f"{index['n_folds']} folds gjithsej mbi {len(index['families_run'])} familje.")
+    print(f"U ruajt: {index_path}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
