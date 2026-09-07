@@ -150,3 +150,31 @@ def binary_diagnostic(y_true, y_pred):
         "attack_rows": attack_rows,
         "benign_fpr_definition": BENIGN_FPR_DEFINITION,
     }
+
+
+def known_class_metrics(y_true, y_pred, known_labels):
+    y_true = np.asarray(y_true, dtype=object)
+    y_pred = np.asarray(y_pred, dtype=object)
+    known = sorted(str(name) for name in known_labels)
+
+    mask = np.isin(y_true, known)
+    if not mask.any():
+        return {"classes": known, "n_classes": len(known), "rows": 0}
+
+    subset_true = y_true[mask]
+    subset_pred = y_pred[mask]
+
+    return {
+        "classes": known,
+        "n_classes": len(known),
+        "rows": int(mask.sum()),
+        "macro_f1": float(f1_score(y_true, y_pred, labels=known, average="macro",
+                                   zero_division=0)),
+        "macro_precision": float(precision_score(y_true, y_pred, labels=known,
+                                                 average="macro", zero_division=0)),
+        "macro_recall": float(recall_score(y_true, y_pred, labels=known,
+                                           average="macro", zero_division=0)),
+        "accuracy_over_known_rows": float(accuracy_score(subset_true, subset_pred)),
+        "note": ("Computed over test rows whose true label was still represented in "
+                 "training after the family was removed. BENIGN is included."),
+    }
