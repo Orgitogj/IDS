@@ -10,6 +10,7 @@ env/
 # Modele te trajnuara dhe dataset (te medha, s'shkojne ne git)
 models/*.pkl
 models/*.joblib
+models/lofo/*.joblib
 datasets/*.csv
 
 # MLflow lokale

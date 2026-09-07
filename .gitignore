@@ -17,6 +17,7 @@ ml-service/venv/
 ml-service/.env
 ml-service/models/*.pkl
 ml-service/models/*.joblib
+ml-service/models/lofo/*.joblib
 ml-service/datasets/*.csv
 ml-service/datasets/**/*.csv
 ml-service/datasets/*.parquet
