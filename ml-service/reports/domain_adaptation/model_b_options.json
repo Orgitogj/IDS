@@ -1,0 +1,70 @@
+{
+ "schema_version": 1,
+ "protocol_version": "domain-adaptation-design-v1",
+ "options": [
+  {
+   "option": "A",
+   "model": "binary XGBoost deployment detector",
+   "data": "lab python-cfm adaptation flows",
+   "leakage_risk": "low (run-level)",
+   "advantage": "direct binary objective; comparable pipeline to Model A",
+   "disadvantage": "lab-specific",
+   "fairness_vs_model_a": "paired same-flow eval",
+   "effort": "moderate",
+   "recommended": true
+  },
+  {
+   "option": "B",
+   "model": "binary Random Forest",
+   "data": "same",
+   "leakage_risk": "low",
+   "advantage": "robustness comparison to XGBoost",
+   "disadvantage": "second model to maintain",
+   "fairness_vs_model_a": "paired",
+   "effort": "low",
+   "recommended": true
+  },
+  {
+   "option": "C",
+   "model": "fine-tune existing XGB (Model A)",
+   "data": "lab flows",
+   "leakage_risk": "medium",
+   "advantage": "reuses learned structure",
+   "disadvantage": "catastrophic forgetting; unfair comparison; mutates the frozen benchmark lineage",
+   "fairness_vs_model_a": "poor",
+   "effort": "medium",
+   "recommended": false
+  },
+  {
+   "option": "D",
+   "model": "new model on common-extractor CICIDS2017",
+   "data": "Strategy A (~50 GB pcaps)",
+   "leakage_risk": "label-transfer",
+   "advantage": "isolates extractor effect",
+   "disadvantage": "not feasible now",
+   "fairness_vs_model_a": "strong if done",
+   "effort": "very high",
+   "recommended": false
+  },
+  {
+   "option": "E",
+   "model": "two-stage: binary detector + frozen Model A attrib",
+   "data": "lab flows for stage 1",
+   "leakage_risk": "low",
+   "advantage": "keeps Model A frozen; no forgetting; ground-truth compatible; full comparability",
+   "disadvantage": "two components; slightly higher latency",
+   "fairness_vs_model_a": "strong",
+   "effort": "moderate",
+   "recommended": true
+  }
+ ],
+ "recommendation": "Option E architecture (two-stage) with Option A binary XGBoost as the Stage-1 detector and Option B RF as a robustness check; Stage 2 = frozen Model A for attribution",
+ "two_stage_rationale": {
+  "keeps_model_a_frozen": true,
+  "catastrophic_forgetting_risk": "eliminated (Model A untouched)",
+  "ground_truth_compatibility": "binary stage matches lab binary ground truth",
+  "latency": "stage 2 runs only on flows stage 1 flags as malicious",
+  "interpretability": "stage 1 decision + stage 2 attribution reported separately",
+  "comparability_with_model_a": "paired same-flow evaluation"
+ }
+}

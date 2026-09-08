@@ -1,0 +1,18 @@
+{
+ "schema_version": 1,
+ "protocol_version": "domain-adaptation-design-v1",
+ "guards": [
+  "run-level separation (no shared run across adaptation/validation/final_test)",
+  "unique run IDs enforced",
+  "no adaptation/validation run in the final test partition",
+  "no final-test labels used in tuning or calibration",
+  "no threshold optimization on final test",
+  "no feature scaler/statistic fitted on final test",
+  "no prediction-based row deletion",
+  "no failed run silently overwritten (aborted/invalid runs retained)",
+  "frozen Model A hash pinned; Model B hash pinned once frozen",
+  "feature-schema pinned",
+  "extractor version pinned (cicflowmeter 0.5.0)"
+ ],
+ "enforced_by": "training/pipeline/domain_adaptation.py validators + tests"
+}

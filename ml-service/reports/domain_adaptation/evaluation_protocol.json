@@ -1,0 +1,26 @@
+{
+ "schema_version": 1,
+ "protocol_version": "domain-adaptation-design-v1",
+ "pre_registered": true,
+ "primary": [
+  "attack_detection_rate_recall",
+  "benign_false_positive_rate",
+  "binary_macro_f1"
+ ],
+ "secondary": [
+  "binary_precision",
+  "binary_accuracy",
+  "per_run_detection",
+  "confidence_distribution",
+  "family_attribution_where_defensible"
+ ],
+ "every_rate_reports_denominator": true,
+ "benign_fpr_definition": "fraction of true BENIGN flows predicted ATTACK; identical to random-v2 / temporal / lofo / live",
+ "paired_comparison": {
+  "mandatory": true,
+  "procedure": "each final eval run: one raw capture -> same python cfm extraction -> Model A prediction AND Model B prediction on the identical flows",
+  "forbidden": "comparing Model A old-run metrics against Model B new-run metrics as the primary adaptation claim"
+ },
+ "model_b_success_criteria": "a defensible, pre-registered comparison against Model A on identical new flows; Model B is NOT required to win, only to be measured fairly",
+ "thresholds": "fixed before viewing final results; never tuned on final test"
+}

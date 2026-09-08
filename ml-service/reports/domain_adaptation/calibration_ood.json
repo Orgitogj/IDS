@@ -1,0 +1,15 @@
+{
+ "schema_version": 1,
+ "protocol_version": "domain-adaptation-design-v1",
+ "status": "design only; not executed",
+ "motivation": "SSH experiment: all attacks predicted BENIGN at confidence ~1.0; a reliability track is warranted",
+ "components": [
+  "probability calibration (Platt/isotonic) learned on validation only",
+  "out-of-distribution score",
+  "UNKNOWN/SUSPICIOUS rejection state",
+  "existing Isolation Forest anomaly detector as a separate signal"
+ ],
+ "kept_separate_from_primary_supervised_detection": true,
+ "no_silent_threshold_changes": true,
+ "parameters_learned_from": "adaptation/validation only, never final test"
+}

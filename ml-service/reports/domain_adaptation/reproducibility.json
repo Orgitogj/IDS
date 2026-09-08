@@ -1,0 +1,33 @@
+{
+ "schema_version": 1,
+ "protocol_version": "domain-adaptation-design-v1",
+ "pins": {
+  "extractor": {
+   "name": "cicflowmeter",
+   "version": "0.5.0",
+   "note": "same extractor for adaptation and deployment by construction"
+  },
+  "feature_schema": "cicids2017-78-v1 (or a documented deployment schema)",
+  "model_a": {
+   "id": "xgb-baseline-cicids2017-v2",
+   "role": "frozen benchmark model",
+   "artifact_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+   "feature_schema": "cicids2017-78-v1",
+   "status": "permanently frozen; never overwritten"
+  },
+  "model_b": {
+   "id": "deployment-adapted-v1",
+   "role": "deployment-adapted model (to be designed and, later, trained)",
+   "status": "not created; design only"
+  },
+  "random_seeds": "fixed and recorded per training run",
+  "manifests": [
+   "run manifests",
+   "adaptation dataset manifest",
+   "final evaluation manifest"
+  ],
+  "raw_capture_hashes": "SHA256 per capture",
+  "model_cards": "one per model (A frozen, B when created)",
+  "environment_versions": "python/numpy/sklearn/xgboost/cicflowmeter recorded"
+ }
+}

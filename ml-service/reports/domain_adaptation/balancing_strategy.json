@@ -1,0 +1,33 @@
+{
+ "schema_version": 1,
+ "protocol_version": "domain-adaptation-design-v1",
+ "applies_to": "adaptation/training data ONLY; never final test",
+ "current_imbalance": {
+  "benign": 5407,
+  "portscan_attack": 1362,
+  "ssh_attack": 69
+ },
+ "options_ranked": [
+  {
+   "method": "class_weights (scale_pos_weight)",
+   "preferred": true,
+   "reason": "no synthetic data; robust; recommended primary"
+  },
+  {
+   "method": "controlled_undersampling_benign",
+   "preferred": false,
+   "reason": "comparison baseline; discards benign data"
+  },
+  {
+   "method": "oversampling_minority",
+   "preferred": false,
+   "reason": "risk of overfitting the few ssh flows"
+  },
+  {
+   "method": "SMOTE",
+   "preferred": false,
+   "reason": "not assumed beneficial; random-v2 showed SMOTE is not universally helpful; only if independently justified for flow features"
+  }
+ ],
+ "test_distribution": "never altered"
+}

@@ -1,0 +1,3 @@
+strategy,extractor_consistency,isolates_extractor_effect,data_needed,leakage_risk,effort,feasible_now,recommendation
+A common-extractor (re-extract CICIDS2017 with python cfm),train+deploy share python cfm,yes,~50 GB official PCAPs (not local),label-transfer across re-segmented flows,very high,no,future work
+B lab-domain adaptation (train on lab python-cfm flows),train+deploy share python cfm,no (also matches domain),existing + new lab runs (local),run-level separation required,moderate,yes,PRIMARY

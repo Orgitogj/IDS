@@ -1,0 +1,18 @@
+{
+ "schema_version": 1,
+ "protocol_version": "domain-adaptation-design-v1",
+ "separation": "RUN_LEVEL_ONLY",
+ "rule": "no flow from an adaptation or validation run may appear in the final Model-B test partition; splitting is by whole run, never by random flow",
+ "roles": [
+  "adaptation",
+  "validation",
+  "final_test"
+ ],
+ "existing_lab_runs": {
+  "lab-v1-benign-001": "adaptation (Model B); Model A result stays frozen",
+  "lab-v1-portscan-001": "adaptation (Model B); Model A result stays frozen",
+  "lab-v1-ssh-bruteforce-001": "adaptation (Model B); too few flows (69) to split, used whole for adaptation"
+ },
+ "final_test": "only NEW runs generated AFTER Model B is frozen; never any existing run",
+ "calibration": "learned only from a validation slice of adaptation runs, never from final test"
+}

@@ -1,0 +1,170 @@
+{
+ "schema_version": 1,
+ "protocol_version": "domain-adaptation-design-v1",
+ "replication": {
+  "adaptation_runs_per_scenario": ">=3 (incl. reused existing where available)",
+  "final_test_runs_per_scenario": ">=3",
+  "different_sessions_time_windows": true,
+  "no_prediction_driven_repetition": true,
+  "min_valid_flow_support_per_eval_run": {
+   "benign": 300,
+   "portscan": 300,
+   "ssh": 30
+  },
+  "report_run_level_variability": [
+   "mean",
+   "median",
+   "range",
+   "std"
+  ]
+ },
+ "runs": [
+  {
+   "run_id": "lab-v1-benign-001",
+   "scenario": "benign",
+   "role": "adaptation",
+   "source": "existing accepted Model-A run, reused as adaptation only",
+   "generated_after_model_b_freeze": false
+  },
+  {
+   "run_id": "lab-v1-portscan-001",
+   "scenario": "portscan",
+   "role": "adaptation",
+   "source": "existing accepted Model-A run, reused as adaptation only",
+   "generated_after_model_b_freeze": false
+  },
+  {
+   "run_id": "lab-v1-ssh-bruteforce-001",
+   "scenario": "ssh",
+   "role": "adaptation",
+   "source": "existing accepted Model-A run, reused as adaptation only",
+   "generated_after_model_b_freeze": false
+  },
+  {
+   "run_id": "adapt-v1-benign-002",
+   "scenario": "benign",
+   "role": "adaptation",
+   "source": "new adaptation run (different session/time window)",
+   "generated_after_model_b_freeze": false
+  },
+  {
+   "run_id": "adapt-v1-benign-003",
+   "scenario": "benign",
+   "role": "adaptation",
+   "source": "new adaptation run (different session/time window)",
+   "generated_after_model_b_freeze": false
+  },
+  {
+   "run_id": "adapt-v1-benign-004",
+   "scenario": "benign",
+   "role": "adaptation",
+   "source": "new adaptation run (different session/time window)",
+   "generated_after_model_b_freeze": false
+  },
+  {
+   "run_id": "adapt-v1-portscan-002",
+   "scenario": "portscan",
+   "role": "adaptation",
+   "source": "new adaptation run (different session/time window)",
+   "generated_after_model_b_freeze": false
+  },
+  {
+   "run_id": "adapt-v1-portscan-003",
+   "scenario": "portscan",
+   "role": "adaptation",
+   "source": "new adaptation run (different session/time window)",
+   "generated_after_model_b_freeze": false
+  },
+  {
+   "run_id": "adapt-v1-portscan-004",
+   "scenario": "portscan",
+   "role": "adaptation",
+   "source": "new adaptation run (different session/time window)",
+   "generated_after_model_b_freeze": false
+  },
+  {
+   "run_id": "adapt-v1-ssh-002",
+   "scenario": "ssh",
+   "role": "adaptation",
+   "source": "new adaptation run (different session/time window)",
+   "generated_after_model_b_freeze": false
+  },
+  {
+   "run_id": "adapt-v1-ssh-003",
+   "scenario": "ssh",
+   "role": "adaptation",
+   "source": "new adaptation run (different session/time window)",
+   "generated_after_model_b_freeze": false
+  },
+  {
+   "run_id": "adapt-v1-ssh-004",
+   "scenario": "ssh",
+   "role": "adaptation",
+   "source": "new adaptation run (different session/time window)",
+   "generated_after_model_b_freeze": false
+  },
+  {
+   "run_id": "eval-v1-benign-001",
+   "scenario": "benign",
+   "role": "final_test",
+   "source": "new unseen run generated AFTER Model B freeze",
+   "generated_after_model_b_freeze": true
+  },
+  {
+   "run_id": "eval-v1-benign-002",
+   "scenario": "benign",
+   "role": "final_test",
+   "source": "new unseen run generated AFTER Model B freeze",
+   "generated_after_model_b_freeze": true
+  },
+  {
+   "run_id": "eval-v1-benign-003",
+   "scenario": "benign",
+   "role": "final_test",
+   "source": "new unseen run generated AFTER Model B freeze",
+   "generated_after_model_b_freeze": true
+  },
+  {
+   "run_id": "eval-v1-portscan-001",
+   "scenario": "portscan",
+   "role": "final_test",
+   "source": "new unseen run generated AFTER Model B freeze",
+   "generated_after_model_b_freeze": true
+  },
+  {
+   "run_id": "eval-v1-portscan-002",
+   "scenario": "portscan",
+   "role": "final_test",
+   "source": "new unseen run generated AFTER Model B freeze",
+   "generated_after_model_b_freeze": true
+  },
+  {
+   "run_id": "eval-v1-portscan-003",
+   "scenario": "portscan",
+   "role": "final_test",
+   "source": "new unseen run generated AFTER Model B freeze",
+   "generated_after_model_b_freeze": true
+  },
+  {
+   "run_id": "eval-v1-ssh-001",
+   "scenario": "ssh",
+   "role": "final_test",
+   "source": "new unseen run generated AFTER Model B freeze",
+   "generated_after_model_b_freeze": true
+  },
+  {
+   "run_id": "eval-v1-ssh-002",
+   "scenario": "ssh",
+   "role": "final_test",
+   "source": "new unseen run generated AFTER Model B freeze",
+   "generated_after_model_b_freeze": true
+  },
+  {
+   "run_id": "eval-v1-ssh-003",
+   "scenario": "ssh",
+   "role": "final_test",
+   "source": "new unseen run generated AFTER Model B freeze",
+   "generated_after_model_b_freeze": true
+  }
+ ]
+}

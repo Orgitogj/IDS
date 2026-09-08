@@ -1,0 +1,35 @@
+{
+ "schema_version": 1,
+ "protocol_version": "domain-adaptation-design-v1",
+ "generated_at": "2026-09-08T15:31:51.357908Z",
+ "design_only": true,
+ "no_training": true,
+ "no_traffic": true,
+ "no_shap": true,
+ "no_llm": true,
+ "strategy_a_common_extractor": {
+  "concept": "re-extract original CICIDS2017 PCAPs with python cicflowmeter 0.5.0 so training and deployment share one extractor",
+  "local_cicids2017_pcaps": false,
+  "what_is_local": "published Java-CICFlowMeter flow CSVs (datasets/MachineLearningCVE, datasets/TrafficLabelling) and the derived cicids2017_cleaned.parquet",
+  "raw_pcap_size_estimate_gb": "~50 (5 capture days, official UNB distribution)",
+  "disk_free_gb": 640,
+  "blockers": [
+   "original raw PCAPs are not local and must be downloaded from the official UNB source (~50 GB)",
+   "python cicflowmeter would segment flows differently from the original Java extractor, so the original flow-level labels do not map 1:1 to re-extracted flows (a non-trivial label-transfer / flow-matching problem with real leakage risk)",
+   "full re-extraction of 5 days is long-running and unverified for label fidelity"
+  ],
+  "feasible_now": false,
+  "feasible_in_principle": true,
+  "verdict": "IMPRACTICAL_NOW_DOCUMENTED_AS_FUTURE_WORK"
+ },
+ "strategy_b_lab_domain_adaptation": {
+  "concept": "train Model B on laboratory flows extracted with python cicflowmeter 0.5.0 and evaluate on NEW laboratory runs extracted the same way; train and deployment share the extractor by construction",
+  "data_available": "existing lab runs (benign 5407, portscan 1362 ATTACK, ssh 69 ATTACK) plus new runs generated later",
+  "same_extractor_train_and_deploy": true,
+  "limitation": "fixes extractor-consistency AND domain-match simultaneously, so it answers the mitigation question but does not isolate the extractor effect alone",
+  "feasible_now": true,
+  "verdict": "PRACTICAL_RECOMMENDED"
+ },
+ "recommended_strategy": "B",
+ "recommended_strategy_reason": "Strategy A needs ~50 GB of non-local PCAPs and an unsolved label-transfer problem; Strategy B is practical now, shares the extractor between training and deployment, and directly tests whether the deployment gap shrinks when the feature-extraction environment is consistent. Strategy A is retained as future work that would additionally isolate the extractor effect."
+}
