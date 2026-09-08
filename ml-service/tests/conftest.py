@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -54,7 +55,16 @@ def evaluation_report():
         return json.load(handle)
 
 
+LLM_INTEGRATION_ENV = "IDS_LLM_INTEGRATION"
+
+
+def _llm_opted_in():
+    return os.environ.get(LLM_INTEGRATION_ENV, "").strip().lower() in ("1", "true", "yes")
+
+
 def _llm_configured():
+    if not _llm_opted_in():
+        return False
     try:
         from app.core.config import settings
     except Exception:
@@ -77,4 +87,4 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(pytest.mark.skip(
                 reason="reports/evaluation_random_vs_temporal.json mungon"))
         if "llm" in item.keywords and not llm_ok:
-            item.add_marker(pytest.mark.skip(reason="asnje celes LLM i konfiguruar ne .env"))
+            item.add_marker(pytest.mark.skip(reason=(f"testet LLM jane opt-in: kalo -m llm DHE cakto {LLM_INTEGRATION_ENV}=1")))
