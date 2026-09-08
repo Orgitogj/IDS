@@ -1,0 +1,186 @@
+{
+ "schema_version": 1,
+ "diagnostic": "ssh_feature_shift",
+ "generated_at": "2026-09-08T13:29:32.337028Z",
+ "is_diagnostic_only": true,
+ "does_not_modify_frozen_results": true,
+ "no_retraining_no_tuning_no_shap_no_llm": true,
+ "feature_schema": "cicids2017-78-v1",
+ "model": {
+  "model_name": "xgb-baseline-cicids2017-v2",
+  "model_version": "2.0",
+  "artifact_file": "xgb_baseline_cicids2017_v2.joblib",
+  "artifact_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+  "feature_schema": "cicids2017-78-v1",
+  "feature_count": 78,
+  "sha_verified": true,
+  "frozen_before_results": true
+ },
+ "primary_reference": "SSH-Patator",
+ "canonical_ssh_patator_support": 1180,
+ "secondary_reference": "SSH-Patator + FTP-Patator (Brute Force family)",
+ "canonical_brute_force_support": 2767,
+ "laboratory_ssh_support": 69,
+ "ground_truth_note": "laboratory ground truth is family-level Brute Force; SSH-Patator is used here only as the relevant canonical reference distribution, not as exact-label ground truth",
+ "n_features": 78,
+ "shift_overview_primary": {
+  "comparable_features": 53,
+  "constant_or_non_comparable": 25,
+  "median_ks": 0.9983050847457627,
+  "p75_ks": 1.0,
+  "max_ks": 1.0,
+  "count_ks_ge_0_3": 53,
+  "count_ks_ge_0_5": 49,
+  "count_ks_ge_0_8": 30,
+  "count_ge_50pct_outside_p01_p99": 34,
+  "count_100pct_outside_p01_p99": 34
+ },
+ "shift_overview_secondary_brute_force": {
+  "comparable_features": 54,
+  "constant_or_non_comparable": 24,
+  "median_ks": 0.9951210697506325,
+  "p75_ks": 1.0,
+  "max_ks": 1.0,
+  "count_ks_ge_0_3": 52,
+  "count_ks_ge_0_5": 49,
+  "count_ks_ge_0_8": 29,
+  "count_ge_50pct_outside_p01_p99": 33,
+  "count_100pct_outside_p01_p99": 33
+ },
+ "semantic_audit_overview": {
+  "unit_mismatch_suspected_count": 13,
+  "unit_mismatch_features": [
+   "Flow Duration",
+   "Flow IAT Mean",
+   "Flow IAT Std",
+   "Flow IAT Max",
+   "Fwd IAT Total",
+   "Fwd IAT Mean",
+   "Fwd IAT Std",
+   "Fwd IAT Max",
+   "Bwd IAT Total",
+   "Bwd IAT Mean",
+   "Bwd IAT Std",
+   "Bwd IAT Max",
+   "Bwd IAT Min"
+  ],
+  "possible_implementation_difference_count": 16
+ },
+ "model_relevant_overview": {
+  "top_k": 15,
+  "top_k_substantially_shifted": 12,
+  "top_feature": "Idle Mean",
+  "top_feature_ks": null
+ },
+ "confident_miss": {
+  "lab_flows": 69,
+  "predicted_benign": 69,
+  "predicted_attack": 0,
+  "confidence_min": 0.9999485015869141,
+  "confidence_median": 0.999957799911499,
+  "confidence_max": 0.9999581575393677,
+  "all_predicted_benign": true,
+  "top_important_feature_position": [
+   {
+    "feature": "Idle Mean",
+    "importance_rank": 0,
+    "lab_median": 0.0,
+    "canon_p01": 0.0,
+    "canon_p99": 0.0,
+    "pct_lab_outside_canon_p01_p99": 0.0
+   },
+   {
+    "feature": "Bwd Packet Length Std",
+    "importance_rank": 1,
+    "lab_median": 309.7489767076375,
+    "canon_p01": 0.0,
+    "canon_p99": 223.315,
+    "pct_lab_outside_canon_p01_p99": 100.0
+   },
+   {
+    "feature": "PSH Flag Count",
+    "importance_rank": 2,
+    "lab_median": 15.0,
+    "canon_p01": 0.0,
+    "canon_p99": 1.0,
+    "pct_lab_outside_canon_p01_p99": 100.0
+   },
+   {
+    "feature": "Bwd Header Length",
+    "importance_rank": 3,
+    "lab_median": 280.0,
+    "canon_p01": 32.0,
+    "canon_p99": 1064.0,
+    "pct_lab_outside_canon_p01_p99": 0.0
+   },
+   {
+    "feature": "act_data_pkt_fwd",
+    "importance_rank": 4,
+    "lab_median": 8.0,
+    "canon_p01": 0.0,
+    "canon_p99": 16.0,
+    "pct_lab_outside_canon_p01_p99": 0.0
+   },
+   {
+    "feature": "Average Packet Size",
+    "importance_rank": 5,
+    "lab_median": 238.53571428571428,
+    "canon_p01": 0.0,
+    "canon_p99": 95.06,
+    "pct_lab_outside_canon_p01_p99": 100.0
+   },
+   {
+    "feature": "Bwd Packet Length Mean",
+    "importance_rank": 6,
+    "lab_median": 235.0,
+    "canon_p01": 0.0,
+    "canon_p99": 88.5483871,
+    "pct_lab_outside_canon_p01_p99": 100.0
+   },
+   {
+    "feature": "Max Packet Length",
+    "importance_rank": 7,
+    "lab_median": 1810.0,
+    "canon_p01": 0.0,
+    "canon_p99": 976.0,
+    "pct_lab_outside_canon_p01_p99": 100.0
+   },
+   {
+    "feature": "Total Fwd Packets",
+    "importance_rank": 8,
+    "lab_median": 14.0,
+    "canon_p01": 1.0,
+    "canon_p99": 24.0,
+    "pct_lab_outside_canon_p01_p99": 0.0
+   },
+   {
+    "feature": "Total Length of Fwd Packets",
+    "importance_rank": 9,
+    "lab_median": 3389.0,
+    "canon_p01": 0.0,
+    "canon_p99": 2024.0,
+    "pct_lab_outside_canon_p01_p99": 100.0
+   }
+  ],
+  "note": "Every laboratory SSH flow was predicted BENIGN, so there is no detected-vs-missed split. Values are descriptive; no causal mechanism is asserted."
+ },
+ "cross_scenario": {
+  "portscan": {
+   "detection_rate": 0.0014684287812041115,
+   "canonical_support": 31761,
+   "lab_support": 1362,
+   "median_ks": 0.7117873900429516,
+   "features_ks_ge_0_8": 24,
+   "top15_important_shifted": 11
+  },
+  "ssh": {
+   "detection_rate": 0.0,
+   "canonical_support": 1180,
+   "lab_support": 69,
+   "median_ks": 0.9983050847457627,
+   "features_ks_ge_0_8": 30,
+   "top15_important_shifted": 12
+  },
+  "classification": "CONSISTENT_CROSS_SCENARIO_SHIFT"
+ }
+}

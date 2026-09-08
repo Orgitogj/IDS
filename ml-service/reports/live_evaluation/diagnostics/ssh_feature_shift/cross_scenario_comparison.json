@@ -1,0 +1,19 @@
+{
+ "portscan": {
+  "detection_rate": 0.0014684287812041115,
+  "canonical_support": 31761,
+  "lab_support": 1362,
+  "median_ks": 0.7117873900429516,
+  "features_ks_ge_0_8": 24,
+  "top15_important_shifted": 11
+ },
+ "ssh": {
+  "detection_rate": 0.0,
+  "canonical_support": 1180,
+  "lab_support": 69,
+  "median_ks": 0.9983050847457627,
+  "features_ks_ge_0_8": 30,
+  "top15_important_shifted": 12
+ },
+ "classification": "CONSISTENT_CROSS_SCENARIO_SHIFT"
+}

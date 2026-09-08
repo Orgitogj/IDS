@@ -1,0 +1,79 @@
+feature,category,semantic_status,canon_median,lab_median,median_ratio,note
+Destination Port,other,LIKELY_SAME,22.0,22.0,1.0,count/length/ratio feature; byte and packet semantics are conventional
+Protocol,other,LIKELY_SAME,6.0,6.0,1.0,count/length/ratio feature; byte and packet semantics are conventional
+Flow Duration,time,UNIT_MISMATCH_SUSPECTED,10608658.0,2.0230398178100586,1.9069705308721034e-07,canonical/lab median ratio 5.24e+06 is compatible with a microseconds(canonical) vs seconds(lab) time-unit convention
+Total Fwd Packets,other,LIKELY_SAME,19.0,14.0,0.7368421052631579,count/length/ratio feature; byte and packet semantics are conventional
+Total Backward Packets,other,LIKELY_SAME,31.0,14.0,0.45161290322580644,count/length/ratio feature; byte and packet semantics are conventional
+Total Length of Fwd Packets,other,LIKELY_SAME,2008.0,3389.0,1.6877490039840637,count/length/ratio feature; byte and packet semantics are conventional
+Total Length of Bwd Packets,other,LIKELY_SAME,2745.0,3290.0,1.198542805100182,count/length/ratio feature; byte and packet semantics are conventional
+Fwd Packet Length Max,other,LIKELY_SAME,640.0,1810.0,2.828125,count/length/ratio feature; byte and packet semantics are conventional
+Fwd Packet Length Min,other,LIKELY_SAME,0.0,66.0,,count/length/ratio feature; byte and packet semantics are conventional
+Fwd Packet Length Mean,other,LIKELY_SAME,87.30434783,242.07142857142858,2.772730506420972,count/length/ratio feature; byte and packet semantics are conventional
+Fwd Packet Length Std,other,LIKELY_SAME,136.3399611,446.6383107305563,3.27591637203831,count/length/ratio feature; byte and packet semantics are conventional
+Bwd Packet Length Max,other,LIKELY_SAME,976.0,1042.0,1.0676229508196722,count/length/ratio feature; byte and packet semantics are conventional
+Bwd Packet Length Min,other,LIKELY_SAME,0.0,66.0,,count/length/ratio feature; byte and packet semantics are conventional
+Bwd Packet Length Mean,other,LIKELY_SAME,83.18181818,235.0,2.8251366120836097,count/length/ratio feature; byte and packet semantics are conventional
+Bwd Packet Length Std,other,LIKELY_SAME,217.2857356,309.7489767076375,1.4255375570435627,count/length/ratio feature; byte and packet semantics are conventional
+Flow Bytes/s,rate,POSSIBLE_IMPLEMENTATION_DIFFERENCE,345.83140000000003,3307.647471187417,9.564335312488735,"per-time rate; magnitude depends on each tool's internal duration convention, so not directly comparable in scale"
+Flow Packets/s,rate,POSSIBLE_IMPLEMENTATION_DIFFERENCE,5.019403212,14.040515030243645,2.7972478872939854,"per-time rate; magnitude depends on each tool's internal duration convention, so not directly comparable in scale"
+Flow IAT Mean,time,UNIT_MISMATCH_SUSPECTED,203515.77565,0.07386032740275066,3.629218775146616e-07,canonical/lab median ratio 2.76e+06 is compatible with a microseconds(canonical) vs seconds(lab) time-unit convention
+Flow IAT Std,time,UNIT_MISMATCH_SUSPECTED,549641.61515,0.35393759415197157,6.439424970676215e-07,canonical/lab median ratio 1.55e+06 is compatible with a microseconds(canonical) vs seconds(lab) time-unit convention
+Flow IAT Max,time,UNIT_MISMATCH_SUSPECTED,2021102.5,1.900693416595459,9.404240589457779e-07,canonical/lab median ratio 1.06e+06 is compatible with a microseconds(canonical) vs seconds(lab) time-unit convention
+Flow IAT Min,time,LIKELY_SAME,20.5,0.0,0.0,time feature but (near-)constant in one population; unit effect masked
+Fwd IAT Total,time,UNIT_MISMATCH_SUSPECTED,8802956.0,2.0230398178100586,2.2981369187918906e-07,canonical/lab median ratio 4.35e+06 is compatible with a microseconds(canonical) vs seconds(lab) time-unit convention
+Fwd IAT Mean,time,UNIT_MISMATCH_SUSPECTED,431899.375,0.1500269855771746,3.473656000941761e-07,canonical/lab median ratio 2.88e+06 is compatible with a microseconds(canonical) vs seconds(lab) time-unit convention
+Fwd IAT Std,time,UNIT_MISMATCH_SUSPECTED,777851.0398500001,0.503156185654737,6.468541660004273e-07,canonical/lab median ratio 1.55e+06 is compatible with a microseconds(canonical) vs seconds(lab) time-unit convention
+Fwd IAT Max,time,UNIT_MISMATCH_SUSPECTED,2021701.0,1.93497633934021,9.571031222422159e-07,canonical/lab median ratio 1.04e+06 is compatible with a microseconds(canonical) vs seconds(lab) time-unit convention
+Fwd IAT Min,time,LIKELY_SAME,17.5,0.0,0.0,time feature but (near-)constant in one population; unit effect masked
+Bwd IAT Total,time,UNIT_MISMATCH_SUSPECTED,10600000.0,2.022387981414795,1.9079131900139575e-07,canonical/lab median ratio 5.24e+06 is compatible with a microseconds(canonical) vs seconds(lab) time-unit convention
+Bwd IAT Mean,time,UNIT_MISMATCH_SUSPECTED,347033.76765,0.15334569490872896,4.41875428858512e-07,canonical/lab median ratio 2.26e+06 is compatible with a microseconds(canonical) vs seconds(lab) time-unit convention
+Bwd IAT Std,time,UNIT_MISMATCH_SUSPECTED,684866.96395,0.5004770797352402,7.307653983610436e-07,canonical/lab median ratio 1.37e+06 is compatible with a microseconds(canonical) vs seconds(lab) time-unit convention
+Bwd IAT Max,time,UNIT_MISMATCH_SUSPECTED,2021102.5,1.900693416595459,9.404240589457779e-07,canonical/lab median ratio 1.06e+06 is compatible with a microseconds(canonical) vs seconds(lab) time-unit convention
+Bwd IAT Min,time,UNIT_MISMATCH_SUSPECTED,3.0,0.0005295276641845703,0.00017650922139485678,time feature; canonical CICFlowMeter is documented in microseconds
+Fwd PSH Flags,flag,POSSIBLE_IMPLEMENTATION_DIFFERENCE,0.0,8.0,,flag counting/segmentation semantics may differ between tools
+Bwd PSH Flags,flag,POSSIBLE_IMPLEMENTATION_DIFFERENCE,0.0,7.0,,flag counting/segmentation semantics may differ between tools
+Fwd URG Flags,flag,POSSIBLE_IMPLEMENTATION_DIFFERENCE,0.0,0.0,,flag counting/segmentation semantics may differ between tools
+Bwd URG Flags,flag,POSSIBLE_IMPLEMENTATION_DIFFERENCE,0.0,0.0,,flag counting/segmentation semantics may differ between tools
+Fwd Header Length,other,LIKELY_SAME,616.0,280.0,0.45454545454545453,count/length/ratio feature; byte and packet semantics are conventional
+Bwd Header Length,other,LIKELY_SAME,1000.0,280.0,0.28,count/length/ratio feature; byte and packet semantics are conventional
+Fwd Packets/s,rate,POSSIBLE_IMPLEMENTATION_DIFFERENCE,2.008910466,7.143918923686684,3.5561161358829234,"per-time rate; magnitude depends on each tool's internal duration convention, so not directly comparable in scale"
+Bwd Packets/s,rate,POSSIBLE_IMPLEMENTATION_DIFFERENCE,2.9648755615000004,7.0202575151218225,2.3678084862253406,"per-time rate; magnitude depends on each tool's internal duration convention, so not directly comparable in scale"
+Min Packet Length,other,LIKELY_SAME,0.0,66.0,,count/length/ratio feature; byte and packet semantics are conventional
+Max Packet Length,other,LIKELY_SAME,976.0,1810.0,1.8545081967213115,count/length/ratio feature; byte and packet semantics are conventional
+Packet Length Mean,other,LIKELY_SAME,84.790948275,238.53571428571428,2.813221448026249,count/length/ratio feature; byte and packet semantics are conventional
+Packet Length Std,other,LIKELY_SAME,186.15726935,384.3534907703414,2.0646708673390917,count/length/ratio feature; byte and packet semantics are conventional
+Packet Length Variance,other,LIKELY_SAME,34654.954545,147727.60586734692,4.262813436258308,count/length/ratio feature; byte and packet semantics are conventional
+FIN Flag Count,flag,POSSIBLE_IMPLEMENTATION_DIFFERENCE,0.0,2.0,,flag counting/segmentation semantics may differ between tools
+SYN Flag Count,flag,POSSIBLE_IMPLEMENTATION_DIFFERENCE,0.0,3.0,,flag counting/segmentation semantics may differ between tools
+RST Flag Count,flag,POSSIBLE_IMPLEMENTATION_DIFFERENCE,0.0,0.0,,flag counting/segmentation semantics may differ between tools
+PSH Flag Count,flag,POSSIBLE_IMPLEMENTATION_DIFFERENCE,1.0,15.0,15.0,flag counting/segmentation semantics may differ between tools
+ACK Flag Count,flag,POSSIBLE_IMPLEMENTATION_DIFFERENCE,0.0,26.0,,flag counting/segmentation semantics may differ between tools
+URG Flag Count,flag,POSSIBLE_IMPLEMENTATION_DIFFERENCE,0.0,0.0,,flag counting/segmentation semantics may differ between tools
+CWE Flag Count,flag,POSSIBLE_IMPLEMENTATION_DIFFERENCE,0.0,0.0,,flag counting/segmentation semantics may differ between tools
+ECE Flag Count,flag,POSSIBLE_IMPLEMENTATION_DIFFERENCE,0.0,0.0,,flag counting/segmentation semantics may differ between tools
+Down/Up Ratio,other,LIKELY_SAME,1.0,1.0,1.0,count/length/ratio feature; byte and packet semantics are conventional
+Average Packet Size,other,LIKELY_SAME,86.30558214,238.53571428571428,2.7638503602093225,count/length/ratio feature; byte and packet semantics are conventional
+Avg Fwd Segment Size,other,LIKELY_SAME,87.30434783,242.07142857142858,2.772730506420972,count/length/ratio feature; byte and packet semantics are conventional
+Avg Bwd Segment Size,other,LIKELY_SAME,83.18181818,235.0,2.8251366120836097,count/length/ratio feature; byte and packet semantics are conventional
+Fwd Avg Bytes/Bulk,other,SEMANTICS_UNRESOLVED,0.0,0.0,,bulk-rate feature; aggregation semantics not verified locally
+Fwd Avg Packets/Bulk,other,SEMANTICS_UNRESOLVED,0.0,0.0,,bulk-rate feature; aggregation semantics not verified locally
+Fwd Avg Bulk Rate,other,SEMANTICS_UNRESOLVED,0.0,0.0,,bulk-rate feature; aggregation semantics not verified locally
+Bwd Avg Bytes/Bulk,other,SEMANTICS_UNRESOLVED,0.0,0.0,,bulk-rate feature; aggregation semantics not verified locally
+Bwd Avg Packets/Bulk,other,SEMANTICS_UNRESOLVED,0.0,0.0,,bulk-rate feature; aggregation semantics not verified locally
+Bwd Avg Bulk Rate,other,SEMANTICS_UNRESOLVED,0.0,0.0,,bulk-rate feature; aggregation semantics not verified locally
+Subflow Fwd Packets,other,LIKELY_SAME,19.0,14.0,0.7368421052631579,count/length/ratio feature; byte and packet semantics are conventional
+Subflow Fwd Bytes,other,LIKELY_SAME,2008.0,3389.0,1.6877490039840637,count/length/ratio feature; byte and packet semantics are conventional
+Subflow Bwd Packets,other,LIKELY_SAME,31.0,14.0,0.45161290322580644,count/length/ratio feature; byte and packet semantics are conventional
+Subflow Bwd Bytes,other,LIKELY_SAME,2745.0,3290.0,1.198542805100182,count/length/ratio feature; byte and packet semantics are conventional
+Init_Win_bytes_forward,other,LIKELY_SAME,29200.0,64240.0,2.2,count/length/ratio feature; byte and packet semantics are conventional
+Init_Win_bytes_backward,other,LIKELY_SAME,247.0,5792.0,23.44939271255061,count/length/ratio feature; byte and packet semantics are conventional
+act_data_pkt_fwd,other,LIKELY_SAME,16.0,8.0,0.5,count/length/ratio feature; byte and packet semantics are conventional
+min_seg_size_forward,other,LIKELY_SAME,32.0,20.0,0.625,count/length/ratio feature; byte and packet semantics are conventional
+Active Mean,time,LIKELY_SAME,0.0,0.0,,time feature but (near-)constant in one population; unit effect masked
+Active Std,time,LIKELY_SAME,0.0,0.0,,time feature but (near-)constant in one population; unit effect masked
+Active Max,time,LIKELY_SAME,0.0,0.0,,time feature but (near-)constant in one population; unit effect masked
+Active Min,time,LIKELY_SAME,0.0,0.0,,time feature but (near-)constant in one population; unit effect masked
+Idle Mean,time,LIKELY_SAME,0.0,0.0,,time feature but (near-)constant in one population; unit effect masked
+Idle Std,time,LIKELY_SAME,0.0,0.0,,time feature but (near-)constant in one population; unit effect masked
+Idle Max,time,LIKELY_SAME,0.0,0.0,,time feature but (near-)constant in one population; unit effect masked
+Idle Min,time,LIKELY_SAME,0.0,0.0,,time feature but (near-)constant in one population; unit effect masked
