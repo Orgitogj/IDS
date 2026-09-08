@@ -1,0 +1,20 @@
+{
+ "model_inference_latency": {
+  "n": 5407,
+  "mean_ms": 67.35643933778421,
+  "median_ms": 66.94170000264421,
+  "p95_ms": 70.47859999875072,
+  "min_ms": 24.72259999194648,
+  "max_ms": 141.8208999966737
+ },
+ "production_path_inference_latency": {
+  "n": 5407,
+  "mean_ms": 70.78729295358197,
+  "median_ms": 70.37680000939872,
+  "p95_ms": 73.94819999171887,
+  "min_ms": 26.727599994046614,
+  "max_ms": 145.92750000883825
+ },
+ "end_to_end_IDS_latency": null,
+ "note": "model_inference_latency covers predict() on an input-ready vector. production_path_inference_latency adds mapping, validation and DataFrame construction. end_to_end_IDS_latency additionally covers capture, Spring ingest and persistence, and may only be reported once every one of those components has been measured. SHAP and LLM explanation are separate layers and are excluded from all three."
+}
