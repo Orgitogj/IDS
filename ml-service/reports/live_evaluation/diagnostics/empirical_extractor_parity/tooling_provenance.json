@@ -1,0 +1,47 @@
+{
+ "schema_version": 1,
+ "diagnostic": "empirical_extractor_parity",
+ "phase": "16F",
+ "status": "BLOCKED_BEFORE_TRAFFIC",
+ "gate": "B2 reproducible Java CICFlowMeter build/run",
+ "gate_met": false,
+ "no_traffic_generated": true,
+ "no_pcap_captured": true,
+ "no_fabricated_parity": true,
+ "java_cicflowmeter_source": {
+   "project": "ahlashkari/CICFlowMeter",
+   "url": "https://github.com/ahlashkari/CICFlowMeter.git",
+   "cloned_commit": "98a5ebad0df579cc8b43eedd3421b3ae87699901",
+   "clone_location": "C:/Users/orgit/ids-tooling/CICFlowMeter (outside the repository)",
+   "official_upstream": true,
+   "exact_2017_dataset_extractor_identity_claimed": false,
+   "note": "official upstream source, but not asserted to be byte-identical to the exact extractor build used to produce CICIDS2017 in 2017"
+ },
+ "build_requirements": {
+   "source_target_compatibility": "1.8 (Java 8)",
+   "gradle_wrapper_version": "gradle-4.2 (2017)",
+   "native_dependency": "jnetpcap 1.4.r1425 (2013) JNI native library",
+   "windows_runtime_needs": "Npcap/WinPcap (wpcap.dll) - not installed, driver install out of scope"
+ },
+ "available_toolchain": {
+   "host_os": "Windows 11",
+   "host_java": "openjdk 17.0.20 (no Java 8; jnetpcap needs Npcap on Windows)",
+   "kali_java_default": "openjdk 25.0.3",
+   "kali_java_apt_installable": ["openjdk-11-jdk"],
+   "kali_java_8_available": false,
+   "kali_openjdk_17_available": false,
+   "kali_maven_gradle_preinstalled": false,
+   "kali_internet": "yes (NAT eth1)",
+   "kali_tcpdump": "present"
+ },
+ "blocking_incompatibilities": [
+   "CICFlowMeter requires Java 8; neither host nor Kali provides Java 8, and it is not apt-installable on Kali (only Java 11 and Java 25 available).",
+   "The bundled Gradle 4.2 wrapper supports only Java 7-9 and cannot run on Java 11/25.",
+   "jnetpcap 1.4 (2013) JNI native is very unlikely to load on Java 11/25.",
+   "On Windows, jnetpcap additionally requires an Npcap/WinPcap driver that is not installed; installing a system packet-capture driver was out of scope.",
+   "Assembling Java 8 + Gradle 4.2 + jnetpcap 1.4 would require manual third-party JDK/Gradle downloads, which would be non-reproducible and against the phase's tooling guidance."
+ ],
+ "decision": "STOP per B2: reproducible Java extractor could not be established, so no same-PCAP dual extraction and no diagnostic parity traffic were performed.",
+ "consequence": "CASE C persists: empirical same-PCAP extractor parity remains infeasible with available systems. The source/semantic audit (Phase 16E) stands as the strongest available evidence.",
+ "generated_at_note": "recorded from a live tooling audit on the Windows host and the Kali guest"
+}
