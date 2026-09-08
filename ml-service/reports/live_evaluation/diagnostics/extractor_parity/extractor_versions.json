@@ -1,0 +1,19 @@
+{
+ "python_extractor": {
+  "name": "cicflowmeter",
+  "version": "0.5.0",
+  "evidence": "cicflowmeter-0.5.0 (python, source-verified)",
+  "constants": {
+   "EXPIRED_UPDATE": 240,
+   "CLUMP_TIMEOUT": 1,
+   "ACTIVE_TIMEOUT": 5,
+   "PACKETS_PER_GC": 1000
+  }
+ },
+ "java_extractor": {
+  "name": "CICFlowMeter",
+  "version": "unavailable_locally",
+  "evidence": "CICFlowMeter (java, CICIDS2017; documented, not locally executable)"
+ },
+ "canonical_dataset": "CICIDS2017 (features produced by the original CICFlowMeter)"
+}

@@ -1,0 +1,15 @@
+{
+ "generated_at": "2026-09-08T14:19:46.943663Z",
+ "case": "CASE_C",
+ "case_description": "no exact accepted-run PCAP was retained; the accepted runs used cicflowmeter live capture (-i eth0 -c csv) which writes CSV only, not packets",
+ "retained_pcap_portscan": false,
+ "retained_pcap_ssh": false,
+ "pcap_search": "only metasploit-framework sample/test pcaps exist on the Kali guest; none correspond to lab-v1-portscan-001 or lab-v1-ssh-bruteforce-001",
+ "cicflowmeter_live_mode_writes_pcap": false,
+ "java_cicflowmeter_available": false,
+ "java_cicflowmeter_note": "no CICFlowMeter jar or source in the repository or host; a JRE (openjdk 17) exists but no extractor; installing an external binary was out of scope",
+ "python_cicflowmeter_source_available": true,
+ "python_cicflowmeter_source_retained_at": "reports/live_evaluation/diagnostics/extractor_parity/cicflowmeter_0_5_0_source/",
+ "same_pcap_empirical_parity_possible": false,
+ "audit_type": "source_and_semantic_implementation_audit_only"
+}
