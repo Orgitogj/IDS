@@ -1,0 +1,49 @@
+{
+ "protocol_version": "live-lab-v1",
+ "experiment_id": "lab-generalization-v1",
+ "run_id": "lab-v1-smoke-001",
+ "scenario_id": "smoke",
+ "scenario_description": "Local smoke validation of metadata propagation, validation status, run lifecycle and report generation. The rows are replayed CICIDS2017 records renamed into CICFlowMeter column form; no laboratory traffic was captured and no VM was involved. This run is NOT a live generalization result.",
+ "expected_binary_label": "ATTACK",
+ "smoke_test": true,
+ "exclude_from_thesis_metrics": true,
+ "ground_truth": {
+  "mode": "per_flow_selector",
+  "unmatched_policy": "BENIGN",
+  "attack_selector": {
+   "source_ip": "192.168.50.10",
+   "destination_ip": "192.168.50.20"
+  },
+  "rationale": "synthetic selector exercising the per-flow ground-truth path; unmatched rows are declared BENIGN here only so the smoke run exercises both metric denominators"
+ },
+ "model": {
+  "name": "xgb-baseline-cicids2017-v2",
+  "version": "2.0",
+  "feature_version": "cicids2017-78-v1",
+  "artifact_file": "xgb_baseline_cicids2017_v2.joblib"
+ },
+ "capture": {
+  "interface": "none",
+  "source": "replayed_rows_renamed_to_cicflowmeter"
+ },
+ "topology": {
+  "source_host": "192.168.50.10",
+  "source_role": "synthetic",
+  "target_host": "192.168.50.20",
+  "target_role": "synthetic",
+  "network": "no network was used"
+ },
+ "notes": "smoke_test = true, exclude_from_thesis_metrics = true",
+ "attribution_mapping_declared": false,
+ "manifest_source": "live_smoke.py",
+ "resolved_model": {
+  "model_name": "xgb-baseline-cicids2017-v2",
+  "model_version": "2.0",
+  "artifact_file": "xgb_baseline_cicids2017_v2.joblib",
+  "artifact_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+  "feature_schema": "cicids2017-78-v1",
+  "feature_count": 78,
+  "sha_verified": true,
+  "frozen_before_results": true
+ }
+}

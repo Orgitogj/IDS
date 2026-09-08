@@ -1,0 +1,109 @@
+{
+ "schema_version": 1,
+ "experiment_type": "live_lab",
+ "protocol_version": "live-lab-v1",
+ "experiment_id": "lab-generalization-v1",
+ "run_id": "lab-v1-smoke-001",
+ "scenario_id": "smoke",
+ "expected_binary_label": "ATTACK",
+ "smoke_test": true,
+ "exclude_from_thesis_metrics": true,
+ "counts": {
+  "flow_count": 300,
+  "valid_flow_count": 300,
+  "invalid_flow_count": 0,
+  "unlabelled_flow_count": 0,
+  "evaluable_flow_count": 300,
+  "validation_status_counts": {
+   "VALID": 300
+  }
+ },
+ "binary": {
+  "evaluable_flows": 300,
+  "attack_flows": 62,
+  "benign_flows": 238,
+  "true_positive": 62,
+  "false_positive": 0,
+  "false_negative": 0,
+  "true_negative": 238,
+  "attack_detection_rate": 1.0,
+  "attack_detection_rate_denominator": 62,
+  "attack_miss_rate": 0.0,
+  "attack_miss_rate_denominator": 62,
+  "benign_false_positive_rate": 0.0,
+  "benign_false_positive_rate_denominator": 238,
+  "attack_precision": 1.0,
+  "attack_precision_denominator": 62,
+  "attack_f1": 1.0,
+  "binary_accuracy": 1.0,
+  "rate_support_warning": null,
+  "benign_fpr_definition": "fraction of true BENIGN flows predicted as some attack class - identical to the definition used by random-v2 (overall_metrics.binary_benign_vs_attack), by the corrected temporal evaluation and by lofo-v1. It is NOT the per-class BENIGN fpr and NOT attack_rows_predicted_as_benign_rate.",
+  "detection_definition": "attack_detection_rate is the fraction of ground-truth ATTACK flows predicted as ANY non-BENIGN class. It says the traffic was flagged as malicious; it says nothing about whether the assigned CICIDS2017 label was correct. Attribution is reported separately."
+ },
+ "attribution": {
+  "attack_predictions": 62,
+  "scored_attack_flows": 62,
+  "predicted_label_distribution": {
+   "DoS Hulk": 31,
+   "PortScan": 16,
+   "DDoS": 11,
+   "DoS Slowhttptest": 2,
+   "FTP-Patator": 1,
+   "Web Attack \u0096 Brute Force": 1
+  },
+  "predicted_family_distribution": {
+   "DoS": 33,
+   "PortScan": 16,
+   "DDoS": 11,
+   "Brute Force": 1,
+   "unmapped": 1
+  },
+  "dominant_predicted_label": "DoS Hulk",
+  "dominant_predicted_label_share": 0.5,
+  "dominant_predicted_family": "DoS",
+  "dominant_predicted_family_share": 0.532258064516129,
+  "attribution_definition": "Attribution is only scored when the laboratory scenario declares a defensible mapping to a CICIDS2017 label or family. Where the manifest declares no mapping, binary detection is reported and attribution is left unscored rather than guessed.",
+  "attribution_scored": false,
+  "note": "the manifest declares no defensible CICIDS2017 mapping for this scenario, so only binary detection is scored"
+ },
+ "benign_baseline": {
+  "valid_benign_flows": 238,
+  "predicted_benign": 238,
+  "predicted_attack": 0,
+  "benign_false_positive_rate": 0.0,
+  "benign_false_positive_rate_denominator": 238,
+  "false_positive_label_distribution": {},
+  "rate_support_warning": null,
+  "benign_fpr_definition": "fraction of true BENIGN flows predicted as some attack class - identical to the definition used by random-v2 (overall_metrics.binary_benign_vs_attack), by the corrected temporal evaluation and by lofo-v1. It is NOT the per-class BENIGN fpr and NOT attack_rows_predicted_as_benign_rate."
+ },
+ "run_state": {
+  "run_id": "lab-v1-smoke-001",
+  "experiment_id": "lab-generalization-v1",
+  "scenario_id": "smoke",
+  "protocol_version": "live-lab-v1",
+  "status": "COMPLETED",
+  "planned_start": null,
+  "planned_duration_seconds": null,
+  "actual_start": "2026-09-07T21:26:30.209294Z",
+  "actual_end": "2026-09-07T21:26:41.808318Z",
+  "flow_count": 300,
+  "valid_flow_count": 300,
+  "invalid_flow_count": 0,
+  "prediction_count": 300,
+  "unlabelled_flow_count": 0,
+  "abort_reason": null,
+  "smoke_test": true,
+  "exclude_from_thesis_metrics": true,
+  "written_at": "2026-09-07T21:26:41.819364Z",
+  "model": {
+   "model_name": "xgb-baseline-cicids2017-v2",
+   "model_version": "2.0",
+   "artifact_file": "xgb_baseline_cicids2017_v2.joblib",
+   "artifact_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+   "feature_schema": "cicids2017-78-v1",
+   "feature_count": 78,
+   "sha_verified": true,
+   "frozen_before_results": true
+  }
+ }
+}
