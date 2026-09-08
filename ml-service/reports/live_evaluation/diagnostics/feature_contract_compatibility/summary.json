@@ -1,0 +1,406 @@
+{
+ "schema_version": 1,
+ "experiment": "feature_contract_compatibility",
+ "generated_at": "2026-09-08T13:51:03.493253Z",
+ "compatibility_protocol": "lab-feature-compat-v1",
+ "frozen_model": {
+  "model_name": "xgb-baseline-cicids2017-v2",
+  "model_version": "2.0",
+  "artifact_file": "xgb_baseline_cicids2017_v2.joblib",
+  "artifact_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+  "feature_schema": "cicids2017-78-v1",
+  "feature_count": 78,
+  "sha_verified": true,
+  "frozen_before_results": true
+ },
+ "no_retraining_no_tuning_no_shap_no_llm": true,
+ "scenarios": {
+  "portscan": {
+   "support": 1362,
+   "original_detection_rate": 0.0014684287812041115,
+   "compatibility_detection_rate": 0.0014684287812041115,
+   "detection_rate_change_pp": 0.0,
+   "absolute_detection_change": 0,
+   "shift_before_all": {
+    "comparable_features": 61,
+    "median_ks": 0.7117873900429516,
+    "p75_ks": 0.9969144548345455,
+    "max_ks": 1.0,
+    "count_ks_ge_0_3": 36,
+    "count_ks_ge_0_5": 35,
+    "count_ks_ge_0_8": 24,
+    "count_ge_50pct_outside": 35,
+    "count_100pct_outside": 30
+   },
+   "shift_after_all": {
+    "comparable_features": 61,
+    "median_ks": 0.7117873900429516,
+    "p75_ks": 0.9929158401813545,
+    "max_ks": 1.0,
+    "count_ks_ge_0_3": 36,
+    "count_ks_ge_0_5": 35,
+    "count_ks_ge_0_8": 21,
+    "count_ge_50pct_outside": 35,
+    "count_100pct_outside": 29
+   },
+   "shift_before_time": {
+    "comparable_features": 21,
+    "median_ks": 0.002644752998960942,
+    "p75_ks": 0.008847328484619554,
+    "max_ks": 1.0,
+    "count_ks_ge_0_3": 4,
+    "count_ks_ge_0_5": 4,
+    "count_ks_ge_0_8": 4,
+    "count_ge_50pct_outside": 4,
+    "count_100pct_outside": 4
+   },
+   "shift_after_time": {
+    "comparable_features": 21,
+    "median_ks": 0.002644752998960942,
+    "p75_ks": 0.008847328484619554,
+    "max_ks": 0.9999685148452505,
+    "count_ks_ge_0_3": 4,
+    "count_ks_ge_0_5": 4,
+    "count_ks_ge_0_8": 1,
+    "count_ge_50pct_outside": 4,
+    "count_100pct_outside": 3
+   },
+   "shift_before_nontime": {
+    "comparable_features": 40,
+    "median_ks": 0.8521841335070426,
+    "count_ks_ge_0_5": 31,
+    "count_ks_ge_0_8": 20,
+    "count_100pct_outside": 26
+   },
+   "shift_after_nontime": {
+    "comparable_features": 40,
+    "median_ks": 0.8521841335070426,
+    "count_ks_ge_0_5": 31,
+    "count_ks_ge_0_8": 20,
+    "count_100pct_outside": 26
+   },
+   "model_relevant_residual": [
+    {
+     "feature": "Idle Mean",
+     "importance_rank": 0,
+     "importance": 0.23894979059696198,
+     "ks_before": 0.0019205944397217012,
+     "ks_after": 0.0019205944397217012,
+     "is_time_feature": true
+    },
+    {
+     "feature": "Bwd Packet Length Std",
+     "importance_rank": 1,
+     "importance": 0.12301358580589294,
+     "ks_before": 0.0010075249519850837,
+     "ks_after": 0.0010075249519850837,
+     "is_time_feature": false
+    },
+    {
+     "feature": "PSH Flag Count",
+     "importance_rank": 2,
+     "importance": 0.10925355553627014,
+     "ks_before": 0.999527722678757,
+     "ks_after": 0.999527722678757,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Bwd Header Length",
+     "importance_rank": 3,
+     "importance": 0.07734746485948563,
+     "ks_before": 0.7146840242799088,
+     "ks_after": 0.7146840242799088,
+     "is_time_feature": false
+    },
+    {
+     "feature": "act_data_pkt_fwd",
+     "importance_rank": 4,
+     "importance": 0.07676631212234497,
+     "ks_before": 0.003746733415194714,
+     "ks_after": 0.003746733415194714,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Average Packet Size",
+     "importance_rank": 5,
+     "importance": 0.07328735291957855,
+     "ks_before": 0.9995906929882561,
+     "ks_after": 0.9995906929882561,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Bwd Packet Length Mean",
+     "importance_rank": 6,
+     "importance": 0.052313417196273804,
+     "ks_before": 0.7117873900429516,
+     "ks_after": 0.7117873900429516,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Max Packet Length",
+     "importance_rank": 7,
+     "importance": 0.03485185652971268,
+     "ks_before": 0.9993702969050093,
+     "ks_after": 0.9993702969050093,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Total Fwd Packets",
+     "importance_rank": 8,
+     "importance": 0.02998185344040394,
+     "ks_before": 0.9911526715153804,
+     "ks_after": 0.9911526715153804,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Total Length of Fwd Packets",
+     "importance_rank": 9,
+     "importance": 0.020141461864113808,
+     "ks_before": 0.9997796039167532,
+     "ks_after": 0.9997796039167532,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Total Backward Packets",
+     "importance_rank": 10,
+     "importance": 0.019553449004888535,
+     "ks_before": 0.7147155094346584,
+     "ks_after": 0.7147155094346584,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Fwd Packet Length Max",
+     "importance_rank": 11,
+     "importance": 0.0177464559674263,
+     "ks_before": 0.9995906929882561,
+     "ks_after": 0.9995906929882561,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Bwd Packets/s",
+     "importance_rank": 12,
+     "importance": 0.015939507633447647,
+     "ks_before": 0.9908063348131356,
+     "ks_after": 0.9908063348131356,
+     "is_time_feature": false
+    },
+    {
+     "feature": "FIN Flag Count",
+     "importance_rank": 13,
+     "importance": 0.012736480683088303,
+     "ks_before": null,
+     "ks_after": null,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Fwd Packet Length Min",
+     "importance_rank": 14,
+     "importance": 0.01265924796462059,
+     "ks_before": 1.0,
+     "ks_after": 1.0,
+     "is_time_feature": false
+    }
+   ],
+   "reproduction_verified": true
+  },
+  "ssh": {
+   "support": 69,
+   "original_detection_rate": 0.0,
+   "compatibility_detection_rate": 0.0,
+   "detection_rate_change_pp": 0.0,
+   "absolute_detection_change": 0,
+   "shift_before_all": {
+    "comparable_features": 53,
+    "median_ks": 0.9983050847457627,
+    "p75_ks": 1.0,
+    "max_ks": 1.0,
+    "count_ks_ge_0_3": 53,
+    "count_ks_ge_0_5": 49,
+    "count_ks_ge_0_8": 30,
+    "count_ge_50pct_outside": 34,
+    "count_100pct_outside": 34
+   },
+   "shift_after_all": {
+    "comparable_features": 53,
+    "median_ks": 0.9949152542372881,
+    "p75_ks": 1.0,
+    "max_ks": 1.0,
+    "count_ks_ge_0_3": 53,
+    "count_ks_ge_0_5": 46,
+    "count_ks_ge_0_8": 27,
+    "count_ge_50pct_outside": 32,
+    "count_100pct_outside": 31
+   },
+   "shift_before_time": {
+    "comparable_features": 15,
+    "median_ks": 0.5279661016949152,
+    "p75_ks": 0.7639830508474577,
+    "max_ks": 1.0,
+    "count_ks_ge_0_3": 15,
+    "count_ks_ge_0_5": 15,
+    "count_ks_ge_0_8": 4,
+    "count_ge_50pct_outside": 4,
+    "count_100pct_outside": 4
+   },
+   "shift_after_time": {
+    "comparable_features": 15,
+    "median_ks": 0.5177966101694915,
+    "p75_ks": 0.5177966101694915,
+    "max_ks": 1.0,
+    "count_ks_ge_0_3": 15,
+    "count_ks_ge_0_5": 12,
+    "count_ks_ge_0_8": 1,
+    "count_ge_50pct_outside": 2,
+    "count_100pct_outside": 1
+   },
+   "shift_before_nontime": {
+    "comparable_features": 38,
+    "median_ks": 1.0,
+    "count_ks_ge_0_5": 34,
+    "count_ks_ge_0_8": 26,
+    "count_100pct_outside": 30
+   },
+   "shift_after_nontime": {
+    "comparable_features": 38,
+    "median_ks": 1.0,
+    "count_ks_ge_0_5": 34,
+    "count_ks_ge_0_8": 26,
+    "count_100pct_outside": 30
+   },
+   "model_relevant_residual": [
+    {
+     "feature": "Idle Mean",
+     "importance_rank": 0,
+     "importance": 0.23894979059696198,
+     "ks_before": null,
+     "ks_after": null,
+     "is_time_feature": true
+    },
+    {
+     "feature": "Bwd Packet Length Std",
+     "importance_rank": 1,
+     "importance": 0.12301358580589294,
+     "ks_before": 0.9983050847457627,
+     "ks_after": 0.9983050847457627,
+     "is_time_feature": false
+    },
+    {
+     "feature": "PSH Flag Count",
+     "importance_rank": 2,
+     "importance": 0.10925355553627014,
+     "ks_before": 1.0,
+     "ks_after": 1.0,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Bwd Header Length",
+     "importance_rank": 3,
+     "importance": 0.07734746485948563,
+     "ks_before": 0.5186440677966102,
+     "ks_after": 0.5186440677966102,
+     "is_time_feature": false
+    },
+    {
+     "feature": "act_data_pkt_fwd",
+     "importance_rank": 4,
+     "importance": 0.07676631212234497,
+     "ks_before": 0.5152542372881356,
+     "ks_after": 0.5152542372881356,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Average Packet Size",
+     "importance_rank": 5,
+     "importance": 0.07328735291957855,
+     "ks_before": 1.0,
+     "ks_after": 1.0,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Bwd Packet Length Mean",
+     "importance_rank": 6,
+     "importance": 0.052313417196273804,
+     "ks_before": 1.0,
+     "ks_after": 1.0,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Max Packet Length",
+     "importance_rank": 7,
+     "importance": 0.03485185652971268,
+     "ks_before": 1.0,
+     "ks_after": 1.0,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Total Fwd Packets",
+     "importance_rank": 8,
+     "importance": 0.02998185344040394,
+     "ks_before": 0.4822033898305085,
+     "ks_after": 0.4822033898305085,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Total Length of Fwd Packets",
+     "importance_rank": 9,
+     "importance": 0.020141461864113808,
+     "ks_before": 1.0,
+     "ks_after": 1.0,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Total Backward Packets",
+     "importance_rank": 10,
+     "importance": 0.019553449004888535,
+     "ks_before": 0.5169491525423728,
+     "ks_after": 0.5169491525423728,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Fwd Packet Length Max",
+     "importance_rank": 11,
+     "importance": 0.0177464559674263,
+     "ks_before": 1.0,
+     "ks_after": 1.0,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Bwd Packets/s",
+     "importance_rank": 12,
+     "importance": 0.015939507633447647,
+     "ks_before": 0.5186440677966102,
+     "ks_after": 0.5186440677966102,
+     "is_time_feature": false
+    },
+    {
+     "feature": "FIN Flag Count",
+     "importance_rank": 13,
+     "importance": 0.012736480683088303,
+     "ks_before": null,
+     "ks_after": null,
+     "is_time_feature": false
+    },
+    {
+     "feature": "Fwd Packet Length Min",
+     "importance_rank": 14,
+     "importance": 0.01265924796462059,
+     "ks_before": 1.0,
+     "ks_after": 1.0,
+     "is_time_feature": false
+    }
+   ],
+   "reproduction_verified": true,
+   "secondary_shift_after_all": {
+    "comparable_features": 54,
+    "median_ks": 0.7883989880737261,
+    "p75_ks": 1.0,
+    "max_ks": 1.0,
+    "count_ks_ge_0_3": 52,
+    "count_ks_ge_0_5": 45,
+    "count_ks_ge_0_8": 26,
+    "count_ge_50pct_outside": 31,
+    "count_100pct_outside": 30
+   }
+  }
+ }
+}
