@@ -40,3 +40,5 @@ frontend/.vscode/
 # ===== OS =====
 .DS_Store
 Thumbs.db
+# Laboratory brute-force per-attempt credential logs (kept local, not tracked)
+ml-service/reports/live_evaluation/captures/*_attempts.log
