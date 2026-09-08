@@ -1,0 +1,46 @@
+{
+ "schema_version": 1,
+ "experiment_type": "live_lab",
+ "protocol_version": "live-lab-v1",
+ "runs_included": [
+  "lab-v1-benign-001",
+  "lab-v1-portscan-001"
+ ],
+ "runs_excluded": [
+  "lab-v1-smoke-001"
+ ],
+ "n_runs": 2,
+ "scenarios": [
+  "benign",
+  "portscan"
+ ],
+ "rows": [
+  {
+   "run_id": "lab-v1-benign-001",
+   "scenario_id": "benign",
+   "expected_binary_label": "BENIGN",
+   "evaluable_flows": 5407,
+   "attack_detection_rate": null,
+   "attack_detection_rate_denominator": 0,
+   "benign_false_positive_rate": 0.0,
+   "benign_false_positive_rate_denominator": 5407,
+   "dominant_predicted_label": null,
+   "attribution_scored": false
+  },
+  {
+   "run_id": "lab-v1-portscan-001",
+   "scenario_id": "portscan",
+   "expected_binary_label": "ATTACK",
+   "evaluable_flows": 1362,
+   "attack_detection_rate": 0.0014684287812041115,
+   "attack_detection_rate_denominator": 1362,
+   "benign_false_positive_rate": null,
+   "benign_false_positive_rate_denominator": 0,
+   "dominant_predicted_label": "FTP-Patator",
+   "attribution_scored": true
+  }
+ ],
+ "benign_fpr_definition": "fraction of true BENIGN flows predicted as some attack class - identical to the definition used by random-v2 (overall_metrics.binary_benign_vs_attack), by the corrected temporal evaluation and by lofo-v1. It is NOT the per-class BENIGN fpr and NOT attack_rows_predicted_as_benign_rate.",
+ "detection_definition": "attack_detection_rate is the fraction of ground-truth ATTACK flows predicted as ANY non-BENIGN class. It says the traffic was flagged as malicious; it says nothing about whether the assigned CICIDS2017 label was correct. Attribution is reported separately.",
+ "attribution_definition": "Attribution is only scored when the laboratory scenario declares a defensible mapping to a CICIDS2017 label or family. Where the manifest declares no mapping, binary detection is reported and attribution is left unscored rather than guessed."
+}

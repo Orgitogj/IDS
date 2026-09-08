@@ -1,0 +1,76 @@
+{
+ "schema_version": 1,
+ "experiment_type": "live_lab",
+ "protocol_version": "live-lab-v1",
+ "experiment_id": "lab-generalization-v1",
+ "objective": "Evaluate whether the frozen CICIDS2017-trained supervised classifier retains useful attack-detection ability on traffic generated outside the benchmark dataset, in a controlled isolated laboratory testbed.",
+ "not_a_claim_about": [
+  "production validation",
+  "arbitrary zero-day detection",
+  "unseen attack families - that question is answered by lofo-v1"
+ ],
+ "separate_from": {
+  "random-v2": "reports/artifact_evaluation",
+  "temporal-v1": "reports/temporal_evaluation",
+  "lofo-v1": "reports/lofo_evaluation"
+ },
+ "frozen_primary_model": {
+  "name": "xgb-baseline-cicids2017-v2",
+  "version": "2.0",
+  "artifact_file": "xgb_baseline_cicids2017_v2.joblib",
+  "artifact_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+  "feature_version": "cicids2017-78-v1",
+  "n_features": 78,
+  "source": "reports/artifact_evaluation/xgb_baseline_cicids2017_v2/metrics.json",
+  "note": "Pre-specified before any laboratory traffic was generated. No retraining, no threshold tuning and no model selection may follow the observation of laboratory results."
+ },
+ "validation_statuses": [
+  "VALID",
+  "INVALID_SCHEMA",
+  "MISSING_FEATURE",
+  "EXTRA_FEATURE",
+  "NONFINITE_VALUE",
+  "MODEL_ERROR",
+  "INGEST_ERROR"
+ ],
+ "validation_status_note": "validationStatus describes pipeline and data integrity only. A flow the classifier labels incorrectly is still VALID; prediction correctness is never a validation outcome.",
+ "run_statuses": [
+  "PLANNED",
+  "RUNNING",
+  "COMPLETED",
+  "ABORTED",
+  "INVALID"
+ ],
+ "evaluable_run_statuses": [
+  "COMPLETED"
+ ],
+ "expected_binary_labels": [
+  "BENIGN",
+  "ATTACK"
+ ],
+ "ground_truth_modes": [
+  "run_level_uniform",
+  "per_flow_selector"
+ ],
+ "unmatched_policies": [
+  "BENIGN",
+  "UNLABELLED"
+ ],
+ "extra_feature_policy": "ignore",
+ "extra_feature_policy_note": "Columns present in the mapped flow but absent from the frozen feature schema are counted and reported, then dropped. They never reach the model and never change the vector, because the vector is projected in frozen schema order. Set the policy to 'reject' to fail closed on them instead.",
+ "capture_time_sources": [
+  "cicflowmeter_flow_timestamp",
+  "approximate_agent_read_time"
+ ],
+ "capture_time_note": "captureTimestamp is the time the flow was observed on the wire, taken from the CICFlowMeter timestamp column. ingestedAt is when the record reached the agent or the backend. They are stored separately and neither is ever written over the other. When the capture column is unusable the timestamp is marked approximate_agent_read_time and is NOT presented as a packet-capture time.",
+ "latency_layers": [
+  "model_inference_latency",
+  "production_path_inference_latency",
+  "end_to_end_IDS_latency"
+ ],
+ "latency_layer_note": "model_inference_latency covers predict() on an input-ready vector. production_path_inference_latency adds mapping, validation and DataFrame construction. end_to_end_IDS_latency additionally covers capture, Spring ingest and persistence, and may only be reported once every one of those components has been measured. SHAP and LLM explanation are separate layers and are excluded from all three.",
+ "benign_fpr_definition": "fraction of true BENIGN flows predicted as some attack class - identical to the definition used by random-v2 (overall_metrics.binary_benign_vs_attack), by the corrected temporal evaluation and by lofo-v1. It is NOT the per-class BENIGN fpr and NOT attack_rows_predicted_as_benign_rate.",
+ "detection_definition": "attack_detection_rate is the fraction of ground-truth ATTACK flows predicted as ANY non-BENIGN class. It says the traffic was flagged as malicious; it says nothing about whether the assigned CICIDS2017 label was correct. Attribution is reported separately.",
+ "attribution_definition": "Attribution is only scored when the laboratory scenario declares a defensible mapping to a CICIDS2017 label or family. Where the manifest declares no mapping, binary detection is reported and attribution is left unscored rather than guessed.",
+ "minimum_support_for_rate": 30
+}
