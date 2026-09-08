@@ -1,0 +1,41 @@
+{
+ "compatibility_protocol": "lab-feature-compat-v1",
+ "source_feature_semantics": "cicflowmeter-0.5.0",
+ "target_feature_contract": "cicids2017-78-v1",
+ "conversion_factor_seconds_to_microseconds": 1000000,
+ "confirmed_converted_features": [
+  "Flow Duration",
+  "Flow IAT Mean",
+  "Flow IAT Std",
+  "Flow IAT Max",
+  "Fwd IAT Total",
+  "Fwd IAT Mean",
+  "Fwd IAT Std",
+  "Fwd IAT Max",
+  "Bwd IAT Total",
+  "Bwd IAT Mean",
+  "Bwd IAT Std",
+  "Bwd IAT Max",
+  "Bwd IAT Min"
+ ],
+ "confirmed_count": 13,
+ "likely_not_auto_converted": [
+  "Flow IAT Min",
+  "Fwd IAT Min",
+  "Active Mean",
+  "Active Std",
+  "Active Max",
+  "Active Min",
+  "Idle Mean",
+  "Idle Std",
+  "Idle Max",
+  "Idle Min"
+ ],
+ "rate_features_not_converted": [
+  "Flow Bytes/s",
+  "Flow Packets/s",
+  "Fwd Packets/s",
+  "Bwd Packets/s"
+ ],
+ "rationale": "only features with canonical microseconds scale and positive laboratory seconds-scale evidence are auto-converted; prediction outcomes never determined the transformation"
+}

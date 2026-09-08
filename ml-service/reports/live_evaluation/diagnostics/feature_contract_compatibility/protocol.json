@@ -1,0 +1,20 @@
+{
+ "compatibility_protocol": "lab-feature-compat-v1",
+ "target_feature_contract": "cicids2017-78-v1",
+ "frozen_model": {
+  "model_name": "xgb-baseline-cicids2017-v2",
+  "model_version": "2.0",
+  "artifact_file": "xgb_baseline_cicids2017_v2.joblib",
+  "artifact_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+  "feature_schema": "cicids2017-78-v1",
+  "feature_count": 78,
+  "sha_verified": true,
+  "frozen_before_results": true
+ },
+ "no_retraining": true,
+ "no_tuning": true,
+ "no_threshold_change": true,
+ "no_calibration": true,
+ "generated_at": "2026-09-08T13:51:03.492253Z",
+ "description": "controlled seconds->microseconds harmonization of confirmed time features, applied to raw laboratory flow vectors before the unchanged frozen classifier; a counterfactual re-prediction, not a model change"
+}
