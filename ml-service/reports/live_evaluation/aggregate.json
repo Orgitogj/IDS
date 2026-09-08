@@ -4,15 +4,17 @@
  "protocol_version": "live-lab-v1",
  "runs_included": [
   "lab-v1-benign-001",
-  "lab-v1-portscan-001"
+  "lab-v1-portscan-001",
+  "lab-v1-ssh-bruteforce-001"
  ],
  "runs_excluded": [
   "lab-v1-smoke-001"
  ],
- "n_runs": 2,
+ "n_runs": 3,
  "scenarios": [
   "benign",
-  "portscan"
+  "portscan",
+  "ssh-bruteforce"
  ],
  "rows": [
   {
@@ -38,6 +40,18 @@
    "benign_false_positive_rate_denominator": 0,
    "dominant_predicted_label": "FTP-Patator",
    "attribution_scored": true
+  },
+  {
+   "run_id": "lab-v1-ssh-bruteforce-001",
+   "scenario_id": "ssh-bruteforce",
+   "expected_binary_label": "ATTACK",
+   "evaluable_flows": 69,
+   "attack_detection_rate": 0.0,
+   "attack_detection_rate_denominator": 69,
+   "benign_false_positive_rate": null,
+   "benign_false_positive_rate_denominator": 0,
+   "dominant_predicted_label": null,
+   "attribution_scored": false
   }
  ],
  "benign_fpr_definition": "fraction of true BENIGN flows predicted as some attack class - identical to the definition used by random-v2 (overall_metrics.binary_benign_vs_attack), by the corrected temporal evaluation and by lofo-v1. It is NOT the per-class BENIGN fpr and NOT attack_rows_predicted_as_benign_rate.",
