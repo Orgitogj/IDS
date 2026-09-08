@@ -888,3 +888,238 @@ attributed it primarily to another class"*. Not: *"the model correctly detected 
 * LOFO says nothing about chronological drift; that is §16. The three PK2 experiments
   (random-v2 benchmark, temporal, LOFO) measure different things and are never merged into
   one metric.
+
+## 18. Laboratory / live protocol *(Phase 16, `live-lab-v1`)*
+
+### 18.1 Objective
+
+Evaluate whether the frozen CICIDS2017-trained supervised classifier retains useful
+attack-detection ability on traffic generated **outside the benchmark dataset**, in a
+controlled isolated laboratory testbed.
+
+This phase evaluates **deployment-domain generalization in a controlled laboratory
+environment**. It is **not production validation**. It is **not arbitrary zero-day
+evaluation** — the unseen-family question is answered by §17 (`lofo-v1`), and every
+scenario here uses attack families the model has seen in training. What changes is the
+capture environment, the tooling, the hosts and the flow-construction path, not the
+family taxonomy.
+
+### 18.2 Separation from the frozen experiments
+
+| Experiment | Namespace | Question |
+|---|---|---|
+| random-v2 | `reports/artifact_evaluation` | benchmark performance on a stratified split |
+| temporal-v1 | `reports/temporal_evaluation` | chronological distribution shift |
+| lofo-v1 | `reports/lofo_evaluation` | unseen attack families |
+| live-lab-v1 | `reports/live_evaluation` | traffic captured outside the benchmark |
+
+The live namespace is disjoint from all three. Nothing in the laboratory path reads,
+writes or recomputes a frozen artifact, and the frozen reports remain the reference for
+every comparison.
+
+### 18.3 Frozen primary model
+
+The primary live classifier is pre-specified **before any laboratory traffic is
+generated**:
+
+* `xgb-baseline-cicids2017-v2`, version 2.0
+* artifact `xgb_baseline_cicids2017_v2.joblib`
+* SHA-256 `2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa`
+* feature schema `cicids2017-78-v1`, 78 features
+
+No retraining, no live tuning, no threshold tuning and no model selection may follow the
+observation of laboratory results. The digest is verified at load time against the frozen
+metadata, and a run manifest naming any other model is refused before the run starts. No
+model leaderboard is run on laboratory traffic. A secondary model may be added only if it
+is pre-specified in writing before attack results are viewed.
+
+### 18.4 Topology
+
+```
+Kali Linux            controlled traffic / attacks            Metasploitable2
+192.168.50.10   ------------------------------------->        192.168.50.20
+```
+
+An isolated host-only segment with no route to the internet. All attack execution stays
+inside this owned testbed; no public or third-party target is ever used. Addresses live in
+the run manifests, never in inference code, so a different testbed needs only new
+manifests.
+
+### 18.5 Run identity
+
+Every laboratory flow carries three identifiers, assigned from the manifest and never
+inferred from a prediction:
+
+* `experiment_id` — `lab-generalization-v1`, the laboratory experiment as a whole
+* `run_id` — one controlled execution, e.g. `lab-v1-portscan-001`; uniqueness is enforced
+  across the manifest directory and a collision is a hard error
+* `scenario_id` — the intended traffic scenario, e.g. `benign`, `portscan`,
+  `ssh-bruteforce`
+
+The identifiers travel on each flow record in `predictions.csv` and on the run state, so a
+prediction can always be traced back to the execution that produced it.
+
+### 18.6 Ground truth
+
+Ground truth comes from the experiment definition, never from the model. Two modes exist:
+
+* `run_level_uniform` — every flow in the capture carries the expected label of the run.
+  For an **attack** run this is permitted only when the manifest declares
+  `capture_is_filtered_to_scenario: true`; otherwise it is refused, because labelling every
+  flow in an attack window as ATTACK produces invalid ground truth whenever the capture
+  contains background traffic.
+* `per_flow_selector` — flows matching an explicit selector (source host, target host,
+  destination ports, protocols) are ATTACK. Everything else follows `unmatched_policy`,
+  which defaults to `UNLABELLED`.
+
+`UNLABELLED` flows are counted and reported but enter **no metric denominator**. Mixed
+traffic is therefore handled explicitly rather than by assumption: a flow is never ATTACK
+merely because it occurred during an attack window, and never BENIGN merely because it did
+not match the selector.
+
+Ground truth reaches PostgreSQL through the fields the ingest contract already has —
+`groundTruthLabel` and `groundTruthAttackType` — so no duplicate field is introduced.
+
+### 18.7 Timestamp semantics
+
+Two time concepts are stored separately and neither is written over the other:
+
+* `capture_timestamp` — when the flow was observed on the wire, read from the CICFlowMeter
+  `timestamp` column, normalised to UTC, source recorded as
+  `cicflowmeter_flow_timestamp`.
+* `ingested_at` — when the record reached the agent or the backend.
+
+When no usable capture column is present, the agent read time is recorded and explicitly
+marked `approximate_agent_read_time` with `capture_timestamp_is_approximate: true`. It is
+never presented as a packet-capture time. Historical timestamps are never invented.
+
+**CICFlowMeter emits the flow timestamp in the capture host local time, not UTC.** The
+laboratory Kali host runs `America/New_York`, so a raw `2026-09-07 18:17:07` corresponds to
+`2026-09-07T22:17:07Z`. Treating it as UTC would shift every laboratory flow by four hours.
+Each manifest therefore **must** declare exactly one of `capture.timestamp_timezone` (an
+IANA zone name) or `capture.timestamp_assumed_utc: true`; a manifest declaring neither is
+refused before the run starts, and an unknown zone name is refused as well. The zone that
+was applied is recorded on every flow as `capture_timestamp_timezone`, so the conversion
+is auditable after the fact and a naive value is never silently reinterpreted.
+
+### 18.8 Schema validation and validation status
+
+Inference uses exactly the frozen schema: 78 features, `cicids2017-78-v1`, in the exact
+order carried by the `feature_names_in_` attribute of the artifact itself. The schema guard
+checks names, count, ordering and duplicates, and refuses a mismatch before any flow is
+processed. The laboratory path builds a **named DataFrame** so the feature-name check of
+the model participates, matching the training path exactly.
+
+Validation status is machine-readable and persisted per flow:
+
+`VALID`, `INVALID_SCHEMA`, `MISSING_FEATURE`, `EXTRA_FEATURE`, `NONFINITE_VALUE`,
+`MODEL_ERROR`, `INGEST_ERROR`
+
+Missing features and non-finite values fail closed under the strict policy. Extra columns
+follow an explicit declared policy — `ignore` by default: they are counted, reported and
+dropped, and never reach the model, because the vector is projected in frozen schema
+order.
+
+**Validation status describes pipeline and data integrity only.** A flow the classifier
+labels incorrectly is still `VALID`. Prediction correctness is never a validation outcome.
+
+### 18.8b Capture flush behaviour
+
+CICFlowMeter 0.5.0 does not write a flow the moment it ends. A flow is emitted when it has
+been idle for `EXPIRED_UPDATE` (240 s), when its duration exceeds 90 s at a garbage
+collection, when `PACKETS_PER_GC` (1000) packets have been processed, or when the process
+shuts down cleanly and `flush_flows()` runs.
+
+Two consequences bind the run design. A short capture that is killed abruptly produces an
+**empty** CSV even though traffic was captured. And a capture must therefore be stopped
+with `SIGINT` delivered to the CICFlowMeter process itself, not to a `sudo` wrapper, so the
+shutdown flush executes. The laboratory capture script uses
+`sudo timeout -s INT <window> cicflowmeter ...` for exactly this reason.
+
+### 18.9 Run lifecycle and validity
+
+`PLANNED` to `RUNNING` to `COMPLETED`, with `ABORTED` and `INVALID` as terminal
+alternatives. Each run records planned start, actual start, actual end, status, flow count,
+valid and invalid flow counts, unlabelled count and prediction count.
+
+Only `COMPLETED` runs are evaluable. Requesting a report for any other status is a hard
+error, and the aggregate excludes them. A run left in `RUNNING` or `PLANNED` on disk is
+discoverable as interrupted and cannot silently enter final thesis metrics. Runs marked
+`smoke_test: true` are excluded from the aggregate by construction.
+
+### 18.10 Metrics
+
+Binary detection is primary and every rate records its denominator explicitly:
+
+* `attack_detection_rate` / `attack_miss_rate` over ground-truth ATTACK flows
+* `benign_false_positive_rate` over ground-truth BENIGN flows
+* `attack_precision`, `attack_f1`, `binary_accuracy`
+
+`benign_false_positive_rate` is the fraction of true BENIGN flows predicted as some attack
+class — the identical definition used by random-v2, temporal-v1 and lofo-v1, and verified
+numerically against the lofo implementation in the test suite. It is never
+`attack_rows_predicted_as_benign_rate`.
+
+Rates computed on fewer than 30 flows carry an explicit support warning and must be
+reported alongside raw counts.
+
+### 18.11 Detection versus attribution
+
+The distinction carried over from §17 holds here:
+
+* **Detection** — was malicious traffic flagged as an attack at all?
+* **Attribution** — which CICIDS2017 class did the model assign?
+
+A laboratory attack is never called correctly identified merely because it was flagged as
+some attack. Attribution is scored only when the manifest declares a defensible mapping to
+a CICIDS2017 label or family. Where the mapping is ambiguous the manifest declares none,
+the evaluator reports binary detection only, and the predicted labels are reported as a
+distribution rather than scored. The telnet brute-force scenario exists specifically to
+exercise this path, since CICIDS2017 contains no telnet traffic.
+
+### 18.12 Benign baseline
+
+The benign run is designed and executed **before** any attack run, so the benign
+false-positive rate is measured on traffic that was never adjacent to an attack window. It
+exercises multiple services rather than an idle network: ICMP, HTTP browsing, an FTP
+session, an interactive SSH session and DNS lookups. Flows are never selected or discarded
+on the basis of what the model predicted.
+
+### 18.13 Attack scenarios
+
+Pre-specified before any result is observed: port scan, SSH brute force, FTP brute force,
+slow HTTP DoS, web application attack, telnet brute force. Scenarios were chosen for
+reproducible tooling, clear start and stop boundaries, and coverage of distinct behaviour
+classes — not because the classifier performs well on the analogous CICIDS2017 class. The
+telnet scenario is deliberately one with no CICIDS2017 analogue.
+
+### 18.14 Latency layers
+
+The frozen terminology is reused unchanged:
+
+* `model_inference_latency` — `predict()` on an input-ready vector
+* `production_path_inference_latency` — adds mapping, validation and DataFrame
+  construction
+* `end_to_end_IDS_latency` — additionally covers capture, Spring ingest and persistence
+
+The third may only be reported once every one of those components has been measured. SHAP
+and LLM explanation are separate layers, excluded from all three, and are evaluated only
+after the live classifier results are frozen. LLM availability never determines whether a
+classifier run is valid.
+
+### 18.15 Limitations
+
+* One testbed, two hosts, one capture tool. Results describe this environment.
+* Attack families are all families the model has **seen**; this is a domain-shift
+  experiment, not an unseen-family experiment.
+* Flow construction differs from the pipeline the CICIDS2017 authors used even when the
+  tool family matches, so feature distributions may shift for reasons unrelated to the
+  attacks.
+* Ground truth for background traffic is deliberately left `UNLABELLED` rather than
+  guessed, which reduces usable sample size.
+* Sample sizes are far smaller than the benchmark; several scenarios will produce thin
+  denominators and must be read as raw counts.
+* Metasploitable2 is a deliberately vulnerable 2008-era image; its services are not
+  representative of a modern network.
+* No claim is made about calibrated probability, and no rejection threshold is introduced
+  or tuned.
