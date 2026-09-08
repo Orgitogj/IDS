@@ -1,0 +1,48 @@
+protocol_version: live-lab-v1
+experiment_id: lab-generalization-v1
+run_id: lab-v1-telnet-bruteforce-001
+scenario_id: telnet-bruteforce
+scenario_description: >-
+  Credential brute force from Kali against the Metasploitable2 telnet service on port
+  23. CICIDS2017 contains no telnet class and no telnet traffic, so this scenario has no
+  defensible label or family mapping and is deliberately included to exercise the
+  binary-only reporting path.
+
+expected_binary_label: ATTACK
+planned_duration_seconds: 900
+
+ground_truth:
+  mode: per_flow_selector
+  unmatched_policy: UNLABELLED
+  attack_selector:
+    source_ip: 192.168.50.10
+    destination_ip: 192.168.50.20
+    destination_ports: [23]
+  rationale: >-
+    Only flows to the telnet port from the attacking host are brute-force traffic.
+
+topology:
+  source_host: 192.168.50.10
+  source_role: kali
+  target_host: 192.168.50.20
+  target_role: metasploitable2
+  network: isolated host-only laboratory segment, no route to the internet
+
+capture:
+  interface: eth0
+  source: cicflowmeter
+  timestamp_column: timestamp
+  timestamp_timezone: America/New_York
+  timestamp_assumed_utc: false
+
+model:
+  name: xgb-baseline-cicids2017-v2
+  version: "2.0"
+  feature_version: cicids2017-78-v1
+  artifact_file: xgb_baseline_cicids2017_v2.joblib
+
+notes: >-
+  No expected_family and no expected_label are declared, so the evaluator reports binary
+  detection and leaves attribution unscored. Whatever CICIDS2017 class the model assigns
+  here is a misattribution by construction and is reported as a distribution only.
+  Required service: telnetd on 23.

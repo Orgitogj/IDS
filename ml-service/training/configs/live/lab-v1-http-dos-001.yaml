@@ -1,0 +1,48 @@
+protocol_version: live-lab-v1
+experiment_id: lab-generalization-v1
+run_id: lab-v1-http-dos-001
+scenario_id: http-slow-dos
+scenario_description: >-
+  Slow HTTP denial-of-service from Kali against the Metasploitable2 Apache service on
+  port 80, holding many partial requests open. CICIDS2017 generated DoS slowloris with
+  the same technique, so both label-level and family-level mappings are declared.
+
+expected_binary_label: ATTACK
+expected_family: DoS
+expected_label: DoS slowloris
+planned_duration_seconds: 600
+
+ground_truth:
+  mode: per_flow_selector
+  unmatched_policy: UNLABELLED
+  attack_selector:
+    source_ip: 192.168.50.10
+    destination_ip: 192.168.50.20
+    destination_ports: [80]
+  rationale: >-
+    Only flows to the web port from the attacking host carry the slow-DoS behaviour.
+
+topology:
+  source_host: 192.168.50.10
+  source_role: kali
+  target_host: 192.168.50.20
+  target_role: metasploitable2
+  network: isolated host-only laboratory segment, no route to the internet
+
+capture:
+  interface: eth0
+  source: cicflowmeter
+  timestamp_column: timestamp
+  timestamp_timezone: America/New_York
+  timestamp_assumed_utc: false
+
+model:
+  name: xgb-baseline-cicids2017-v2
+  version: "2.0"
+  feature_version: cicids2017-78-v1
+  artifact_file: xgb_baseline_cicids2017_v2.joblib
+
+notes: >-
+  Long-lived flows mean the flow count grows slowly; the planned duration targets at
+  least 100 valid flows. This is a single-host slow DoS, not a distributed flood, and is
+  confined to the laboratory target. Required service: Apache on 80.

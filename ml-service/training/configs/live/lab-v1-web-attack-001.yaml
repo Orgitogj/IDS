@@ -1,0 +1,49 @@
+protocol_version: live-lab-v1
+experiment_id: lab-generalization-v1
+run_id: lab-v1-web-attack-001
+scenario_id: web-attack
+scenario_description: >-
+  Web application attack from Kali against the vulnerable web applications hosted on
+  Metasploitable2 port 80, exercising injection and cross-site scripting inputs against
+  the DVWA and Mutillidae forms. CICIDS2017 produced its Web Attack labels against a
+  different application stack, so the mapping is declared at family level only.
+
+expected_binary_label: ATTACK
+expected_family: Web Attack
+planned_duration_seconds: 900
+
+ground_truth:
+  mode: per_flow_selector
+  unmatched_policy: UNLABELLED
+  attack_selector:
+    source_ip: 192.168.50.10
+    destination_ip: 192.168.50.20
+    destination_ports: [80]
+  rationale: >-
+    Only flows to the web port from the attacking host carry the injection payloads.
+    This run must not be captured concurrently with the slow-DoS run, because both
+    selectors would match the same port and the two ground truths would collide.
+
+topology:
+  source_host: 192.168.50.10
+  source_role: kali
+  target_host: 192.168.50.20
+  target_role: metasploitable2
+  network: isolated host-only laboratory segment, no route to the internet
+
+capture:
+  interface: eth0
+  source: cicflowmeter
+  timestamp_column: timestamp
+  timestamp_timezone: America/New_York
+  timestamp_assumed_utc: false
+
+model:
+  name: xgb-baseline-cicids2017-v2
+  version: "2.0"
+  feature_version: cicids2017-78-v1
+  artifact_file: xgb_baseline_cicids2017_v2.joblib
+
+notes: >-
+  Web attacks produce few, short flows; expect a thin denominator and report raw counts
+  alongside any rate. Required services: Apache on 80 with DVWA or Mutillidae reachable.
