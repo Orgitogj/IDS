@@ -1,0 +1,30 @@
+{
+ "scenario": "portscan",
+ "expected": {
+  "support": 1362,
+  "detected": 2,
+  "benign": 1360
+ },
+ "reproduced": {
+  "support": 1362,
+  "predicted_benign": 1360,
+  "predicted_attack": 2,
+  "detection_rate": 0.0014684287812041115,
+  "predicted_label_distribution": {
+   "BENIGN": 1360,
+   "FTP-Patator": 2
+  },
+  "predicted_family_distribution": {
+   "Brute Force": 2
+  },
+  "confidence_min": 0.7855751514434814,
+  "confidence_median": 0.9999927282333374,
+  "confidence_max": 0.9999996423721313
+ },
+ "checks": {
+  "support_match": true,
+  "detected_match": true,
+  "benign_match": true,
+  "all_match": true
+ }
+}

@@ -1,0 +1,54 @@
+{
+ "scenario": "portscan",
+ "support": 1362,
+ "original": {
+  "support": 1362,
+  "predicted_benign": 1360,
+  "predicted_attack": 2,
+  "detection_rate": 0.0014684287812041115,
+  "predicted_label_distribution": {
+   "BENIGN": 1360,
+   "FTP-Patator": 2
+  },
+  "predicted_family_distribution": {
+   "Brute Force": 2
+  },
+  "confidence_min": 0.7855751514434814,
+  "confidence_median": 0.9999927282333374,
+  "confidence_max": 0.9999996423721313
+ },
+ "compatibility": {
+  "support": 1362,
+  "predicted_benign": 1360,
+  "predicted_attack": 2,
+  "detection_rate": 0.0014684287812041115,
+  "predicted_label_distribution": {
+   "BENIGN": 1360,
+   "FTP-Patator": 2
+  },
+  "predicted_family_distribution": {
+   "Brute Force": 2
+  },
+  "confidence_min": 0.7855751514434814,
+  "confidence_median": 0.9999927282333374,
+  "confidence_max": 0.9999991655349731
+ },
+ "absolute_detection_change": 0,
+ "detection_rate_change_pp": 0.0,
+ "converted_features": [
+  "Flow Duration",
+  "Flow IAT Mean",
+  "Flow IAT Std",
+  "Flow IAT Max",
+  "Fwd IAT Total",
+  "Fwd IAT Mean",
+  "Fwd IAT Std",
+  "Fwd IAT Max",
+  "Bwd IAT Total",
+  "Bwd IAT Mean",
+  "Bwd IAT Std",
+  "Bwd IAT Max",
+  "Bwd IAT Min"
+ ],
+ "note": "change in detection after feature-contract harmonization; not a model improvement and not retraining"
+}
