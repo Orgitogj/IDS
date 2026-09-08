@@ -1,0 +1,48 @@
+{
+ "scenario": "ssh",
+ "support": 69,
+ "original": {
+  "support": 69,
+  "predicted_benign": 69,
+  "predicted_attack": 0,
+  "detection_rate": 0.0,
+  "predicted_label_distribution": {
+   "BENIGN": 69
+  },
+  "predicted_family_distribution": {},
+  "confidence_min": 0.9999485015869141,
+  "confidence_median": 0.999957799911499,
+  "confidence_max": 0.9999581575393677
+ },
+ "compatibility": {
+  "support": 69,
+  "predicted_benign": 69,
+  "predicted_attack": 0,
+  "detection_rate": 0.0,
+  "predicted_label_distribution": {
+   "BENIGN": 69
+  },
+  "predicted_family_distribution": {},
+  "confidence_min": 0.9999120235443115,
+  "confidence_median": 0.9999486207962036,
+  "confidence_max": 0.9999730587005615
+ },
+ "absolute_detection_change": 0,
+ "detection_rate_change_pp": 0.0,
+ "converted_features": [
+  "Flow Duration",
+  "Flow IAT Mean",
+  "Flow IAT Std",
+  "Flow IAT Max",
+  "Fwd IAT Total",
+  "Fwd IAT Mean",
+  "Fwd IAT Std",
+  "Fwd IAT Max",
+  "Bwd IAT Total",
+  "Bwd IAT Mean",
+  "Bwd IAT Std",
+  "Bwd IAT Max",
+  "Bwd IAT Min"
+ ],
+ "note": "change in detection after feature-contract harmonization; not a model improvement and not retraining"
+}

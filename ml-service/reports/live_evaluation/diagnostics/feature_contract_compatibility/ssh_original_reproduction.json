@@ -1,0 +1,27 @@
+{
+ "scenario": "ssh",
+ "expected": {
+  "support": 69,
+  "detected": 0,
+  "benign": 69
+ },
+ "reproduced": {
+  "support": 69,
+  "predicted_benign": 69,
+  "predicted_attack": 0,
+  "detection_rate": 0.0,
+  "predicted_label_distribution": {
+   "BENIGN": 69
+  },
+  "predicted_family_distribution": {},
+  "confidence_min": 0.9999485015869141,
+  "confidence_median": 0.999957799911499,
+  "confidence_max": 0.9999581575393677
+ },
+ "checks": {
+  "support_match": true,
+  "detected_match": true,
+  "benign_match": true,
+  "all_match": true
+ }
+}
