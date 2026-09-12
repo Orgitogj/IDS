@@ -1,0 +1,14 @@
+{
+ "schema_version": 1,
+ "role": "adaptation",
+ "rebalanced": false,
+ "raw_binary": {
+  "BENIGN": 7758,
+  "ATTACK": 23806
+ },
+ "attack_by_family": {
+  "PortScan": 23521,
+  "Brute Force": 285
+ },
+ "note": "raw collected distribution; not rebalanced"
+}
