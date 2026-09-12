@@ -1,0 +1,49 @@
+{
+ "run_id": "adapt-v1-benign-004",
+ "experiment_id": "lab-generalization-v1",
+ "scenario_id": "benign",
+ "scenario": "benign",
+ "role": "adaptation",
+ "ground_truth_binary_primary": "BENIGN",
+ "expected_family": null,
+ "expected_label": null,
+ "extractor": {
+  "name": "cicflowmeter",
+  "version": "0.5.0",
+  "note": "same extractor for adaptation and deployment by construction"
+ },
+ "feature_schema": "cicids2017-78-v1",
+ "model_a_identity": {
+  "model_name": "xgb-baseline-cicids2017-v2",
+  "model_version": "2.0",
+  "artifact_file": "xgb_baseline_cicids2017_v2.joblib",
+  "artifact_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+  "feature_schema": "cicids2017-78-v1",
+  "feature_count": 78,
+  "sha_verified": true,
+  "frozen_before_results": true
+ },
+ "capture_started_utc": "2026-09-11T14:16:40Z",
+ "capture_stopped_utc": "2026-09-11T14:19:50Z",
+ "packet_capture_available": true,
+ "pcap_path": "reports/domain_adaptation/data/captures/adapt-v1-benign-004.pcap",
+ "pcap_sha256": "f3516445351513f621ab5aaa5190e8f2a912051a35258a82bbb70069bbbb1b37",
+ "flow_csv_path": "reports/domain_adaptation/data/captures/adapt-v1-benign-004.csv",
+ "flow_csv_sha256": "66a5827e24c975a1d9dd88a0cf8f89bd02cdd6047a99cc97a78f4549fcd3f4fc",
+ "counts": {
+  "total_flows": 770,
+  "valid_flows": 770,
+  "evaluable_flows": 770,
+  "attack_flows": 0,
+  "benign_flows": 770,
+  "unlabelled_flows": 0
+ },
+ "support_floor": 300,
+ "support_metric": 770,
+ "acceptance_status": "ACCEPTED",
+ "model_a_descriptive_only": {
+  "note": "Model A predictions are descriptive; they do not affect acceptance",
+  "attack_flows_flagged_by_model_a": 0
+ },
+ "written_at": "2026-09-11T14:21:18.515128Z"
+}
