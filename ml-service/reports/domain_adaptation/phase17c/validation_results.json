@@ -1,0 +1,237 @@
+{
+ "schema_version": 1,
+ "protocol_version": "phase17c-model-b-v1",
+ "generated_at": "2026-09-12T14:12:58.719834Z",
+ "threshold": 0.5,
+ "threshold_tuned_on_validation": false,
+ "validation_runs": [
+  "lab-v1-benign-001",
+  "lab-v1-portscan-001",
+  "lab-v1-ssh-bruteforce-001"
+ ],
+ "validation_is_development_only": true,
+ "validation_note": "Historical adaptation runs used as a development validation partition. They are NOT unseen final evaluation data.",
+ "validation_class_counts": {
+  "BENIGN": 5407,
+  "ATTACK": 1431
+ },
+ "results": {
+  "model-b-xgb-weighted-v1": {
+   "model_id": "model-b-xgb-weighted-v1",
+   "threshold": 0.5,
+   "confusion_matrix": {
+    "true_benign_pred_benign": 5386,
+    "true_benign_pred_attack": 21,
+    "true_attack_pred_benign": 2,
+    "true_attack_pred_attack": 1429
+   },
+   "macro_f1": 0.9949430224278502,
+   "balanced_accuracy": 0.997359260848937,
+   "attack_recall_detection_rate": 0.9986023759608665,
+   "attack_precision": 0.9855172413793103,
+   "benign_false_positive_rate": 0.0038838542629924173,
+   "roc_auc": 0.9988326853780791,
+   "roc_auc_unavailable_reason": null,
+   "pr_auc": 0.9936876215439464,
+   "pr_auc_unavailable_reason": null,
+   "overall_wilson_95": {
+    "benign_false_positive_rate": {
+     "point": 0.0038838542629924173,
+     "low": 0.0025417562868692775,
+     "high": 0.0059303934091754825,
+     "n": 5407,
+     "successes": 21
+    },
+    "attack_detection_rate": {
+     "point": 0.9986023759608665,
+     "low": 0.9949183276116644,
+     "high": 0.9996166373682722,
+     "n": 1431,
+     "successes": 1429
+    }
+   },
+   "per_scenario": {
+    "benign": {
+     "quantity": "benign_false_positive_rate",
+     "wilson_95": {
+      "point": 0.0038838542629924173,
+      "low": 0.0025417562868692775,
+      "high": 0.0059303934091754825,
+      "n": 5407,
+      "successes": 21
+     }
+    },
+    "portscan": {
+     "quantity": "attack_detection_rate",
+     "wilson_95": {
+      "point": 1.0,
+      "low": 0.9971874782421593,
+      "high": 1.0,
+      "n": 1362,
+      "successes": 1362
+     }
+    },
+    "ssh": {
+     "quantity": "attack_detection_rate",
+     "wilson_95": {
+      "point": 0.9710144927536232,
+      "low": 0.9003341623693445,
+      "high": 0.9920147973076358,
+      "n": 69,
+      "successes": 67
+     }
+    }
+   }
+  },
+  "model-b-rf-weighted-v1": {
+   "model_id": "model-b-rf-weighted-v1",
+   "threshold": 0.5,
+   "confusion_matrix": {
+    "true_benign_pred_benign": 5396,
+    "true_benign_pred_attack": 11,
+    "true_attack_pred_benign": 0,
+    "true_attack_pred_attack": 1431
+   },
+   "macro_f1": 0.9975765069448197,
+   "balanced_accuracy": 0.9989828000739782,
+   "attack_recall_detection_rate": 1.0,
+   "attack_precision": 0.992371705963939,
+   "benign_false_positive_rate": 0.002034399852043647,
+   "roc_auc": 1.0,
+   "roc_auc_unavailable_reason": null,
+   "pr_auc": 1.0,
+   "pr_auc_unavailable_reason": null,
+   "overall_wilson_95": {
+    "benign_false_positive_rate": {
+     "point": 0.002034399852043647,
+     "low": 0.0011363816939330524,
+     "high": 0.003639485242357913,
+     "n": 5407,
+     "successes": 11
+    },
+    "attack_detection_rate": {
+     "point": 1.0,
+     "low": 0.9973227294227675,
+     "high": 1.0,
+     "n": 1431,
+     "successes": 1431
+    }
+   },
+   "per_scenario": {
+    "benign": {
+     "quantity": "benign_false_positive_rate",
+     "wilson_95": {
+      "point": 0.002034399852043647,
+      "low": 0.0011363816939330524,
+      "high": 0.003639485242357913,
+      "n": 5407,
+      "successes": 11
+     }
+    },
+    "portscan": {
+     "quantity": "attack_detection_rate",
+     "wilson_95": {
+      "point": 1.0,
+      "low": 0.9971874782421593,
+      "high": 1.0,
+      "n": 1362,
+      "successes": 1362
+     }
+    },
+    "ssh": {
+     "quantity": "attack_detection_rate",
+     "wilson_95": {
+      "point": 1.0,
+      "low": 0.9472627418109483,
+      "high": 1.0,
+      "n": 69,
+      "successes": 69
+     }
+    }
+   }
+  },
+  "model-b-xgb-unweighted-v1": {
+   "model_id": "model-b-xgb-unweighted-v1",
+   "threshold": 0.5,
+   "confusion_matrix": {
+    "true_benign_pred_benign": 5332,
+    "true_benign_pred_attack": 75,
+    "true_attack_pred_benign": 2,
+    "true_attack_pred_attack": 1429
+   },
+   "macro_f1": 0.9832980569129068,
+   "balanced_accuracy": 0.9923657339393754,
+   "attack_recall_detection_rate": 0.9986023759608665,
+   "attack_precision": 0.9501329787234043,
+   "benign_false_positive_rate": 0.013870908082115775,
+   "roc_auc": 0.9992434167629843,
+   "roc_auc_unavailable_reason": null,
+   "pr_auc": 0.9943514990849301,
+   "pr_auc_unavailable_reason": null,
+   "overall_wilson_95": {
+    "benign_false_positive_rate": {
+     "point": 0.013870908082115775,
+     "low": 0.011080715204986024,
+     "high": 0.017351361393729222,
+     "n": 5407,
+     "successes": 75
+    },
+    "attack_detection_rate": {
+     "point": 0.9986023759608665,
+     "low": 0.9949183276116644,
+     "high": 0.9996166373682722,
+     "n": 1431,
+     "successes": 1429
+    }
+   },
+   "per_scenario": {
+    "benign": {
+     "quantity": "benign_false_positive_rate",
+     "wilson_95": {
+      "point": 0.013870908082115775,
+      "low": 0.011080715204986024,
+      "high": 0.017351361393729222,
+      "n": 5407,
+      "successes": 75
+     }
+    },
+    "portscan": {
+     "quantity": "attack_detection_rate",
+     "wilson_95": {
+      "point": 1.0,
+      "low": 0.9971874782421593,
+      "high": 1.0,
+      "n": 1362,
+      "successes": 1362
+     }
+    },
+    "ssh": {
+     "quantity": "attack_detection_rate",
+     "wilson_95": {
+      "point": 0.9710144927536232,
+      "low": 0.9003341623693445,
+      "high": 0.9920147973076358,
+      "n": 69,
+      "successes": 67
+     }
+    }
+   }
+  }
+ },
+ "frozen_model_a_historical": {
+  "benign": {
+   "false_positives": 0,
+   "n": 5407
+  },
+  "portscan": {
+   "detected": 2,
+   "n": 1362
+  },
+  "ssh": {
+   "detected": 0,
+   "n": 69
+  }
+ },
+ "comparison_caveat": "Model A multiclass Macro F1 must NOT be compared directly against Model B binary Macro F1 as if they were the same task.",
+ "ssh_support_note": "The small SSH support must be reported, never hidden. An observed zero must never be interpreted as a true population zero; the Wilson upper bound is reported alongside it."
+}
