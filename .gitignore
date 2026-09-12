@@ -42,3 +42,6 @@ frontend/.vscode/
 Thumbs.db
 # Laboratory brute-force per-attempt credential logs (kept local, not tracked)
 ml-service/reports/live_evaluation/captures/*_attempts.log
+
+# Adaptation raw PCAPs (large; kept local, hashes recorded in manifest)
+ml-service/reports/domain_adaptation/data/captures/*.pcap
