@@ -1,0 +1,4 @@
+scenario,run_count,total_flows,valid_flows,evaluable_flows,attack_flows,benign_flows,unlabelled_flows,min_support,max_support,mean_support,median_support
+benign,4,7758,7758,7758,0,7758,0,770,5407,1939.5,790.5
+portscan,4,28041,28041,23521,23521,0,4520,1362,7711,5880.2,7224.0
+ssh,4,286,286,285,285,0,1,69,72,71.2,72.0
