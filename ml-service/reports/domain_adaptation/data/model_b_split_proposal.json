@@ -1,0 +1,23 @@
+{
+ "schema_version": 1,
+ "protocol_version": "domain-adaptation-design-v1",
+ "rule": "deterministic run-level split fixed before Model B training: for each scenario, the lexicographically-last accepted run is validation, the rest are train; no flow-level random splitting",
+ "train_runs": [
+  "adapt-v1-benign-002",
+  "adapt-v1-benign-003",
+  "adapt-v1-benign-004",
+  "adapt-v1-portscan-002",
+  "adapt-v1-portscan-003",
+  "adapt-v1-portscan-004",
+  "adapt-v1-ssh-002",
+  "adapt-v1-ssh-003",
+  "adapt-v1-ssh-004"
+ ],
+ "validation_runs": [
+  "lab-v1-benign-001",
+  "lab-v1-portscan-001",
+  "lab-v1-ssh-bruteforce-001"
+ ],
+ "final_test_runs": [],
+ "note": "final test runs do not exist yet and must be generated post-freeze"
+}
