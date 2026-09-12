@@ -1,0 +1,49 @@
+{
+ "run_id": "adapt-v1-portscan-003",
+ "experiment_id": "lab-generalization-v1",
+ "scenario_id": "portscan",
+ "scenario": "portscan",
+ "role": "adaptation",
+ "ground_truth_binary_primary": "ATTACK",
+ "expected_family": "PortScan",
+ "expected_label": "PortScan",
+ "extractor": {
+  "name": "cicflowmeter",
+  "version": "0.5.0",
+  "note": "same extractor for adaptation and deployment by construction"
+ },
+ "feature_schema": "cicids2017-78-v1",
+ "model_a_identity": {
+  "model_name": "xgb-baseline-cicids2017-v2",
+  "model_version": "2.0",
+  "artifact_file": "xgb_baseline_cicids2017_v2.joblib",
+  "artifact_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+  "feature_schema": "cicids2017-78-v1",
+  "feature_count": 78,
+  "sha_verified": true,
+  "frozen_before_results": true
+ },
+ "capture_started_utc": "2026-09-11T14:41:21Z",
+ "capture_stopped_utc": "2026-09-11T14:43:09Z",
+ "packet_capture_available": true,
+ "pcap_path": "reports/domain_adaptation/data/captures/adapt-v1-portscan-003.pcap",
+ "pcap_sha256": "f85611bf2515514c47e3fbf45166601fbb6582aa31db2f5337c7c58abefdd161",
+ "flow_csv_path": "reports/domain_adaptation/data/captures/adapt-v1-portscan-003.csv",
+ "flow_csv_sha256": "c8d3ec7d4f7285b888f79dbc04e3c7f42968072fbdad3f6513277f0b98ad00f1",
+ "counts": {
+  "total_flows": 8917,
+  "valid_flows": 8917,
+  "evaluable_flows": 7711,
+  "attack_flows": 7711,
+  "benign_flows": 0,
+  "unlabelled_flows": 1206
+ },
+ "support_floor": 300,
+ "support_metric": 7711,
+ "acceptance_status": "ACCEPTED",
+ "model_a_descriptive_only": {
+  "note": "Model A predictions are descriptive; they do not affect acceptance",
+  "attack_flows_flagged_by_model_a": 4
+ },
+ "written_at": "2026-09-11T14:54:51.241328Z"
+}
