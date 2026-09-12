@@ -1,0 +1,341 @@
+{
+ "schema_version": 1,
+ "protocol_version": "phase17c-model-b-v1",
+ "status": "FROZEN_BEFORE_TRAINING",
+ "phase17b_frozen_head": "38905dacaba658967d68740b458ece54555ff329",
+ "written_before_any_model_fit": true,
+ "objective": {
+  "task": "binary deployment-domain intrusion detection",
+  "positive_class": {
+   "name": "ATTACK",
+   "value": 1
+  },
+  "negative_class": {
+   "name": "BENIGN",
+   "value": 0
+  },
+  "model_id": "model-b-deployment-binary-v1",
+  "note": "Model B is a binary deployment-adapted detector. It is NOT a 15-class replacement for frozen Model A."
+ },
+ "intended_architecture": {
+  "stage_1": "Model B -> binary deployment-domain detector",
+  "stage_2": "frozen Model A -> multiclass attribution for flows flagged by Model B",
+  "model_a_policy": "Model A is never modified or retrained in Phase 17C"
+ },
+ "split": {
+  "granularity": "run_level",
+  "flow_level_random_splitting": false,
+  "rule": "the frozen Phase 17B run-level split is used verbatim; train = the 9 new adaptation runs, validation = the 3 historical adaptation runs",
+  "train_runs": [
+   "adapt-v1-benign-002",
+   "adapt-v1-benign-003",
+   "adapt-v1-benign-004",
+   "adapt-v1-portscan-002",
+   "adapt-v1-portscan-003",
+   "adapt-v1-portscan-004",
+   "adapt-v1-ssh-002",
+   "adapt-v1-ssh-003",
+   "adapt-v1-ssh-004"
+  ],
+  "validation_runs": [
+   "lab-v1-benign-001",
+   "lab-v1-portscan-001",
+   "lab-v1-ssh-bruteforce-001"
+  ],
+  "final_test_runs": [],
+  "development_only": true,
+  "development_only_note": "This is a development split. The 3 historical validation runs are NOT unseen final evaluation data and must never later be described as such."
+ },
+ "leakage_guards": {
+  "preprocessing_fit_partition": "TRAIN_ONLY",
+  "validation_must_not_enter": [
+   "preprocessing fit",
+   "feature selection",
+   "class-weight calculation",
+   "imputation fit",
+   "scaler fit",
+   "hyperparameter fitting",
+   "threshold construction",
+   "model fitting"
+  ],
+  "validation_state": "untouched, naturally distributed"
+ },
+ "labelling": {
+  "source": "manifest ground-truth selector (app/live/manifest.py: expected_for_flow)",
+  "prediction_driven_labelling": false,
+  "note": "Labels derive only from the pre-declared scenario manifest (run-level uniform for benign, per-flow selector for portscan/ssh). Model A predictions never influence Model B labels.",
+  "unlabelled_policy": "flows whose expected_binary_label is neither BENIGN nor ATTACK are excluded from both training and every metric denominator"
+ },
+ "feature_contract": {
+  "extractor": {
+   "name": "cicflowmeter",
+   "version": "0.5.0"
+  },
+  "domain": "deployment",
+  "schema_id": "deployment-cicflowmeter-76-v1",
+  "n_features": 76,
+  "ordering": "fixed, exactly as listed in feature_list; the capture CSV column order with identity columns removed",
+  "feature_list": [
+   "flow_duration",
+   "flow_byts_s",
+   "flow_pkts_s",
+   "fwd_pkts_s",
+   "bwd_pkts_s",
+   "tot_fwd_pkts",
+   "tot_bwd_pkts",
+   "totlen_fwd_pkts",
+   "totlen_bwd_pkts",
+   "fwd_pkt_len_max",
+   "fwd_pkt_len_min",
+   "fwd_pkt_len_mean",
+   "fwd_pkt_len_std",
+   "bwd_pkt_len_max",
+   "bwd_pkt_len_min",
+   "bwd_pkt_len_mean",
+   "bwd_pkt_len_std",
+   "pkt_len_max",
+   "pkt_len_min",
+   "pkt_len_mean",
+   "pkt_len_std",
+   "pkt_len_var",
+   "fwd_header_len",
+   "bwd_header_len",
+   "fwd_seg_size_min",
+   "fwd_act_data_pkts",
+   "flow_iat_mean",
+   "flow_iat_max",
+   "flow_iat_min",
+   "flow_iat_std",
+   "fwd_iat_tot",
+   "fwd_iat_max",
+   "fwd_iat_min",
+   "fwd_iat_mean",
+   "fwd_iat_std",
+   "bwd_iat_tot",
+   "bwd_iat_max",
+   "bwd_iat_min",
+   "bwd_iat_mean",
+   "bwd_iat_std",
+   "fwd_psh_flags",
+   "bwd_psh_flags",
+   "fwd_urg_flags",
+   "bwd_urg_flags",
+   "fin_flag_cnt",
+   "syn_flag_cnt",
+   "rst_flag_cnt",
+   "psh_flag_cnt",
+   "ack_flag_cnt",
+   "urg_flag_cnt",
+   "ece_flag_cnt",
+   "down_up_ratio",
+   "pkt_size_avg",
+   "init_fwd_win_byts",
+   "init_bwd_win_byts",
+   "active_max",
+   "active_min",
+   "active_mean",
+   "active_std",
+   "idle_max",
+   "idle_min",
+   "idle_mean",
+   "idle_std",
+   "fwd_byts_b_avg",
+   "fwd_pkts_b_avg",
+   "bwd_byts_b_avg",
+   "bwd_pkts_b_avg",
+   "fwd_blk_rate_avg",
+   "bwd_blk_rate_avg",
+   "fwd_seg_size_avg",
+   "bwd_seg_size_avg",
+   "cwr_flag_count",
+   "subflow_fwd_pkts",
+   "subflow_bwd_pkts",
+   "subflow_fwd_byts",
+   "subflow_bwd_byts"
+  ],
+  "excluded_identity_columns": [
+   "src_ip",
+   "dst_ip",
+   "src_port",
+   "dst_port",
+   "protocol",
+   "timestamp"
+  ],
+  "exclusion_rationale": "src_ip, dst_ip and dst_port are literally the ground-truth attack selector for the portscan and ssh scenarios; admitting them as features would let the model memorise the labelling rule and the fixed laboratory topology rather than flow behaviour. src_port and timestamp are non-behavioural provenance. protocol is excluded with them because the selector schema may key on it.",
+  "numeric_conversion": "pandas.to_numeric(errors='coerce') applied to every feature column",
+  "nan_policy": "non-finite values replaced with 0.0 using a fixed constant; no train-fitted imputer",
+  "inf_policy": "+/-inf mapped to 0.0 by the same fixed rule",
+  "scaler": "none; tree ensembles are scale-invariant and no train-fitted scaler is introduced",
+  "constant_feature_policy": "retained, not dropped; the feature list is fixed a priori and does not depend on observed variance, so no train-fitted feature selection step exists",
+  "no_conversion_to_model_a_schema": true,
+  "no_conversion_note": "The deployment rows are NOT mapped back into the historical Java CICFlowMeter cicids2017-78-v1 contract. Model B exists specifically to learn the deployment extractor domain."
+ },
+ "balancing": {
+  "benign_undersampling": false,
+  "benign_undersampling_rationale": "Pre-training refinement based solely on observed class support in the acquired adaptation data, NOT on model predictions. The earlier design considered benign undersampling before the real distribution was known; the acquired training data is ATTACK-heavy and PortScan-dominated, making BENIGN the minority class, so undersampling benign is no longer scientifically justified.",
+  "smote": false,
+  "smote_rationale": "excluded from the primary Phase 17C experiment by pre-registration",
+  "method": "TRAIN-ONLY inverse-frequency binary class weighting",
+  "formula": "w_c = n_total_train / (n_classes * n_c_train), computed over the TRAIN partition only",
+  "xgboost_application": "explicit per-row sample_weight vector derived from the TRAIN partition; validation data is never altered",
+  "random_forest_application": "class_weight='balanced', which is the same inverse-frequency rule computed on the fitted (TRAIN) partition"
+ },
+ "models": {
+  "primary": {
+   "role": "PRIMARY Model B",
+   "id": "model-b-xgb-weighted-v1",
+   "algorithm": "xgboost.XGBClassifier",
+   "class_weighting": true,
+   "params": {
+    "n_estimators": 100,
+    "tree_method": "hist",
+    "eval_metric": "logloss",
+    "objective": "binary:logistic",
+    "n_jobs": -1,
+    "random_state": 42
+   }
+  },
+  "robustness": {
+   "role": "ROBUSTNESS evidence only",
+   "id": "model-b-rf-weighted-v1",
+   "algorithm": "sklearn.ensemble.RandomForestClassifier",
+   "class_weighting": true,
+   "params": {
+    "n_estimators": 100,
+    "n_jobs": -1,
+    "random_state": 42,
+    "class_weight": "balanced"
+   }
+  },
+  "ablation": {
+   "role": "ABLATION only",
+   "id": "model-b-xgb-unweighted-v1",
+   "algorithm": "xgboost.XGBClassifier",
+   "class_weighting": false,
+   "params": {
+    "n_estimators": 100,
+    "tree_method": "hist",
+    "eval_metric": "logloss",
+    "objective": "binary:logistic",
+    "n_jobs": -1,
+    "random_state": 42
+   }
+  },
+  "no_additional_algorithms_after_validation": true,
+  "broad_hyperparameter_optimisation": false,
+  "hyperparameter_provenance": "reused from the existing frozen IDS pipeline configs (training/configs/xgb_baseline_v2.yaml, training/configs/rf_baseline_v2.yaml): seed 42, n_estimators 100, tree_method hist, n_jobs -1. Only the objective/eval_metric required for binary classification were adapted (mlogloss -> logloss)."
+ },
+ "threshold": {
+  "primary": 0.5,
+  "rule": "P(ATTACK) >= 0.50 -> ATTACK; P(ATTACK) < 0.50 -> BENIGN",
+  "tuned_on_validation": false,
+  "tuned_on_final_evaluation": false,
+  "note": "The primary threshold is pre-registered at exactly 0.50 and may not be replaced during Phase 17C. A clearly labelled threshold-sensitivity analysis may be produced later as a SECONDARY diagnostic only."
+ },
+ "metrics": {
+  "primary": [
+   "macro_f1",
+   "balanced_accuracy",
+   "attack_recall_detection_rate",
+   "attack_precision",
+   "benign_false_positive_rate",
+   "confusion_matrix"
+  ],
+  "additional": [
+   "roc_auc",
+   "pr_auc",
+   "per_scenario_results"
+  ],
+  "auc_validity_rule": "ROC-AUC and PR-AUC are reported only where mathematically valid; a partition containing a single ground-truth class is reported as null with an explicit reason rather than a fabricated number.",
+  "interval": "Wilson score, 95%",
+  "per_scenario_required": {
+   "benign": [
+    "false_positive_rate",
+    "wilson_95"
+   ],
+   "portscan": [
+    "detection_rate",
+    "wilson_95"
+   ],
+   "ssh": [
+    "detection_rate",
+    "wilson_95"
+   ]
+  },
+  "small_support_disclosure": {
+   "ssh_validation_n": 69,
+   "rule": "The small SSH support must be reported, never hidden. An observed zero must never be interpreted as a true population zero; the Wilson upper bound is reported alongside it."
+  }
+ },
+ "model_comparison": {
+  "compare": [
+   "frozen Model A historical deployment behaviour",
+   "XGBoost Model B weighted",
+   "Random Forest Model B weighted",
+   "XGBoost Model B unweighted ablation"
+  ],
+  "forbidden": "Model A multiclass Macro F1 must NOT be compared directly against Model B binary Macro F1 as if they were the same task.",
+  "task_difference": {
+   "model_a": "multiclass attribution",
+   "model_b": "binary attack detection"
+  },
+  "shared_operational_quantities": [
+   "benign false-positive rate",
+   "attack detection rate",
+   "scenario-level detection"
+  ],
+  "frozen_model_a_historical_values": {
+   "benign": {
+    "false_positives": 0,
+    "n": 5407
+   },
+   "portscan": {
+    "detected": 2,
+    "n": 1362
+   },
+   "ssh": {
+    "detected": 0,
+    "n": 69
+   }
+  },
+  "model_a_files_policy": "frozen Model A result files are never overwritten and never recomputed differently"
+ },
+ "selection_and_freeze_rule": {
+  "pre_declared_primary": "model-b-xgb-weighted-v1",
+  "post_hoc_selection_permitted": false,
+  "rule": "The weighted XGBoost is the PRE-DECLARED primary Model B. Whichever algorithm happens to score best on validation does NOT become the primary. Random Forest is robustness evidence; unweighted XGBoost is an ablation.",
+  "poor_performance_policy": "If the weighted XGBoost performs poorly, that is reported truthfully rather than silently promoting another model.",
+  "freeze_artefacts": [
+   "primary model artefact",
+   "exact feature contract",
+   "configuration",
+   "SHA-256 hashes",
+   "training-run identities",
+   "threshold"
+  ]
+ },
+ "reproducibility": {
+  "seed": 42,
+  "deterministic": true,
+  "environment": {
+   "python": "3.11.9",
+   "numpy": "2.1.1",
+   "pandas": "2.2.3",
+   "scipy": "1.17.1",
+   "scikit-learn": "1.5.2",
+   "xgboost": "2.1.1",
+   "joblib": "1.4.2"
+  }
+ },
+ "out_of_scope_phase17c": [
+  "creating eval-v1-* runs",
+  "acquiring final-test traffic",
+  "using final-test data",
+  "running the final paired Model A vs Model B evaluation",
+  "modifying frozen Model A",
+  "LLM/SHAP human-study work",
+  "claiming Phase 17 solves H4",
+  "updating thesis final conclusions",
+  "fabricating missing results"
+ ]
+}
