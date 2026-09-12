@@ -205,3 +205,28 @@ point.
 
 Seed 42, deterministic scoring. Python 3.11.9 · numpy 2.1.1 · pandas 2.2.3 · scipy 1.17.1
 · scikit-learn 1.5.2 · xgboost 2.1.1 · joblib 1.4.2.
+
+---
+
+## Amendment 001 — cicflowmeter 0.5.0 compatibility shim (before any final capture)
+
+Machine-readable: [`protocol_amendment_001.json`](protocol_amendment_001.json). Full
+write-up: [`EXTRACTOR_COMPAT.md`](EXTRACTOR_COMPAT.md).
+
+Before any final-test flow was scored, an **upstream** `cicflowmeter 0.5.0` bug was found:
+`main()` calls `create_sniffer` with misaligned positional arguments, so the frozen
+capture script's `cicflowmeter -f PCAP -c CSV` crashes with
+`AttributeError: 'bool' object has no attribute 'split'`. No prediction was inspected; the
+failed `eval-v1-benign-001` attempt was deleted.
+
+Resolution — a project-controlled compatibility shim
+(`training/phase17d_cicflowmeter_shim.py`) that is a corrected copy of upstream `main()`
+calling `create_sniffer` with keyword arguments and reusing the installed 0.5.0 extraction
+code unchanged, exposed on `PATH` as `cicflowmeter`. This changes **only argument
+plumbing**. Unchanged and reaffirmed: extractor `cicflowmeter 0.5.0`, feature schema
+`deployment-cicflowmeter-76-v1`, the 82→76 CSV contract, the **byte-identical** frozen
+capture script, both frozen model hashes, the 0.50 threshold, the nine run IDs, the
+support floors, the selectors, and the acceptance rule.
+
+`PHASE17D_PROTOCOL_HEAD` (`eb4e8979…`) remains valid; this amendment is additive and is
+committed and pushed **before** any `eval-v1-*` capture is restarted.

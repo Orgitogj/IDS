@@ -1,0 +1,68 @@
+{
+ "schema_version": 1,
+ "amendment_id": "phase17d-amendment-001",
+ "amends": "phase17d-final-eval-v1",
+ "phase17d_protocol_head": "eb4e8979bdd192b3aec466f544fea45d6cf3c582",
+ "phase17d_protocol_head_still_valid": true,
+ "reason": "cicflowmeter 0.5.0 upstream runtime bug crashes the frozen capture script's file-mode extractor call before any flow is produced; discovered before any final-test scoring.",
+ "discovered_before_scoring": true,
+ "no_predictions_inspected": true,
+ "bug": {
+  "package": "cicflowmeter",
+  "version": "0.5.0",
+  "classification": "upstream defect",
+  "file": "src/cicflowmeter/sniffer.py",
+  "definition_lines": "33-35",
+  "buggy_call_lines": "295-302",
+  "crash_lines": "39-40",
+  "symptom": "AttributeError: 'bool' object has no attribute 'split'",
+  "cause": "main() calls create_sniffer positionally so args.fields lands in input_directory and args.verbose (False) lands in fields; False.split(',') then raises.",
+  "audited_sdist_sha256": "501d8b78ca6b95a1d1300bf5f9424bbfa1f359d188e0af960920586b4a0d4f0e"
+ },
+ "fix": {
+  "type": "project-controlled compatibility shim (argument plumbing only)",
+  "artifact": "training/phase17d_cicflowmeter_shim.py",
+  "artifact_sha256": "ac212bb6a1ec70813ec9b422a664de516dcea117adc5b5364a96c972a5678a70",
+  "mechanism": "corrected copy of upstream main() that calls create_sniffer with keyword arguments and reuses the installed 0.5.0 extraction code unchanged; exposed on PATH as cicflowmeter so the frozen capture script runs unedited.",
+  "changes_extraction_semantics": false,
+  "changes_feature_schema": false,
+  "changes_traffic_procedure": false,
+  "changes_models_or_threshold_or_selectors_or_acceptance": false
+ },
+ "unchanged_and_reaffirmed": {
+  "extractor_name": "cicflowmeter",
+  "extractor_version": "0.5.0",
+  "feature_schema": "deployment-cicflowmeter-76-v1",
+  "csv_output_contract": "82-column cicflowmeter CSV -> 76 numeric features after dropping the six identity columns",
+  "frozen_capture_script": "training/phase17d_capture.sh",
+  "frozen_capture_script_sha256": "6c5c55e1ac74c59924b7ea3ab2f1d7db845e1b3fd420e49afaf139c93fbb3e05",
+  "frozen_capture_script_edited": false,
+  "model_a_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+  "model_b_sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+  "model_b_threshold": 0.5,
+  "final_test_runs": [
+   "eval-v1-benign-001",
+   "eval-v1-benign-002",
+   "eval-v1-benign-003",
+   "eval-v1-portscan-001",
+   "eval-v1-portscan-002",
+   "eval-v1-portscan-003",
+   "eval-v1-ssh-001",
+   "eval-v1-ssh-002",
+   "eval-v1-ssh-003"
+  ],
+  "support_floors": {
+   "benign": 300,
+   "portscan": 300,
+   "ssh": 30
+  }
+ },
+ "verification": {
+  "root_cause_from_authoritative_source": true,
+  "regression_test": "tests/test_phase17d_extractor_compat.py",
+  "host_end_to_end_extractor_test": "not run on host; cicflowmeter 0.5.0 requires Python >= 3.12 and the host analysis venv is 3.11; no cicflowmeter version installed or altered on the host. Real-PCAP smoke test runs in Kali before final captures (see EXTRACTOR_COMPAT.md)."
+ },
+ "protocol_amendment_required_before_restart": true,
+ "restart_precondition": "this amendment is committed and pushed before any new eval-v1-* capture; the Kali extractor smoke test passes.",
+ "documentation": "reports/domain_adaptation/phase17d/EXTRACTOR_COMPAT.md"
+}
