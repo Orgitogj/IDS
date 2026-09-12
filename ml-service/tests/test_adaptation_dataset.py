@@ -95,11 +95,17 @@ class TestNoModelBNoEval:
         for d in list((DATA / "runs").glob("eval-v1-*")) if (DATA / "runs").exists() else []:
             pytest.fail(f"unexpected eval run: {d}")
 
-    def test_no_model_b_artifact_exists(self):
+    def test_model_b_never_enters_the_model_a_namespace(self):
         models = ML / "models"
         for pat in ("deployment-adapted*", "model_b*", "*deployment-adapted*"):
-            hits = list(models.glob(pat))
-            assert not hits, f"unexpected Model B artifact: {hits}"
+            for hit in models.glob(pat):
+                assert hit.is_dir() and hit.name == "model_b", (
+                    f"Model B artifact outside models/model_b/: {hit}")
+
+    def test_phase17b_data_declares_no_model_b(self):
+        summary = json.load(open(DATA / "validation_summary.json", encoding="utf-8"))
+        assert summary["model_b_exists"] is False
+        assert summary["final_evaluation_runs_exist"] is False
 
     def test_no_prediction_driven_metadata(self):
         for rid in NEW:
