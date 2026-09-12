@@ -1,0 +1,8 @@
+{
+ "n_runs": 12,
+ "n_accepted": 12,
+ "n_invalid": 0,
+ "model_b_exists": false,
+ "final_evaluation_runs_exist": false,
+ "all_new_runs_have_pcap": true
+}
