@@ -45,3 +45,6 @@ ml-service/reports/live_evaluation/captures/*_attempts.log
 
 # Adaptation raw PCAPs (large; kept local, hashes recorded in manifest)
 ml-service/reports/domain_adaptation/data/captures/*.pcap
+
+# Model B artefacts (binaries kept local; hashes recorded in phase17c metadata)
+ml-service/models/model_b/*.joblib
