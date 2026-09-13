@@ -157,13 +157,18 @@ def _generate_with_claude(prompt):
     return message.content[0].text, model_name
 
 
+LAST_RESOLVED_MODEL = None
+
+
 def _generate_with_gemini(prompt):
+    global LAST_RESOLVED_MODEL
     client = _get_gemini_client()
     model_name = "gemini-flash-latest"
     response = client.models.generate_content(
         model=model_name,
         contents=prompt,
     )
+    LAST_RESOLVED_MODEL = getattr(response, "model_version", None)
     return response.text, model_name
 
 
