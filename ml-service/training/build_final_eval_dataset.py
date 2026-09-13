@@ -58,6 +58,12 @@ def flow_is_valid(status):
     return status["validation_status"] == protocol.STATUS_VALID
 
 
+def pcap_has_records(path):
+    if path is None or not Path(path).exists():
+        return None
+    return Path(path).stat().st_size > 24
+
+
 def process(run_id, capture_csv, pcap_path=None, capture_started=None,
             capture_stopped=None, capture_attempt=1,
             traffic_procedure="phase17d_capture.sh"):
@@ -89,6 +95,12 @@ def process(run_id, capture_csv, pcap_path=None, capture_started=None,
     support_metric = benign if scenario == "benign" else attack
     acceptance = "ACCEPTED" if support_metric >= floor else "INVALID_LOW_SUPPORT"
 
+    pcap_bytes = Path(pcap_path).stat().st_size if pcap_path and Path(pcap_path).exists() \
+        else None
+    capture_nonempty = pcap_has_records(pcap_path)
+    if pcap_path is not None and capture_nonempty is False:
+        acceptance = "INVALID_EMPTY_CAPTURE"
+
     csv_path = Path(capture_csv)
     csv_repr = (str(csv_path.relative_to(_ML_SERVICE_ROOT)).replace("\\", "/")
                 if csv_path.is_absolute() and _ML_SERVICE_ROOT in csv_path.parents
@@ -113,6 +125,8 @@ def process(run_id, capture_csv, pcap_path=None, capture_started=None,
         "packet_capture_available": bool(pcap_path),
         "pcap_path": str(pcap_path) if pcap_path else None,
         "pcap_sha256": sha256_file(pcap_path),
+        "pcap_bytes": pcap_bytes,
+        "capture_nonempty": capture_nonempty,
         "flow_csv_path": csv_repr,
         "flow_csv_sha256": sha256_file(capture_csv),
         "counts": {

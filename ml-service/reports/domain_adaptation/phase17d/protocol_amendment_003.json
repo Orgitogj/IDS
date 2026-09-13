@@ -1,0 +1,77 @@
+{
+ "schema_version": 1,
+ "amendment_id": "phase17d-amendment-003",
+ "amends": "phase17d-final-eval-v1",
+ "supersedes_procedure_of": "phase17d-amendment-002",
+ "phase17d_protocol_head": "eb4e8979bdd192b3aec466f544fea45d6cf3c582",
+ "phase17d_protocol_head_still_valid": true,
+ "scope": "SSH capture orchestration only",
+ "reason": "The amendment-002 SSH procedure (phase17d_ssh_capture_v2.sh) produced an EMPTY capture: a 24-byte pcap (global header only), 0 packets, 0 SYN to dst port 22, while its metadata still printed ssh_attempts=60. The SSH traffic step opened zero TCP connections and the failure was hidden by output redirection and a static attempt-count echo.",
+ "discovered_before_scoring": true,
+ "no_predictions_inspected": true,
+ "no_dataset_sealed": true,
+ "attempt_002_failure_evidence": {
+  "confirmed_run": "eval-v1-ssh-001",
+  "pcap_bytes": 24,
+  "pcap_note": "24 bytes is exactly the pcap global header; no packet records were written",
+  "packets": 0,
+  "syn_to_dst_port_22": 0,
+  "csv_usable_rows": 0,
+  "reported_metadata_ssh_attempts": 60,
+  "runs_002_003_not_run": true
+ },
+ "root_cause": {
+  "summary": "phase17d_ssh_capture_v2.sh generated no TCP traffic; each ssh/sshpass attempt aborted before opening a socket and the error was silenced.",
+  "responsible_lines_v2": {
+   "L2": "set -euo pipefail (with the trailing '|| true' on L36 this neutralises -e for the ssh step)",
+   "L19": "tcpdump started with '>/dev/null 2>&1 &' so any startup error is invisible",
+   "L22": "blind 'sleep 3' instead of a tcpdump-readiness check",
+   "L25_L36": "sshpass/ssh attempt with forced legacy options (HostKeyAlgorithms=+ssh-dss, KexAlgorithms=+diffie-hellman-group1-sha1) that a modern OpenSSH client rejects at config-parse time (exit 255 before any TCP connect); the trailing '>/dev/null 2>&1 || true' hides the error and continues the loop",
+   "L52": "echo \"ssh_attempts=$ATTEMPTS\" prints the static constant regardless of whether any connection was opened"
+  },
+  "why_pcap_24_bytes": "tcpdump started and wrote the 24-byte pcap global header, but zero packets matched 'host 192.168.50.20 and port 22' because no TCP connection to :22 was ever opened, so the file never grew beyond the header.",
+  "why_metadata_claimed_60": "the attempt count was a hard-coded echo of the ATTEMPTS constant (L52), never a count of connections actually opened.",
+  "trigger_disambiguation": "cannot be disambiguated without in-guest execution between (a) modern OpenSSH rejecting the forced legacy algorithm options and (b) sshpass being unavailable; both yield identical evidence. Amendment 003 removes dependence on ssh and sshpass entirely, so the exact trigger no longer matters."
+ },
+ "replacement_procedure": {
+  "script": "training/phase17d_ssh_capture_v3.sh",
+  "script_sha256": "33de2449bb2be69f480b29b8a6978fd0fb65c163eebba38c124e3d22314e10ac",
+  "attempts_per_run": 60,
+  "attempt_count_is_fixed_and_predeclared": true,
+  "connection_primitive": "bash /dev/tcp/192.168.50.20/22 per attempt (guaranteed TCP SYN to the SSH port), sending an SSH-2.0 client identification banner and reading the server banner, then closing; independent of the ssh client and sshpass and of algorithm negotiation",
+  "orchestration_fixes": [
+   "tcpdump started with stderr to a log and '-U' (packet-buffered writes)",
+   "readiness check: poll until tcpdump prints 'listening on' or the process dies, instead of a blind sleep; abort with exit 3 if not ready",
+   "per-attempt outcome logged to <run>.attempts.log; connections actually opened are counted (ssh_connections_opened), not a static constant",
+   "after capture: verify pcap grew beyond the 24-byte header or exit 4 (FAILURE pcap_header_only)",
+   "after extraction: verify the CSV has at least one data row or exit 5 (FAILURE csv_no_rows)",
+   "the success RESULT block is emitted only if both verifications pass"
+  ],
+  "depends_on_predictions": false,
+  "depends_on_auth_success": false
+ },
+ "unchanged_and_reaffirmed": {
+  "ssh_ground_truth_selector": {"source_ip": "192.168.50.10", "destination_ip": "192.168.50.20", "destination_ports": [22]},
+  "support_floor_ssh": 30,
+  "source_destination": "192.168.50.10 -> 192.168.50.20",
+  "model_a_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+  "model_b_sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+  "model_b_threshold": 0.50,
+  "feature_schema": "deployment-cicflowmeter-76-v1",
+  "extractor": {"name": "cicflowmeter", "version": "0.5.0"},
+  "cicflowmeter_compatibility_shim": "amendment 001 (phase17d_cicflowmeter_shim.py) still required on PATH",
+  "final_test_run_ids": ["eval-v1-benign-001", "eval-v1-benign-002", "eval-v1-benign-003", "eval-v1-portscan-001", "eval-v1-portscan-002", "eval-v1-portscan-003", "eval-v1-ssh-001", "eval-v1-ssh-002", "eval-v1-ssh-003"],
+  "benign_and_portscan_runs": "already ACCEPTED; not touched or re-acquired",
+  "acceptance_criteria": "unchanged (a capture-integrity check for a non-empty pcap is an added guard, not a relaxation)",
+  "scoring_rules": "unchanged",
+  "frozen_capture_script": "training/phase17d_capture.sh unchanged and unedited"
+ },
+ "run_versioning_rule": {
+  "final_run_ids_unchanged": true,
+  "rule": "SSH run IDs are unchanged. Attempt 001 (frozen hydra) = INVALID_LOW_SUPPORT (preserved). Attempt 002 (amendment-002 v2 script) = INVALID_EMPTY_CAPTURE (preserved, not the canonical instance). Attempt 003 (this amended v3 procedure) produces the canonical files and runs/<id>/provenance.json used for sealing. Provenance records capture_attempt and traffic_procedure.",
+  "attempt_002_status": "INVALID_EMPTY_CAPTURE",
+  "attempt_003_status": "canonical final instance (to be acquired after smoke test and review)"
+ },
+ "required_smoke_test_before_final": "A NON-FINAL smoke test (small attempt count, temporary out dir) must observe at least one SYN to 192.168.50.20:22 and at least one extracted CSV flow before any final SSH recapture.",
+ "stop_after_commit": "STOP after this amendment is committed and pushed; run only the non-final smoke test next, and wait for review before any final SSH recapture. No seal, no scoring."
+}
