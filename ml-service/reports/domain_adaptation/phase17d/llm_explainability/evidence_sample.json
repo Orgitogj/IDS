@@ -1,0 +1,570 @@
+{
+ "schema_version": 1,
+ "generated_at": "2026-09-13T16:14:29.089861Z",
+ "packages": [
+  {
+   "alert_id": "eval-v1-benign-001#29",
+   "source_run": "eval-v1-benign-001",
+   "flow_index": 29,
+   "model": {
+    "id": "model-b-xgb-weighted-v1",
+    "sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+    "feature_schema": "deployment-cicflowmeter-76-v1",
+    "threshold": 0.5
+   },
+   "decision": "ATTACK",
+   "attack_probability": 0.9558613896369934,
+   "shap_base_value": 0.013752092607319355,
+   "top_shap_features": [
+    {
+     "feature": "fwd_pkt_len_std",
+     "value": 550.7461841674439,
+     "shap_contribution": 8.870243072509766,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "totlen_fwd_pkts",
+     "value": 2249.0,
+     "shap_contribution": -5.336501121520996,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "bwd_pkt_len_std",
+     "value": 289.06381456157544,
+     "shap_contribution": 0.7845886945724487,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "bwd_iat_min",
+     "value": 0.002094,
+     "shap_contribution": -0.635925829410553,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "pkt_len_std",
+     "value": 458.8912380590274,
+     "shap_contribution": 0.3978557586669922,
+     "direction": "increases_attack"
+    }
+   ],
+   "analyst_instruction": "Explain only the model decision from the evidence below; do not invent packet contents, identities, protocols, attack tools or causes not present in this evidence."
+  },
+  {
+   "alert_id": "eval-v1-benign-001#221",
+   "source_run": "eval-v1-benign-001",
+   "flow_index": 221,
+   "model": {
+    "id": "model-b-xgb-weighted-v1",
+    "sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+    "feature_schema": "deployment-cicflowmeter-76-v1",
+    "threshold": 0.5
+   },
+   "decision": "ATTACK",
+   "attack_probability": 0.5499717593193054,
+   "shap_base_value": 0.013752092607319355,
+   "top_shap_features": [
+    {
+     "feature": "fwd_pkt_len_std",
+     "value": 550.7461841674439,
+     "shap_contribution": 7.682042598724365,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "totlen_fwd_pkts",
+     "value": 2249.0,
+     "shap_contribution": -5.813279151916504,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "flow_duration",
+     "value": 0.020061,
+     "shap_contribution": -1.3443915843963623,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "bwd_pkt_len_std",
+     "value": 289.06381456157544,
+     "shap_contribution": 0.7845886945724487,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "bwd_iat_min",
+     "value": 0.00162,
+     "shap_contribution": -0.635925829410553,
+     "direction": "decreases_attack"
+    }
+   ],
+   "analyst_instruction": "Explain only the model decision from the evidence below; do not invent packet contents, identities, protocols, attack tools or causes not present in this evidence."
+  },
+  {
+   "alert_id": "eval-v1-benign-002#21",
+   "source_run": "eval-v1-benign-002",
+   "flow_index": 21,
+   "model": {
+    "id": "model-b-xgb-weighted-v1",
+    "sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+    "feature_schema": "deployment-cicflowmeter-76-v1",
+    "threshold": 0.5
+   },
+   "decision": "ATTACK",
+   "attack_probability": 0.9294185042381287,
+   "shap_base_value": 0.013752092607319355,
+   "top_shap_features": [
+    {
+     "feature": "fwd_pkt_len_std",
+     "value": 550.7461841674439,
+     "shap_contribution": 8.870243072509766,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "totlen_fwd_pkts",
+     "value": 2249.0,
+     "shap_contribution": -5.377788066864014,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "bwd_iat_min",
+     "value": 0.001241,
+     "shap_contribution": -0.635925829410553,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "pkt_len_std",
+     "value": 445.65494375008217,
+     "shap_contribution": 0.3978557586669922,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "bwd_pkt_len_std",
+     "value": 271.9636830497028,
+     "shap_contribution": 0.3283887505531311,
+     "direction": "increases_attack"
+    }
+   ],
+   "analyst_instruction": "Explain only the model decision from the evidence below; do not invent packet contents, identities, protocols, attack tools or causes not present in this evidence."
+  },
+  {
+   "alert_id": "eval-v1-benign-002#53",
+   "source_run": "eval-v1-benign-002",
+   "flow_index": 53,
+   "model": {
+    "id": "model-b-xgb-weighted-v1",
+    "sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+    "feature_schema": "deployment-cicflowmeter-76-v1",
+    "threshold": 0.5
+   },
+   "decision": "ATTACK",
+   "attack_probability": 0.9469106793403625,
+   "shap_base_value": 0.013752092607319355,
+   "top_shap_features": [
+    {
+     "feature": "fwd_pkt_len_std",
+     "value": 550.7461841674439,
+     "shap_contribution": 8.839109420776367,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "totlen_fwd_pkts",
+     "value": 2249.0,
+     "shap_contribution": -5.391604900360107,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "pkt_len_std",
+     "value": 445.65494375008217,
+     "shap_contribution": 0.3978557586669922,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "bwd_iat_min",
+     "value": 2e-06,
+     "shap_contribution": -0.3501828610897064,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "bwd_pkt_len_std",
+     "value": 271.9636830497028,
+     "shap_contribution": 0.3283887505531311,
+     "direction": "increases_attack"
+    }
+   ],
+   "analyst_instruction": "Explain only the model decision from the evidence below; do not invent packet contents, identities, protocols, attack tools or causes not present in this evidence."
+  },
+  {
+   "alert_id": "eval-v1-benign-002#85",
+   "source_run": "eval-v1-benign-002",
+   "flow_index": 85,
+   "model": {
+    "id": "model-b-xgb-weighted-v1",
+    "sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+    "feature_schema": "deployment-cicflowmeter-76-v1",
+    "threshold": 0.5
+   },
+   "decision": "ATTACK",
+   "attack_probability": 0.9294185042381287,
+   "shap_base_value": 0.013752092607319355,
+   "top_shap_features": [
+    {
+     "feature": "fwd_pkt_len_std",
+     "value": 582.3205863664125,
+     "shap_contribution": 8.870243072509766,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "totlen_fwd_pkts",
+     "value": 2183.0,
+     "shap_contribution": -5.377788066864014,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "bwd_iat_min",
+     "value": 0.002789,
+     "shap_contribution": -0.635925829410553,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "pkt_len_std",
+     "value": 458.8912380590274,
+     "shap_contribution": 0.3978557586669922,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "bwd_pkt_len_std",
+     "value": 271.9636830497028,
+     "shap_contribution": 0.3283887505531311,
+     "direction": "increases_attack"
+    }
+   ],
+   "analyst_instruction": "Explain only the model decision from the evidence below; do not invent packet contents, identities, protocols, attack tools or causes not present in this evidence."
+  },
+  {
+   "alert_id": "eval-v1-benign-003#229",
+   "source_run": "eval-v1-benign-003",
+   "flow_index": 229,
+   "model": {
+    "id": "model-b-xgb-weighted-v1",
+    "sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+    "feature_schema": "deployment-cicflowmeter-76-v1",
+    "threshold": 0.5
+   },
+   "decision": "ATTACK",
+   "attack_probability": 0.5664721131324768,
+   "shap_base_value": 0.013752092607319355,
+   "top_shap_features": [
+    {
+     "feature": "fwd_pkt_len_std",
+     "value": 550.7461841674439,
+     "shap_contribution": 7.682042598724365,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "totlen_fwd_pkts",
+     "value": 2249.0,
+     "shap_contribution": -5.813279151916504,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "flow_duration",
+     "value": 0.014376,
+     "shap_contribution": -1.3443915843963623,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "bwd_pkt_len_std",
+     "value": 289.06381456157544,
+     "shap_contribution": 0.7845886945724487,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "bwd_iat_min",
+     "value": 0.001244,
+     "shap_contribution": -0.635925829410553,
+     "direction": "decreases_attack"
+    }
+   ],
+   "analyst_instruction": "Explain only the model decision from the evidence below; do not invent packet contents, identities, protocols, attack tools or causes not present in this evidence."
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#209",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 209,
+   "model": {
+    "id": "model-b-xgb-weighted-v1",
+    "sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+    "feature_schema": "deployment-cicflowmeter-76-v1",
+    "threshold": 0.5
+   },
+   "decision": "ATTACK",
+   "attack_probability": 0.9999545812606812,
+   "shap_base_value": 0.013752092607319355,
+   "top_shap_features": [
+    {
+     "feature": "totlen_fwd_pkts",
+     "value": 116.0,
+     "shap_contribution": 9.840187072753906,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "bwd_iat_min",
+     "value": 0.0,
+     "shap_contribution": 0.7974856495857239,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "fwd_iat_std",
+     "value": 0.0,
+     "shap_contribution": 0.2507196068763733,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "fwd_pkt_len_std",
+     "value": 0.0,
+     "shap_contribution": -0.24433302879333496,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "bwd_pkts_s",
+     "value": 1219.5121951219512,
+     "shap_contribution": -0.1738288402557373,
+     "direction": "decreases_attack"
+    }
+   ],
+   "analyst_instruction": "Explain only the model decision from the evidence below; do not invent packet contents, identities, protocols, attack tools or causes not present in this evidence."
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#285",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 285,
+   "model": {
+    "id": "model-b-xgb-weighted-v1",
+    "sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+    "feature_schema": "deployment-cicflowmeter-76-v1",
+    "threshold": 0.5
+   },
+   "decision": "ATTACK",
+   "attack_probability": 0.9999545812606812,
+   "shap_base_value": 0.013752092607319355,
+   "top_shap_features": [
+    {
+     "feature": "totlen_fwd_pkts",
+     "value": 116.0,
+     "shap_contribution": 9.840187072753906,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "bwd_iat_min",
+     "value": 0.0,
+     "shap_contribution": 0.7974856495857239,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "fwd_iat_std",
+     "value": 0.0,
+     "shap_contribution": 0.2507196068763733,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "fwd_pkt_len_std",
+     "value": 0.0,
+     "shap_contribution": -0.24433302879333496,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "bwd_pkts_s",
+     "value": 1273.8853503184714,
+     "shap_contribution": -0.1738288402557373,
+     "direction": "decreases_attack"
+    }
+   ],
+   "analyst_instruction": "Explain only the model decision from the evidence below; do not invent packet contents, identities, protocols, attack tools or causes not present in this evidence."
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1385",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1385,
+   "model": {
+    "id": "model-b-xgb-weighted-v1",
+    "sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+    "feature_schema": "deployment-cicflowmeter-76-v1",
+    "threshold": 0.5
+   },
+   "decision": "ATTACK",
+   "attack_probability": 0.9999545812606812,
+   "shap_base_value": 0.013752092607319355,
+   "top_shap_features": [
+    {
+     "feature": "totlen_fwd_pkts",
+     "value": 116.0,
+     "shap_contribution": 9.840187072753906,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "bwd_iat_min",
+     "value": 0.0,
+     "shap_contribution": 0.7974856495857239,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "fwd_iat_std",
+     "value": 0.0,
+     "shap_contribution": 0.2507196068763733,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "fwd_pkt_len_std",
+     "value": 0.0,
+     "shap_contribution": -0.24433302879333496,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "bwd_pkts_s",
+     "value": 3003.003003003003,
+     "shap_contribution": -0.1738288402557373,
+     "direction": "decreases_attack"
+    }
+   ],
+   "analyst_instruction": "Explain only the model decision from the evidence below; do not invent packet contents, identities, protocols, attack tools or causes not present in this evidence."
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1508",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1508,
+   "model": {
+    "id": "model-b-xgb-weighted-v1",
+    "sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+    "feature_schema": "deployment-cicflowmeter-76-v1",
+    "threshold": 0.5
+   },
+   "decision": "ATTACK",
+   "attack_probability": 0.9999545812606812,
+   "shap_base_value": 0.013752092607319355,
+   "top_shap_features": [
+    {
+     "feature": "totlen_fwd_pkts",
+     "value": 116.0,
+     "shap_contribution": 9.840187072753906,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "bwd_iat_min",
+     "value": 0.0,
+     "shap_contribution": 0.7974856495857239,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "fwd_iat_std",
+     "value": 0.0,
+     "shap_contribution": 0.2507196068763733,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "fwd_pkt_len_std",
+     "value": 0.0,
+     "shap_contribution": -0.24433302879333496,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "bwd_pkts_s",
+     "value": 1468.4287812041116,
+     "shap_contribution": -0.1738288402557373,
+     "direction": "decreases_attack"
+    }
+   ],
+   "analyst_instruction": "Explain only the model decision from the evidence below; do not invent packet contents, identities, protocols, attack tools or causes not present in this evidence."
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1516",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1516,
+   "model": {
+    "id": "model-b-xgb-weighted-v1",
+    "sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+    "feature_schema": "deployment-cicflowmeter-76-v1",
+    "threshold": 0.5
+   },
+   "decision": "ATTACK",
+   "attack_probability": 0.9999545812606812,
+   "shap_base_value": 0.013752092607319355,
+   "top_shap_features": [
+    {
+     "feature": "totlen_fwd_pkts",
+     "value": 116.0,
+     "shap_contribution": 9.840187072753906,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "bwd_iat_min",
+     "value": 0.0,
+     "shap_contribution": 0.7974856495857239,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "fwd_iat_std",
+     "value": 0.0,
+     "shap_contribution": 0.2507196068763733,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "fwd_pkt_len_std",
+     "value": 0.0,
+     "shap_contribution": -0.24433302879333496,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "bwd_pkts_s",
+     "value": 1358.695652173913,
+     "shap_contribution": -0.1738288402557373,
+     "direction": "decreases_attack"
+    }
+   ],
+   "analyst_instruction": "Explain only the model decision from the evidence below; do not invent packet contents, identities, protocols, attack tools or causes not present in this evidence."
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1827",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1827,
+   "model": {
+    "id": "model-b-xgb-weighted-v1",
+    "sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+    "feature_schema": "deployment-cicflowmeter-76-v1",
+    "threshold": 0.5
+   },
+   "decision": "ATTACK",
+   "attack_probability": 0.9999545812606812,
+   "shap_base_value": 0.013752092607319355,
+   "top_shap_features": [
+    {
+     "feature": "totlen_fwd_pkts",
+     "value": 116.0,
+     "shap_contribution": 9.840187072753906,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "bwd_iat_min",
+     "value": 0.0,
+     "shap_contribution": 0.7974856495857239,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "fwd_iat_std",
+     "value": 0.0,
+     "shap_contribution": 0.2507196068763733,
+     "direction": "increases_attack"
+    },
+    {
+     "feature": "fwd_pkt_len_std",
+     "value": 0.0,
+     "shap_contribution": -0.24433302879333496,
+     "direction": "decreases_attack"
+    },
+    {
+     "feature": "bwd_pkts_s",
+     "value": 1633.986928104575,
+     "shap_contribution": -0.1738288402557373,
+     "direction": "decreases_attack"
+    }
+   ],
+   "analyst_instruction": "Explain only the model decision from the evidence below; do not invent packet contents, identities, protocols, attack tools or causes not present in this evidence."
+  }
+ ]
+}

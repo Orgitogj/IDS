@@ -1,0 +1,158 @@
+{
+ "schema_version": 1,
+ "protocol_version": "phase17d-explainability-v1",
+ "generated_at": "2026-09-13T16:14:29.092871Z",
+ "seed": 42,
+ "top_k": 5,
+ "threshold": 0.5,
+ "model_id": "model-b-xgb-weighted-v1",
+ "model_sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+ "feature_schema": "deployment-cicflowmeter-76-v1",
+ "prompt_template_version": "v3",
+ "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+ "sampling_rule": "deterministic, seed 42: 6 benign false-positive alerts sampled from all benign flows Model B flagged ATTACK across eval-v1-benign-001,eval-v1-benign-002,eval-v1-benign-003; 6 true-positive PortScan alerts sampled from the first 2000 selector-matched evaluable flows of eval-v1-portscan-001. Ground truth from manifest selectors; NOT included in the evidence packages given to the LLM.",
+ "n_benign_false_positive_alerts": 6,
+ "n_true_positive_attack_alerts": 6,
+ "n_total": 12,
+ "benign_false_positive_pool_size": 85,
+ "shap_latency_ms": {
+  "n": 12,
+  "median": 7.833900002879091,
+  "min": 6.70199999876786,
+  "max": 12.530299998616101
+ },
+ "items": [
+  {
+   "alert_id": "eval-v1-benign-001#29",
+   "source_run": "eval-v1-benign-001",
+   "flow_index": 29,
+   "scenario": "benign",
+   "model_b_decision": "ATTACK",
+   "model_b_attack_probability": 0.9558613896369934,
+   "ground_truth_binary": "BENIGN",
+   "stratum": "benign_false_positive_alert",
+   "inclusion_reason": "benign flow that frozen Model B flagged as ATTACK (operational false-positive alert)"
+  },
+  {
+   "alert_id": "eval-v1-benign-001#221",
+   "source_run": "eval-v1-benign-001",
+   "flow_index": 221,
+   "scenario": "benign",
+   "model_b_decision": "ATTACK",
+   "model_b_attack_probability": 0.5499717593193054,
+   "ground_truth_binary": "BENIGN",
+   "stratum": "benign_false_positive_alert",
+   "inclusion_reason": "benign flow that frozen Model B flagged as ATTACK (operational false-positive alert)"
+  },
+  {
+   "alert_id": "eval-v1-benign-002#21",
+   "source_run": "eval-v1-benign-002",
+   "flow_index": 21,
+   "scenario": "benign",
+   "model_b_decision": "ATTACK",
+   "model_b_attack_probability": 0.9294185042381287,
+   "ground_truth_binary": "BENIGN",
+   "stratum": "benign_false_positive_alert",
+   "inclusion_reason": "benign flow that frozen Model B flagged as ATTACK (operational false-positive alert)"
+  },
+  {
+   "alert_id": "eval-v1-benign-002#53",
+   "source_run": "eval-v1-benign-002",
+   "flow_index": 53,
+   "scenario": "benign",
+   "model_b_decision": "ATTACK",
+   "model_b_attack_probability": 0.9469106793403625,
+   "ground_truth_binary": "BENIGN",
+   "stratum": "benign_false_positive_alert",
+   "inclusion_reason": "benign flow that frozen Model B flagged as ATTACK (operational false-positive alert)"
+  },
+  {
+   "alert_id": "eval-v1-benign-002#85",
+   "source_run": "eval-v1-benign-002",
+   "flow_index": 85,
+   "scenario": "benign",
+   "model_b_decision": "ATTACK",
+   "model_b_attack_probability": 0.9294185042381287,
+   "ground_truth_binary": "BENIGN",
+   "stratum": "benign_false_positive_alert",
+   "inclusion_reason": "benign flow that frozen Model B flagged as ATTACK (operational false-positive alert)"
+  },
+  {
+   "alert_id": "eval-v1-benign-003#229",
+   "source_run": "eval-v1-benign-003",
+   "flow_index": 229,
+   "scenario": "benign",
+   "model_b_decision": "ATTACK",
+   "model_b_attack_probability": 0.5664721131324768,
+   "ground_truth_binary": "BENIGN",
+   "stratum": "benign_false_positive_alert",
+   "inclusion_reason": "benign flow that frozen Model B flagged as ATTACK (operational false-positive alert)"
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#209",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 209,
+   "scenario": "portscan",
+   "model_b_decision": "ATTACK",
+   "model_b_attack_probability": 0.9999545812606812,
+   "ground_truth_binary": "ATTACK",
+   "stratum": "correctly_detected_attack_alert",
+   "inclusion_reason": "PortScan attack flow correctly flagged as ATTACK by frozen Model B (true-positive alert)"
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#285",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 285,
+   "scenario": "portscan",
+   "model_b_decision": "ATTACK",
+   "model_b_attack_probability": 0.9999545812606812,
+   "ground_truth_binary": "ATTACK",
+   "stratum": "correctly_detected_attack_alert",
+   "inclusion_reason": "PortScan attack flow correctly flagged as ATTACK by frozen Model B (true-positive alert)"
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1385",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1385,
+   "scenario": "portscan",
+   "model_b_decision": "ATTACK",
+   "model_b_attack_probability": 0.9999545812606812,
+   "ground_truth_binary": "ATTACK",
+   "stratum": "correctly_detected_attack_alert",
+   "inclusion_reason": "PortScan attack flow correctly flagged as ATTACK by frozen Model B (true-positive alert)"
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1508",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1508,
+   "scenario": "portscan",
+   "model_b_decision": "ATTACK",
+   "model_b_attack_probability": 0.9999545812606812,
+   "ground_truth_binary": "ATTACK",
+   "stratum": "correctly_detected_attack_alert",
+   "inclusion_reason": "PortScan attack flow correctly flagged as ATTACK by frozen Model B (true-positive alert)"
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1516",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1516,
+   "scenario": "portscan",
+   "model_b_decision": "ATTACK",
+   "model_b_attack_probability": 0.9999545812606812,
+   "ground_truth_binary": "ATTACK",
+   "stratum": "correctly_detected_attack_alert",
+   "inclusion_reason": "PortScan attack flow correctly flagged as ATTACK by frozen Model B (true-positive alert)"
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1827",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1827,
+   "scenario": "portscan",
+   "model_b_decision": "ATTACK",
+   "model_b_attack_probability": 0.9999545812606812,
+   "ground_truth_binary": "ATTACK",
+   "stratum": "correctly_detected_attack_alert",
+   "inclusion_reason": "PortScan attack flow correctly flagged as ATTACK by frozen Model B (true-positive alert)"
+  }
+ ]
+}
