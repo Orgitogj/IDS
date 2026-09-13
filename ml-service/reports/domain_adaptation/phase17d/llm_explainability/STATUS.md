@@ -42,3 +42,38 @@
   results unchanged.
 - No ground truth in the LLM evidence.
 - No API secrets in git or reports.
+
+---
+
+## Real batch attempt 1 (INCOMPLETE — provider quota block)
+
+`H4 status: still NOT FULLY TESTED. The pre-registered 24-call batch did not complete.`
+
+- Provider **gemini**, requested `gemini-flash-latest`, **resolved `gemini-3.8-flash`**
+  (captured per response). Generation params: provider defaults (no temperature /
+  max_output_tokens set) — a non-determinism limitation.
+- Outcome: **9 of 24** calls succeeded; **15 failed**; 65 retry attempts. All failures were
+  genuine transient provider errors — **429 RESOURCE_EXHAUSTED** ("exceeded your current
+  quota, check your plan and billing details") and some **503 UNAVAILABLE** on the
+  experimental `gemini-3.8-flash`. Pacing (8 s between calls) + longer 429 backoff (25 s) +
+  3 retries did **not** clear it, so this is a **hard quota/billing cap**, not a per-minute
+  rate limit.
+- Succeeded split (skewed): benign-FP with_shap 4, benign-FP no_shap 3, PortScan-TP
+  with_shap 1, PortScan-TP no_shap 1.
+- **No responses fabricated. No provider switch. No prompt/model/param change. No
+  cherry-picking.** The frozen sample, prompt hash, Model B hash and threshold are
+  unchanged. Provisional technical metrics over the 9 responses are recorded but must **not**
+  be read as the H4 result — the batch is incomplete and skewed.
+- Human-evaluation package preparation is **deferred** until the batch completes (blinding a
+  skewed 9/24 set would not be meaningful).
+
+### Exact remaining action (blocked on the maintainer)
+
+1. Resolve the Gemini quota/billing on the configured API key (enable billing / raise quota
+   for the flash model), **or** supply a working Gemini key, **or** authorize a Claude key
+   for the fallback path. This is an account/billing change I cannot and must not make.
+2. Then re-run (resume — preserves the 9 OK responses, re-attempts only the 15 missing):
+   `IDS_LLM_INTEGRATION=1 python training/phase17d_explain_run.py --provider gemini --conditions both --go`
+3. I then finalize technical metrics + latency over the full 24, prepare the blinded
+   human-eval package from the real texts, and report — H4 stays not-fully-tested until real
+   human ratings are also collected.

@@ -1,0 +1,997 @@
+{
+ "generated_at": "2026-09-13T17:17:46.015036Z",
+ "records": [
+  {
+   "alert_id": "eval-v1-benign-001#29",
+   "source_run": "eval-v1-benign-001",
+   "flow_index": 29,
+   "condition": "with_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "0196b0ae5f279c435784d26a7ba8fc37a5b5c1cf314fb58e2f40c1e719294545",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "00f6e88f9ee866fdf5349f0db7439d947e842d2deba6ecf8b431d37a63c9be67",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:37:37.409972Z",
+   "end_utc": "2026-09-13T16:40:09.893201Z",
+   "shap_latency_ms": 5.745399997977074,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-benign-001#29",
+   "source_run": "eval-v1-benign-001",
+   "flow_index": 29,
+   "condition": "no_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "0196b0ae5f279c435784d26a7ba8fc37a5b5c1cf314fb58e2f40c1e719294545",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "f31d5ae987eca1205833050103011de8d2ba9fd70477e222a88ebaefff01fe84",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": "gemini-3.8-flash",
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:31:12.546278Z",
+   "end_utc": "2026-09-13T16:31:18.381394Z",
+   "shap_latency_ms": null,
+   "llm_latency_ms": 5835.329899997305,
+   "total_explanation_latency_ms": 5835.329899997305,
+   "response_sha256": "39da0c505bf23d21389443777d84160ccc297cd008ab341f87d23eaa2a756356",
+   "explanation_text": "Modeli ML e ka klasifikuar k\u00ebt\u00eb flow trafiku si ATTACK me nj\u00eb nivel besueshm\u00ebrie prej 95.6%, \u00e7ka tregon nj\u00eb siguri t\u00eb lart\u00eb statistikore t\u00eb vet\u00eb modelit n\u00eb zgjedhjen e k\u00ebsaj klase. Megjithat\u00eb, duke qen\u00eb se sistemi nuk ka kthyer matje t\u00eb features apo vlera SHAP p\u00ebr k\u00ebt\u00eb rast, nuk disponojm\u00eb tregues statistikor\u00eb specifik\u00eb p\u00ebr t\u00eb shpjeguar se cilat metrika t\u00eb rrjedh\u00ebs ndikuan drejtp\u00ebrdrejt n\u00eb k\u00ebt\u00eb vendim. \u00cbsht\u00eb e r\u00ebnd\u00ebsishme t\u00eb theksohet se ky klasifikim mbetet nj\u00eb vler\u00ebsim statistikor i automatizuar dhe nuk n\u00ebnkupton nj\u00eb sulm t\u00eb konfirmuar apo t\u00eb provuar n\u00eb rrjet. P\u00ebr k\u00ebt\u00eb arsye, rekomandohet q\u00eb nj\u00eb analist t\u00eb inspektoj\u00eb log-et dhe trafikun p\u00ebrkat\u00ebs p\u00ebr t\u00eb v\u00ebrtetuar natyr\u00ebn reale t\u00eb k\u00ebtij aktiviteti.",
+   "parse_status": "ok",
+   "retries": []
+  },
+  {
+   "alert_id": "eval-v1-benign-001#221",
+   "source_run": "eval-v1-benign-001",
+   "flow_index": 221,
+   "condition": "with_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "e2586cb804393959a3f99c8273a7629bd9bc0401f6743f7032b9b26ba57ef7b6",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "ba6cd056bebed51d9a5f40b030f6924c29318fd27e0a3e0ba483a51a13634463",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:40:17.918247Z",
+   "end_utc": "2026-09-13T16:42:50.394185Z",
+   "shap_latency_ms": 4.655799999454757,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-benign-001#221",
+   "source_run": "eval-v1-benign-001",
+   "flow_index": 221,
+   "condition": "no_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "e2586cb804393959a3f99c8273a7629bd9bc0401f6743f7032b9b26ba57ef7b6",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "6d114c60c10d2e99599d4108d0cacb351a35e769e2a48164492b3eabae49bcab",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:42:58.395093Z",
+   "end_utc": "2026-09-13T16:45:30.757272Z",
+   "shap_latency_ms": null,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-benign-002#21",
+   "source_run": "eval-v1-benign-002",
+   "flow_index": 21,
+   "condition": "with_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "b1daeb12f58add5692a43f8cdcfdd6687759c9b7aec0fe9cde9dd06295c2e244",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "e61be6adf352c4f978e6ce626aa3bfdec230a10dfcdbc5f1cfb33d7358324c41",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": "gemini-3.8-flash",
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:31:43.450891Z",
+   "end_utc": "2026-09-13T16:31:52.976533Z",
+   "shap_latency_ms": 8.295800002088072,
+   "llm_latency_ms": 7177.909899997758,
+   "total_explanation_latency_ms": 7186.205699999846,
+   "response_sha256": "e5cef7af65c7c8259824dbb87b089ed20856926e739297f6a52ce1abf6d0ffb3",
+   "explanation_text": "Sistemi IDS e klasifikoi k\u00ebt\u00eb flow trafiku si ATTACK me nj\u00eb besueshm\u00ebri prej 92.9%, bazuar vet\u00ebm n\u00eb matjet statistikore t\u00eb rrjedh\u00ebs dhe jo n\u00eb inspektimin e p\u00ebrmbajtjes s\u00eb paketave. Faktori kryesor q\u00eb e shtyu modelin drejt k\u00ebtij klasifikimi ishte devijimi i theksuar standard i gjat\u00ebsis\u00eb s\u00eb paketave n\u00eb drejtimin forward (`fwd_pkt_len_std` = 550.75), i ndjekur n\u00eb mas\u00eb m\u00eb t\u00eb vog\u00ebl nga variacioni i p\u00ebrgjithsh\u00ebm i madh\u00ebsis\u00eb s\u00eb paketave (`pkt_len_std` dhe `bwd_pkt_len_std`). Nga ana tjet\u00ebr, gjat\u00ebsia totale e paketave forward (`totlen_fwd_pkts` = 2249.00) dhe koha minimale e nd\u00ebrmjetme backward (`bwd_iat_min` = 0.00) sh\u00ebrbyen si tregues q\u00eb peshuan kund\u00ebr k\u00ebtij vendimi, por pa arritur ta p\u00ebrmbysin at\u00eb. Ky rezultat p\u00ebrfaq\u00ebson nj\u00eb parashikim statistikor t\u00eb modelit dhe jo nj\u00eb sulm t\u00eb provuar apo t\u00eb konfirmuar, prandaj rekomandohet verifikimi i m\u00ebtejsh\u00ebm i k\u00ebtij flow-i nga nj\u00eb analist sigurie.",
+   "parse_status": "ok",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-benign-002#21",
+   "source_run": "eval-v1-benign-002",
+   "flow_index": 21,
+   "condition": "no_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "b1daeb12f58add5692a43f8cdcfdd6687759c9b7aec0fe9cde9dd06295c2e244",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "f73d36801919152e594927e7c6f3587a7117436f156b796e0889984798de87e7",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": "gemini-3.8-flash",
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:31:52.979298Z",
+   "end_utc": "2026-09-13T16:32:08.402692Z",
+   "shap_latency_ms": null,
+   "llm_latency_ms": 6742.962500000431,
+   "total_explanation_latency_ms": 6742.962500000431,
+   "response_sha256": "b19e94b652ede0ea5b598342c5ccaa693ec1fe2b6841e30198c1c7fa22e9ae18",
+   "explanation_text": "Sipas sistemit IDS, modeli ML e ka klasifikuar k\u00ebt\u00eb flow trafiku si \"ATTACK\", me nj\u00eb besueshm\u00ebri statistikore t\u00eb brendshme prej 92.9%. \n\nMeqen\u00ebse sistemi nuk ka ofruar t\u00eb dh\u00ebna mbi kontributin e features (vlera SHAP), nuk mund t\u00eb ve\u00e7ohen matjet konkrete t\u00eb rrjedh\u00ebs q\u00eb e shtyn\u00eb modelin drejt k\u00ebtij parashikimi. \n\nKy rezultat p\u00ebrfaq\u00ebson vet\u00ebm nj\u00eb klasifikim statistikor t\u00eb modelit dhe jo nj\u00eb incident t\u00eb provuar apo t\u00eb konfirmuar sigurie. P\u00ebr t\u00eb p\u00ebrcaktuar natyr\u00ebn reale t\u00eb k\u00ebtij trafiku, rekomandohet q\u00eb nj\u00eb analist t\u00eb inspektoj\u00eb log-et dhe t\u00eb dh\u00ebnat p\u00ebrkat\u00ebse t\u00eb rrjetit.",
+   "parse_status": "ok",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-benign-002#53",
+   "source_run": "eval-v1-benign-002",
+   "flow_index": 53,
+   "condition": "with_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "56f1f6aacc06b386e6ed0ea919c266fcc522c4a1824341824a341c5b71a361f6",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "7d886aa2da8b43901ab8e00736c0bd35d1abf881b0fd440d61f9f471754cb078",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": "gemini-3.8-flash",
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:32:08.450132Z",
+   "end_utc": "2026-09-13T16:32:14.193659Z",
+   "shap_latency_ms": 9.330299999419367,
+   "llm_latency_ms": 5743.148900000961,
+   "total_explanation_latency_ms": 5752.47920000038,
+   "response_sha256": "03ff9f5a31390f3a2de32627784a304fab5d46b048c03139546f6b614e213f1b",
+   "explanation_text": "Sipas sistemit IDS, modeli statistikor e ka klasifikuar k\u00ebt\u00eb flow trafiku si ATTACK me nj\u00eb besueshm\u00ebri prej 94.7%, megjithat\u00eb ky vler\u00ebsim p\u00ebrfaq\u00ebson nj\u00eb parashikim t\u00eb modelit dhe jo nj\u00eb incident t\u00eb konfirmuar. Faktori kryesor q\u00eb e ka shtyr\u00eb modelin drejt k\u00ebtij klasifikimi \u00ebsht\u00eb luhatja e madhe n\u00eb madh\u00ebsin\u00eb e paketave n\u00eb drejtimin forward (`fwd_pkt_len_std` = 550.75), e cila ka pasur kontributin m\u00eb t\u00eb lart\u00eb pozitiv n\u00eb vendim. Nga ana tjet\u00ebr, sasia totale e bajteve n\u00eb paketat forward (`totlen_fwd_pkts` = 2249.00) ka ndikuar n\u00eb m\u00ebnyr\u00eb t\u00eb konsiderueshme kund\u00ebr k\u00ebtij klasifikimi, duke e t\u00ebrhequr at\u00eb drejt trafikut normal. Duke qen\u00eb se ky rezultat bazohet vet\u00ebm n\u00eb matje statistikore t\u00eb rrjedh\u00ebs dhe jo n\u00eb inspektimin e p\u00ebrmbajtjes s\u00eb paketave, rekomandohet q\u00eb nj\u00eb analist t\u00eb verifikoj\u00eb k\u00ebt\u00eb flow p\u00ebr t\u00eb p\u00ebrcaktuar n\u00ebse b\u00ebhet fjal\u00eb p\u00ebr nj\u00eb aktivitet me t\u00eb v\u00ebrtet\u00eb keqdash\u00ebs apo trafik legjitim.",
+   "parse_status": "ok",
+   "retries": []
+  },
+  {
+   "alert_id": "eval-v1-benign-002#53",
+   "source_run": "eval-v1-benign-002",
+   "flow_index": 53,
+   "condition": "no_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "56f1f6aacc06b386e6ed0ea919c266fcc522c4a1824341824a341c5b71a361f6",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "7fb94b3d7a718eef7ff74383ae14f9e689355100c08552d6ce2729027572b71a",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": "gemini-3.8-flash",
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:32:14.197894Z",
+   "end_utc": "2026-09-13T16:32:19.843103Z",
+   "shap_latency_ms": null,
+   "llm_latency_ms": 5644.851500001096,
+   "total_explanation_latency_ms": 5644.851500001096,
+   "response_sha256": "d10b73658aa9bb57c6d09a628a90577e44befc59c6d5ffa994dd72df465ddf7b",
+   "explanation_text": "Modeli ML e ka klasifikuar k\u00ebt\u00eb flow trafiku si ATTACK me nj\u00eb nivel besueshm\u00ebrie prej 94.7%, \u00e7ka tregon nj\u00eb siguri t\u00eb lart\u00eb t\u00eb vet\u00eb modelit n\u00eb zgjedhjen e k\u00ebsaj klase. Meqen\u00ebse sistemi nuk ka gjeneruar vlerat e features apo kontributet SHAP p\u00ebr k\u00ebt\u00eb rast, nuk disponojm\u00eb matje statistikore specifike p\u00ebr t\u00eb shpjeguar se cilat karakteristika t\u00eb rrjedh\u00ebs ndikuan n\u00eb marrjen e k\u00ebtij vendimi. Duhet theksuar se ky vler\u00ebsim mbetet vet\u00ebm nj\u00eb parashikim statistikor i modelit dhe nuk p\u00ebrb\u00ebn nj\u00eb sulm t\u00eb v\u00ebrtetuar apo t\u00eb konfirmuar n\u00eb rrjet. P\u00ebr k\u00ebt\u00eb arsye, rekomandohet q\u00eb nj\u00eb analist t\u00eb verifikoj\u00eb log-et p\u00ebrkat\u00ebse dhe trafikun real p\u00ebr t\u00eb p\u00ebrcaktuar sakt\u00eb natyr\u00ebn e k\u00ebtij flow-i.",
+   "parse_status": "ok",
+   "retries": []
+  },
+  {
+   "alert_id": "eval-v1-benign-002#85",
+   "source_run": "eval-v1-benign-002",
+   "flow_index": 85,
+   "condition": "with_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "4cb0e5375b3dea860d6f3d52165f5daf47c6333f6f0824c160b6fe982b0b0a75",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "a1ce07e9c520ce9be37c084f9ab543bb746d995e440fb6957adcfa41266d0bcc",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": "gemini-3.8-flash",
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:32:19.870803Z",
+   "end_utc": "2026-09-13T16:32:32.602135Z",
+   "shap_latency_ms": 7.258000001456821,
+   "llm_latency_ms": 6299.62809999779,
+   "total_explanation_latency_ms": 6306.886099999247,
+   "response_sha256": "cde4ad06f21a26a1980241adce56d4fa30fb6caca69e747b5513dd71ebd6f485",
+   "explanation_text": "Modeli ML e ka klasifikuar k\u00ebt\u00eb flow trafiku si ATTACK me nj\u00eb besueshm\u00ebri prej 92.9%, megjithat\u00eb kjo p\u00ebrfaq\u00ebson vet\u00ebm nj\u00eb vler\u00ebsim statistikor t\u00eb sistemit dhe jo nj\u00eb fakt t\u00eb provuar. Vendimi i modelit u ndikua kryesisht nga devijimi standard i gjat\u00ebsis\u00eb s\u00eb paketave n\u00eb drejtimin forward (`fwd_pkt_len_std` prej 582.32), i cili pati pesh\u00ebn m\u00eb t\u00eb madhe pozitive drejt k\u00ebtij p\u00ebrfundimi, i ndjekur n\u00eb mas\u00eb m\u00eb t\u00eb vog\u00ebl nga variacioni i p\u00ebrgjithsh\u00ebm i madh\u00ebsis\u00eb s\u00eb paketave. N\u00eb krahun e kund\u00ebrt, vlera totale e gjat\u00ebsis\u00eb s\u00eb paketave forward (`totlen_fwd_pkts` prej 2183.00) dhe koha minimale midis paketave backward (`bwd_iat_min` prej 0.00) vepruan si tregues q\u00eb e shtynin modelin kund\u00ebr k\u00ebtij klasifikimi. Duke qen\u00eb se ky vler\u00ebsim bazohet thjesht n\u00eb matje statistikore dhe nuk disponohen t\u00eb dh\u00ebna mbi p\u00ebrmbajtjen apo burimin e trafikut, rekomandohet q\u00eb nj\u00eb analist t\u00eb verifikoj\u00eb rrjedh\u00ebn p\u00ebrkat\u00ebse p\u00ebr t\u00eb p\u00ebrcaktuar natyr\u00ebn reale t\u00eb saj.",
+   "parse_status": "ok",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-benign-002#85",
+   "source_run": "eval-v1-benign-002",
+   "flow_index": 85,
+   "condition": "no_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "4cb0e5375b3dea860d6f3d52165f5daf47c6333f6f0824c160b6fe982b0b0a75",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "f73d36801919152e594927e7c6f3587a7117436f156b796e0889984798de87e7",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:45:38.892180Z",
+   "end_utc": "2026-09-13T16:48:11.751532Z",
+   "shap_latency_ms": null,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-benign-003#229",
+   "source_run": "eval-v1-benign-003",
+   "flow_index": 229,
+   "condition": "with_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "d64d9aaaefe6e2689595c35c9c426def7017a3acab03fc611837c06868658abc",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "85ae40e2c940c9a282909544ec300311d3a8f1d78fbc87263c607702166c6b45",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": "gemini-3.8-flash",
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:32:40.309455Z",
+   "end_utc": "2026-09-13T16:33:01.378467Z",
+   "shap_latency_ms": 7.535500000813045,
+   "llm_latency_ms": 8391.500100002304,
+   "total_explanation_latency_ms": 8399.035600003117,
+   "response_sha256": "61122a63ebe812fab41bccaacaf3532dd0276e9b75a1fb4c5ec387f835338c9a",
+   "explanation_text": "Modeli statistikor e ka klasifikuar k\u00ebt\u00eb flow trafiku si ATTACK me nj\u00eb nivel t\u00eb ul\u00ebt besueshm\u00ebrie prej vet\u00ebm 56.6%, gj\u00eb q\u00eb tregon pasiguri t\u00eb theksuar dhe nuk p\u00ebrb\u00ebn n\u00eb asnj\u00eb m\u00ebnyr\u00eb nj\u00eb sulm t\u00eb konfirmuar. Faktori kryesor q\u00eb e shtyu modelin drejt k\u00ebtij vendimi ishte variacioni i lart\u00eb n\u00eb madh\u00ebsin\u00eb e paketave t\u00eb d\u00ebrguara (`fwd_pkt_len_std` = 550.75), i mb\u00ebshtetur leht\u00ebsisht edhe nga variacioni n\u00eb paketat e kthimit (`bwd_pkt_len_std` = 289.06). Megjithat\u00eb, matje t\u00eb tilla si gjat\u00ebsia totale e paketave forward (`totlen_fwd_pkts` = 2249.00) dhe koh\u00ebzgjatja shum\u00eb e shkurt\u00ebr e flow-it (`flow_duration` = 0.01) kan\u00eb peshuar fort n\u00eb favor t\u00eb trafikut normal. Duke qen\u00eb se ky \u00ebsht\u00eb vet\u00ebm nj\u00eb parashikim statistikor me rezultat kufitar, rekomandohet domosdoshm\u00ebrisht verifikimi i m\u00ebtejsh\u00ebm nga nj\u00eb analist para se t\u00eb konsiderohet si incident.",
+   "parse_status": "ok",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-benign-003#229",
+   "source_run": "eval-v1-benign-003",
+   "flow_index": 229,
+   "condition": "no_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "d64d9aaaefe6e2689595c35c9c426def7017a3acab03fc611837c06868658abc",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "fe18ec35bcde343fc706f80ae339a6cd95e727ca35ea4648d924d4478a5e1f9a",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:48:19.792492Z",
+   "end_utc": "2026-09-13T16:50:53.833542Z",
+   "shap_latency_ms": null,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#209",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 209,
+   "condition": "with_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "b7dca3275db0473492dd5bd236c408b74a35046355054e338b278913cbbf1695",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "97e1d23a19eb84c9d96d14dd80cba5e208a3512c9348fc7c91e8729e16f106d5",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": "gemini-3.8-flash",
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:33:23.745087Z",
+   "end_utc": "2026-09-13T16:33:29.742009Z",
+   "shap_latency_ms": 7.4711000015668105,
+   "llm_latency_ms": 5996.55630000052,
+   "total_explanation_latency_ms": 6004.027400002087,
+   "response_sha256": "294afe48efd282b443df92128a8be15141ff264b2688d450c1322c7581ace698",
+   "explanation_text": "Sipas vler\u00ebsimit t\u00eb sistemit, modeli ML e klasifikoi k\u00ebt\u00eb flow trafiku si ATTACK me nj\u00eb besueshm\u00ebri statistikore prej 100.0%, por kjo p\u00ebrb\u00ebn vet\u00ebm nj\u00eb parashikim t\u00eb modeluar dhe jo nj\u00eb fakt t\u00eb provuar. Faktori kryesor q\u00eb e shtyu modelin drejt k\u00ebtij vendimi ishte gjat\u00ebsia totale e paketave n\u00eb drejtimin forward (`totlen_fwd_pkts` = 116.00), e mb\u00ebshtetur gjithashtu nga mungesa e variacionit n\u00eb koh\u00ebn midis paketave (`fwd_iat_std` = 0.00) dhe koha minimale e mb\u00ebrritjes n\u00eb kthim (`bwd_iat_min` = 0.00). Disa metrika t\u00eb tjera, si shkalla e paketave n\u00eb kthim (`bwd_pkts_s` = 1219.51), dhan\u00eb nj\u00eb kontribut t\u00eb leht\u00eb kund\u00ebr k\u00ebtij klasifikimi, por pa arritur t\u00eb ndryshojn\u00eb rezultatin e p\u00ebrgjithsh\u00ebm. Meqen\u00ebse k\u00ebto jan\u00eb thjesht matje statistikore t\u00eb rrjedh\u00ebs dhe nuk p\u00ebrfshijn\u00eb inspektimin e p\u00ebrmbajtjes s\u00eb paketave, rekomandohet q\u00eb nj\u00eb analist t\u00eb verifikoj\u00eb manualisht trafikun p\u00ebr t\u00eb p\u00ebrcaktuar n\u00ebse b\u00ebhet fjal\u00eb p\u00ebr nj\u00eb anomali reale apo trafik legjitim.",
+   "parse_status": "ok",
+   "retries": []
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#209",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 209,
+   "condition": "no_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "b7dca3275db0473492dd5bd236c408b74a35046355054e338b278913cbbf1695",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "abee66787a67ae30ff05ada9ae85e56fb2712b7058dd8c77cc38cbf064731b38",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": "gemini-3.8-flash",
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:33:29.744009Z",
+   "end_utc": "2026-09-13T16:33:35.262438Z",
+   "shap_latency_ms": null,
+   "llm_latency_ms": 5518.448800001352,
+   "total_explanation_latency_ms": 5518.448800001352,
+   "response_sha256": "fde0d83d4a5a3649b3fbfd01d18431b2a5e1ecf328ba49caf03129987917889d",
+   "explanation_text": "Sistemi IDS e ka klasifikuar k\u00ebt\u00eb flow trafiku si ATTACK me nj\u00eb nivel besueshm\u00ebrie t\u00eb modelit prej 100.0%, gj\u00eb q\u00eb p\u00ebrb\u00ebn nj\u00eb parashikim statistikor dhe jo nj\u00eb sulm t\u00eb konfirmuar. P\u00ebr k\u00ebt\u00eb rast nuk jan\u00eb gjeneruar t\u00eb dh\u00ebna mbi kontributin e features (vlera SHAP), \u00e7ka do t\u00eb thot\u00eb se nuk disponojm\u00eb matjet specifike statistikore t\u00eb rrjedh\u00ebs q\u00eb ndikuan n\u00eb vendimmarrjen e modelit. Kjo p\u00ebrqindje e lart\u00eb tregon vet\u00ebm sigurin\u00eb e brendshme t\u00eb modelit n\u00eb zgjedhjen e k\u00ebsaj klase, dhe jo rrezikun real apo probabilitetin q\u00eb sulmi ka ndodhur v\u00ebrtet. Rrjedhimisht, rekomandohet nj\u00eb verifikim manual i log-eve dhe i trafikut nga nj\u00eb analist p\u00ebr t\u00eb p\u00ebrcaktuar sakt\u00eb natyr\u00ebn e k\u00ebtij aktiviteti.",
+   "parse_status": "ok",
+   "retries": []
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#285",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 285,
+   "condition": "with_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "0d96e20a5fddd554962c178b6bd97433a7527937a6b89b8e4f84484d0a813b15",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "be4e059c2ae0420ceecc0372a0094c3de0dd6768c333fafc459404b711835791",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:51:01.927751Z",
+   "end_utc": "2026-09-13T16:53:34.641376Z",
+   "shap_latency_ms": 11.887500000739237,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#285",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 285,
+   "condition": "no_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "0d96e20a5fddd554962c178b6bd97433a7527937a6b89b8e4f84484d0a813b15",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "abee66787a67ae30ff05ada9ae85e56fb2712b7058dd8c77cc38cbf064731b38",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:53:42.641818Z",
+   "end_utc": "2026-09-13T16:56:14.864590Z",
+   "shap_latency_ms": null,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1385",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1385,
+   "condition": "with_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "8cd1164b1c3215d2a3e9c342745169a20e2c501b0c91dae1e808500a70abb2e5",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "99d6a75e78bdc037e785c0545553b93b553bf713f0a50a59a0c54d4c812c017a",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:56:22.921110Z",
+   "end_utc": "2026-09-13T16:58:55.941535Z",
+   "shap_latency_ms": 7.12040000144043,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1385",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1385,
+   "condition": "no_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "8cd1164b1c3215d2a3e9c342745169a20e2c501b0c91dae1e808500a70abb2e5",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "abee66787a67ae30ff05ada9ae85e56fb2712b7058dd8c77cc38cbf064731b38",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T16:59:03.943366Z",
+   "end_utc": "2026-09-13T17:01:36.216233Z",
+   "shap_latency_ms": null,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1508",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1508,
+   "condition": "with_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "1d5b6cbb71224aa2b6afa74eab3b03e7133057f0804dbb32e4be1f364081bdd0",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "5d2cb19567f1ef2fa0ac11c5923756a7198e8d51d3db184edee2bc277090af08",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T17:01:44.300508Z",
+   "end_utc": "2026-09-13T17:04:16.867329Z",
+   "shap_latency_ms": 12.773400001606205,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1508",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1508,
+   "condition": "no_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "1d5b6cbb71224aa2b6afa74eab3b03e7133057f0804dbb32e4be1f364081bdd0",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "abee66787a67ae30ff05ada9ae85e56fb2712b7058dd8c77cc38cbf064731b38",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T17:04:24.867924Z",
+   "end_utc": "2026-09-13T17:06:58.456737Z",
+   "shap_latency_ms": null,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1516",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1516,
+   "condition": "with_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "1882107add4005b02864c77aec857eaa78e8db5c9511a40ef34f0ec5183247d9",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "e49eb31f12a90ce6205893cd6f39fffc451a8a4d7f232f7f1be6068936c88cce",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T17:07:06.495302Z",
+   "end_utc": "2026-09-13T17:09:39.667178Z",
+   "shap_latency_ms": 4.802999999810709,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1516",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1516,
+   "condition": "no_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "1882107add4005b02864c77aec857eaa78e8db5c9511a40ef34f0ec5183247d9",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "abee66787a67ae30ff05ada9ae85e56fb2712b7058dd8c77cc38cbf064731b38",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T17:09:47.668145Z",
+   "end_utc": "2026-09-13T17:12:22.351417Z",
+   "shap_latency_ms": null,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1827",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1827,
+   "condition": "with_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "1f851ac3fe456f4ed892741c814a87a4ed15c5ba92d1df761e140ff3b76ca43e",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "0d720a3e1510f3f84a1c08856dac52650309b4ff2eb820e997ff52a43642a406",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T17:12:30.381662Z",
+   "end_utc": "2026-09-13T17:15:04.867161Z",
+   "shap_latency_ms": 4.437100000359351,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  },
+  {
+   "alert_id": "eval-v1-portscan-001#1827",
+   "source_run": "eval-v1-portscan-001",
+   "flow_index": 1827,
+   "condition": "no_shap",
+   "model_decision": "ATTACK",
+   "evidence_sha256": "1f851ac3fe456f4ed892741c814a87a4ed15c5ba92d1df761e140ff3b76ca43e",
+   "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+   "rendered_prompt_sha256": "abee66787a67ae30ff05ada9ae85e56fb2712b7058dd8c77cc38cbf064731b38",
+   "provider": "gemini",
+   "requested_model": "gemini-flash-latest",
+   "resolved_model": null,
+   "generation_params": {
+    "temperature": "provider_default_unset",
+    "max_output_tokens": "provider_default_unset",
+    "note": "no explicit generation config is set for the gemini call in llm_explainer; provider defaults apply"
+   },
+   "start_utc": "2026-09-13T17:15:12.867842Z",
+   "end_utc": "2026-09-13T17:17:46.013989Z",
+   "shap_latency_ms": null,
+   "llm_latency_ms": null,
+   "total_explanation_latency_ms": null,
+   "response_sha256": null,
+   "explanation_text": null,
+   "parse_status": "failed",
+   "retries": [
+    {
+     "attempt": 1,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 2,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 3,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    },
+    {
+     "attempt": 4,
+     "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.",
+     "transient": true
+    }
+   ]
+  }
+ ]
+}
