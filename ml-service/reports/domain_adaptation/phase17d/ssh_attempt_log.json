@@ -1,0 +1,74 @@
+{
+ "schema_version": 1,
+ "amendment": "phase17d-amendment-002",
+ "diagnostic": {
+  "reachability": "SSH/22 reachable; OpenSSH client negotiates and identifies OpenSSH_4.7p1 Debian-8ubuntu1",
+  "hydra_error": "kex error : no match for method mac algo client->server",
+  "interpretation": "modern hydra/libssh cannot negotiate a MAC with the legacy Metasploitable2 OpenSSH 4.7; hydra aborts after one connection, yielding one selector-matched flow per run."
+ },
+ "attempt_001_invalid": {
+  "eval-v1-ssh-001": {
+   "capture_attempt": 1,
+   "traffic_procedure": "phase17d_capture.sh (frozen hydra ssh branch)",
+   "capture_started_utc": "2026-09-13T00:22:09Z",
+   "capture_stopped_utc": "2026-09-13T00:22:16Z",
+   "counts": {
+    "total_flows": 1,
+    "valid_flows": 1,
+    "evaluable_flows": 1,
+    "attack_flows": 1,
+    "benign_flows": 0,
+    "unlabelled_flows": 0
+   },
+   "support_metric": 1,
+   "support_floor": 30,
+   "acceptance_status": "INVALID_LOW_SUPPORT",
+   "flow_csv_sha256": "dffed126618ce237231f9aa67f2e1bd9936a65ace413526cc7d99a889ab17800",
+   "pcap_sha256": "57a9d4f480abe80ef76fe1d41071fc3c065a3bd24b33cb83aa40b611bb4296d8"
+  },
+  "eval-v1-ssh-002": {
+   "capture_attempt": 1,
+   "traffic_procedure": "phase17d_capture.sh (frozen hydra ssh branch)",
+   "capture_started_utc": "2026-09-13T00:26:55Z",
+   "capture_stopped_utc": "2026-09-13T00:27:02Z",
+   "counts": {
+    "total_flows": 1,
+    "valid_flows": 1,
+    "evaluable_flows": 1,
+    "attack_flows": 1,
+    "benign_flows": 0,
+    "unlabelled_flows": 0
+   },
+   "support_metric": 1,
+   "support_floor": 30,
+   "acceptance_status": "INVALID_LOW_SUPPORT",
+   "flow_csv_sha256": "5be16961c9deb40b636d66f6142cbfdb19647f9d6b294a127ec1a7fa0082016b",
+   "pcap_sha256": "184cfcf7ab4dffcd841f2a07d53ba3e70d3307236a898cb578548d358a6e232e"
+  },
+  "eval-v1-ssh-003": {
+   "capture_attempt": 1,
+   "traffic_procedure": "phase17d_capture.sh (frozen hydra ssh branch)",
+   "capture_started_utc": "2026-09-13T00:27:39Z",
+   "capture_stopped_utc": "2026-09-13T00:27:45Z",
+   "counts": {
+    "total_flows": 1,
+    "valid_flows": 1,
+    "evaluable_flows": 1,
+    "attack_flows": 1,
+    "benign_flows": 0,
+    "unlabelled_flows": 0
+   },
+   "support_metric": 1,
+   "support_floor": 30,
+   "acceptance_status": "INVALID_LOW_SUPPORT",
+   "flow_csv_sha256": "8449b5927b76b1b0c0cce28b1912a5f6ecc9702babec09541edfcc0caf7ac0e3",
+   "pcap_sha256": "6ff8c9377d60fe6ee5c4a8c37d4f15b367e8e0b5c767c81d7179c251a7cb93eb"
+  }
+ },
+ "attempt_002_procedure": {
+  "script": "training/phase17d_ssh_capture_v2.sh",
+  "script_sha256": "66d3987542f9a67763ac6c58af6f453afb9b898e5b7fa224191c823bc245a51a",
+  "attempts_per_run": 60,
+  "canonical": true
+ }
+}

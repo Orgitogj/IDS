@@ -1,0 +1,72 @@
+{
+ "schema_version": 1,
+ "amendment_id": "phase17d-amendment-002",
+ "amends": "phase17d-final-eval-v1",
+ "phase17d_protocol_head": "eb4e8979bdd192b3aec466f544fea45d6cf3c582",
+ "phase17d_protocol_head_still_valid": true,
+ "scope": "SSH traffic-generation step only",
+ "reason": "The frozen SSH procedure (hydra) is structurally incapable of producing the required support against the current Metasploitable2 OpenSSH 4.7: hydra/libssh fails MAC negotiation and aborts after one connection.",
+ "diagnostic_evidence": {
+  "hydra_error": "kex error : no match for method mac algo client->server",
+  "openssh_banner_seen": "OpenSSH_4.7p1 Debian-8ubuntu1",
+  "reachability_ok": true,
+  "recorded_in": "reports/domain_adaptation/phase17d/ssh_attempt_log.json"
+ },
+ "why_identical_rerun_inadequate": "The identical frozen hydra invocation is expected to reproduce the same MAC-negotiation failure and the same single-flow outcome, so re-running it is not scientifically justified.",
+ "discovered_before_scoring": true,
+ "no_predictions_inspected": true,
+ "no_dataset_sealed": true,
+ "replacement_procedure": {
+  "script": "training/phase17d_ssh_capture_v2.sh",
+  "script_sha256": "66d3987542f9a67763ac6c58af6f453afb9b898e5b7fa224191c823bc245a51a",
+  "description": "deterministic fixed-count sequence of independent SSH connection attempts to 192.168.50.20:22 from 192.168.50.10; each attempt is a separate TCP/SSH connection (distinct ephemeral source port) and therefore a distinct selector-matched flow, regardless of whether authentication or negotiation succeeds; legacy KEX/host-key/cipher/MAC algorithms are offered so the handshake reaches the SSH authentication layer of the legacy service.",
+  "attempts_per_run": 60,
+  "attempt_count_is_fixed_and_predeclared": true,
+  "margin_over_floor": "60 attempts vs the unchanged >=30 floor",
+  "depends_on_predictions": false,
+  "depends_on_auth_success": false
+ },
+ "unchanged_and_reaffirmed": {
+  "ssh_ground_truth_selector": {
+   "source_ip": "192.168.50.10",
+   "destination_ip": "192.168.50.20",
+   "destination_ports": [
+    22
+   ]
+  },
+  "support_floor_ssh": 30,
+  "source_destination": "192.168.50.10 -> 192.168.50.20",
+  "model_a_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+  "model_b_sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+  "model_b_threshold": 0.5,
+  "feature_schema": "deployment-cicflowmeter-76-v1",
+  "extractor": {
+   "name": "cicflowmeter",
+   "version": "0.5.0"
+  },
+  "final_test_run_ids": [
+   "eval-v1-benign-001",
+   "eval-v1-benign-002",
+   "eval-v1-benign-003",
+   "eval-v1-portscan-001",
+   "eval-v1-portscan-002",
+   "eval-v1-portscan-003",
+   "eval-v1-ssh-001",
+   "eval-v1-ssh-002",
+   "eval-v1-ssh-003"
+  ],
+  "benign_and_portscan_runs": "already ACCEPTED; not touched or re-acquired",
+  "acceptance_criteria": "unchanged",
+  "scoring_rules": "unchanged",
+  "frozen_capture_script": "training/phase17d_capture.sh",
+  "frozen_capture_script_sha256": "6c5c55e1ac74c59924b7ea3ab2f1d7db845e1b3fd420e49afaf139c93fbb3e05",
+  "frozen_capture_script_edited": false
+ },
+ "run_versioning_rule": {
+  "final_run_ids_unchanged": true,
+  "rule": "Each SSH final run ID has versioned capture attempts. Attempt 001 (frozen hydra procedure) is INVALID_LOW_SUPPORT and is preserved, never overwritten, at runs/<id>/provenance.attempt-001.invalid.json. Attempt 002 (this amended procedure) produces the canonical files and runs/<id>/provenance.json used for sealing. Provenance records capture_attempt and traffic_procedure.",
+  "attempt_001_status": "INVALID_LOW_SUPPORT (preserved)",
+  "attempt_002_status": "canonical final instance (to be acquired)"
+ },
+ "stop_after_commit": "STOP after this amendment is committed and pushed; no SSH recapture yet, no seal, no scoring."
+}

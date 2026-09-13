@@ -59,7 +59,8 @@ def flow_is_valid(status):
 
 
 def process(run_id, capture_csv, pcap_path=None, capture_started=None,
-            capture_stopped=None):
+            capture_stopped=None, capture_attempt=1,
+            traffic_procedure="phase17d_capture.sh"):
     scenario = SCENARIO_OF[run_id]
     _, _, feature_columns, _ = lab_runner.load_frozen_model(_ML_SERVICE_ROOT / "models")
     mani = adaptation_manifest(scenario, run_id)
@@ -99,6 +100,8 @@ def process(run_id, capture_csv, pcap_path=None, capture_started=None,
         "scenario_id": mani.scenario_id,
         "scenario": scenario,
         "role": "final_test",
+        "capture_attempt": capture_attempt,
+        "traffic_procedure": traffic_procedure,
         "ground_truth_binary_primary": mani.expected_binary_label,
         "expected_family": mani.expected_family,
         "expected_label": mani.expected_label,
@@ -273,13 +276,17 @@ def main() -> int:
     pr.add_argument("--pcap", default=None)
     pr.add_argument("--capture-started", default=None)
     pr.add_argument("--capture-stopped", default=None)
+    pr.add_argument("--attempt", type=int, default=1)
+    pr.add_argument("--procedure", default="phase17d_capture.sh")
     sub.add_parser("seal")
     args = p.parse_args()
 
     if args.cmd == "process":
         prov = process(args.run_id, args.capture_csv, pcap_path=args.pcap,
                        capture_started=args.capture_started,
-                       capture_stopped=args.capture_stopped)
+                       capture_stopped=args.capture_stopped,
+                       capture_attempt=args.attempt,
+                       traffic_procedure=args.procedure)
         c = prov["counts"]
         print(f"{args.run_id}: {prov['acceptance_status']} total={c['total_flows']} "
               f"valid={c['valid_flows']} attack={c['attack_flows']} "

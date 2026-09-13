@@ -104,9 +104,12 @@ class TestSplitFrozen:
 
 class TestNoFinalEvaluation:
 
-    def test_no_eval_v1_runs_exist(self):
-        hits = [p for p in ML.rglob("*eval-v1-*") if ".git" not in p.parts]
-        assert hits == []
+    def test_no_eval_v1_run_in_model_b_partitions(self):
+        m = _metadata()
+        runs = list(m["train_runs"]) + list(m["validation_runs"]) + \
+            list(m["final_test_runs"])
+        runs += [e["run_id"] for e in m["train_partition"] + m["validation_partition"]]
+        assert not any(str(r).startswith("eval-v1-") for r in runs)
 
     def test_no_final_test_partition_recorded(self):
         m = _metadata()

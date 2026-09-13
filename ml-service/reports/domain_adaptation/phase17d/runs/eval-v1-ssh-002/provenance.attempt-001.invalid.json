@@ -1,0 +1,43 @@
+{
+ "run_id": "eval-v1-ssh-002",
+ "experiment_id": "lab-generalization-v1",
+ "scenario_id": "ssh-bruteforce",
+ "scenario": "ssh",
+ "role": "final_test",
+ "ground_truth_binary_primary": "ATTACK",
+ "expected_family": "Brute Force",
+ "expected_label": null,
+ "ground_truth_mode": "per_flow_selector",
+ "attack_selector": {
+  "source_ip": "192.168.50.10",
+  "destination_ip": "192.168.50.20",
+  "destination_ports": [
+   22
+  ]
+ },
+ "extractor": {
+  "name": "cicflowmeter",
+  "version": "0.5.0"
+ },
+ "capture_started_utc": "2026-09-13T00:26:55Z",
+ "capture_stopped_utc": "2026-09-13T00:27:02Z",
+ "packet_capture_available": true,
+ "pcap_path": "ml-service\\reports\\domain_adaptation\\phase17d\\captures\\eval-v1-ssh-002.pcap",
+ "pcap_sha256": "184cfcf7ab4dffcd841f2a07d53ba3e70d3307236a898cb578548d358a6e232e",
+ "flow_csv_path": "ml-service\\reports\\domain_adaptation\\phase17d\\captures\\eval-v1-ssh-002.csv",
+ "flow_csv_sha256": "5be16961c9deb40b636d66f6142cbfdb19647f9d6b294a127ec1a7fa0082016b",
+ "counts": {
+  "total_flows": 1,
+  "valid_flows": 1,
+  "evaluable_flows": 1,
+  "attack_flows": 1,
+  "benign_flows": 0,
+  "unlabelled_flows": 0
+ },
+ "support_floor": 30,
+ "support_metric": 1,
+ "acceptance_status": "INVALID_LOW_SUPPORT",
+ "acceptance_basis": "capture integrity + predefined ground truth + minimum support; independent of any model prediction",
+ "written_at": "2026-09-13T11:05:59.005076Z",
+ "preserved_note": "attempt-001 acquisition with the frozen hydra procedure; INVALID_LOW_SUPPORT; preserved and never overwritten"
+}
