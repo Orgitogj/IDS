@@ -1,0 +1,152 @@
+{
+ "schema_version": 1,
+ "protocol_version": "phase17d-explainability-v1",
+ "status": "FROZEN_BEFORE_LLM_EVALUATION",
+ "pk": "PK4",
+ "hypothesis": "H4",
+ "objective": "Evaluate whether natural-language explanations generated from a frozen IDS decision and its SHAP evidence are grounded in the model evidence, factually consistent with the supplied prediction/features, understandable, useful, and generated with acceptable latency. This is an explainability evaluation, not another predictive experiment.",
+ "no_new_ml": true,
+ "models_frozen": {
+  "model_a_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+  "model_b_sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+  "no_retraining": true,
+  "model_b_threshold": 0.5
+ },
+ "explanation_path": {
+  "explained_decision": "frozen primary Model B (binary deployment detector) decision on final-test alerts",
+  "production_endpoint_note": "the existing production /explain path (app/api/predict -> app/ml/inference.predict) is tied to Model A (multiclass supervised + anomaly). For the deployment alert evaluation, Model B needed a SHAP path.",
+  "model_b_shap_support": "added read-only via xgboost booster pred_contribs (training/phase17d_explain_sample.py); Model B weights, threshold, feature schema and predictive behaviour are unchanged."
+ },
+ "shap": {
+  "method": "xgboost booster pred_contribs (TreeSHAP)",
+  "top_k": 5,
+  "top_k_rule": "fixed k=5, matching the pre-existing frozen value in app/ml/inference.py; chosen before any explanation quality was seen",
+  "preserved_per_alert": [
+   "shap_base_value",
+   "top-5 signed contributions",
+   "feature value",
+   "direction",
+   "model decision"
+  ],
+  "no_post_hoc_feature_cherry_picking": true
+ },
+ "evidence_contract": {
+  "fields": [
+   "alert_id",
+   "source_run",
+   "flow_index",
+   "model{id,sha256,feature_schema,threshold}",
+   "decision",
+   "attack_probability",
+   "shap_base_value",
+   "top_shap_features[{feature,value,shap_contribution,direction}]",
+   "analyst_instruction"
+  ],
+  "ground_truth_in_evidence": false,
+  "ground_truth_use": "recorded separately in sample_manifest.json for evaluation only; never supplied to the LLM",
+  "artifact": "evidence_sample.json"
+ },
+ "provider": {
+  "primary": "gemini",
+  "primary_model": "gemini-flash-latest",
+  "primary_rationale": "the repository's designated default provider (app/core/config settings.llm_provider='gemini'); reused as primary rather than opening a provider competition",
+  "fallback": "claude (claude-sonnet-5) \u2014 implementation fallback only, not a second research arm",
+  "selection_before_quality_seen": true,
+  "real_calls_status": "NOT YET RUN; gated on approval and API cost"
+ },
+ "prompt": {
+  "template_version": "v3",
+  "template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+  "reused_existing": true,
+  "structure": "prose, 3-5 sentences (existing deployed v3 template), not JSON fields",
+  "structured_fields_deviation": "the protocol recommended JSON fields (summary/model_decision/key_evidence/interpretation/uncertainty/action); the existing defensible v3 prose template was reused instead to avoid changing deployed behaviour. Structural completeness is checked against v3's mandated prose elements (decision statement, evidence reference, verification/uncertainty).",
+  "grounding_rules_present": [
+   "evidence boundary (no packets seen)",
+   "no invented IPs/ports/protocols/payloads/tools",
+   "distinguishes model classification from proven fact",
+   "SHAP is not causal",
+   "never overrides the prediction",
+   "confidence is model confidence, not attack probability"
+  ]
+ },
+ "sample": {
+  "artifact": "sample_manifest.json",
+  "seed": 42,
+  "n_total": 12,
+  "strata": {
+   "benign_false_positive_alert": 6,
+   "correctly_detected_attack_alert": 6
+  },
+  "rule": "deterministic; benign FP alerts sampled from all benign flows Model B flagged ATTACK (pool of 85); PortScan TP alerts sampled from the first 2000 selector-matched evaluable flows of eval-v1-portscan-001; both with seed 42. Selected before any explanation was inspected.",
+  "not_used_to_tune_models": true,
+  "final_test_reuse_justification": "predictive models and threshold are already frozen and no model selection occurs, so frozen final-test alerts may be reused for explanation evaluation."
+ },
+ "automated_groundedness": {
+  "module": "app/services/explanation_eval.py",
+  "checks": [
+   "prediction_consistency",
+   "feature_grounding",
+   "direction_consistency",
+   "unsupported_claims (reuses groundedness heuristic v1)",
+   "evidence_coverage",
+   "structural_completeness"
+  ],
+  "not_proof_of_human_usefulness": true,
+  "direction_consistency_limitation": "scores only unambiguous feature windows and abstains when adjacent features' direction words collide; free-prose direction attribution is inherently limited and is complemented by the human instrument."
+ },
+ "shap_vs_no_shap_baseline": {
+  "status": "implemented, pending real provider calls",
+  "design": "same provider/prompt/sample; condition A = prediction + SHAP evidence, condition B = prediction only (empty SHAP). One controlled comparison, not a prompt-engineering study.",
+  "runner": "training/phase17d_explain_run.py (--conditions both)"
+ },
+ "latency": {
+  "shap_computation_ms": "measured per alert in phase17d_explain_sample.py (median recorded in sample_manifest.json)",
+  "llm_generation_ms": "measured per call in llm_explainer.generate_explanation",
+  "total_explanation_ms": "shap + llm, recorded by the batch runner",
+  "separate_from_ml_inference": true
+ },
+ "human_evaluation": {
+  "instrument": "HUMAN_EVAL_QUESTIONNAIRE.md",
+  "template": "human_eval_ratings_template.csv",
+  "scale": "1-5 Likert",
+  "dimensions": [
+   "clarity",
+   "usefulness",
+   "evidence_support",
+   "conciseness",
+   "confidence"
+  ],
+  "real_results_exist": false,
+  "no_fabrication": true
+ },
+ "h4_status_rule": {
+  "separate": [
+   "technical_groundedness",
+   "human_perceived_clarity_usefulness"
+  ],
+  "not_supported_by_fluency_alone": true,
+  "possible_statuses": [
+   "supported, with limitations",
+   "partially supported",
+   "not supported",
+   "not fully tested"
+  ],
+  "current_status": "not fully tested",
+  "current_status_reason": "automated technical-groundedness infrastructure and the fixed sample are frozen, but no real LLM explanations have been generated and no human ratings have been collected; H4 cannot be concluded yet."
+ },
+ "reproducibility_recorded": [
+  "model hashes",
+  "SHAP config",
+  "sample identities",
+  "prompt template hash",
+  "provider/model id",
+  "generation params (max_tokens=400)",
+  "timestamps",
+  "response hashes",
+  "parsed outputs",
+  "latency",
+  "automated grounding results",
+  "provider failures/retries"
+ ],
+ "secrets_policy": "no API keys stored in reports or git; keys come from environment / .env (gitignored)"
+}
