@@ -56,3 +56,6 @@ ml-service/reports/domain_adaptation/phase17d/data/captures/*.pcap
 # Phase 17D final-eval flow CSVs and meta kept local (large; hashes tracked in manifest)
 ml-service/reports/domain_adaptation/phase17d/captures/*.csv
 ml-service/reports/domain_adaptation/phase17d/captures/*.meta
+
+# Phase 17D per-flow paired predictions (large; hash recorded in evaluation_summary)
+ml-service/reports/domain_adaptation/phase17d/paired_predictions.csv

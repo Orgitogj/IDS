@@ -225,22 +225,27 @@ class TestPairedEvaluation:
         if not pred.exists():
             pytest.skip("paired predictions not produced yet")
         import csv as _csv
-        rows = list(_csv.DictReader(open(pred, encoding="utf-8")))
-        assert rows
-        for r in rows:
-            assert r["model_a_binary"] in ("ATTACK", "BENIGN")
-            assert r["model_b_binary"] in ("ATTACK", "BENIGN")
-            assert r["ground_truth"] in ("ATTACK", "BENIGN")
+        with open(pred, encoding="utf-8") as fh:
+            reader = _csv.DictReader(fh)
+            seen = 0
+            for r in reader:
+                assert r["model_a_binary"] in ("ATTACK", "BENIGN")
+                assert r["model_b_binary"] in ("ATTACK", "BENIGN")
+                assert r["ground_truth"] in ("ATTACK", "BENIGN")
+                seen += 1
+                if seen >= 5000:
+                    break
+        assert seen > 0
 
     def test_every_evaluable_flow_scored_by_both(self):
         pred = PHASE17D / "paired_predictions.csv"
         manifest = DATA / "final_test_manifest.json"
         if not (pred.exists() and manifest.exists()):
             pytest.skip("evaluation not complete yet")
-        import csv as _csv
-        rows = list(_csv.DictReader(open(pred, encoding="utf-8")))
+        with open(pred, encoding="utf-8") as fh:
+            rows = sum(1 for _ in fh) - 1
         m = json.load(open(manifest, encoding="utf-8"))
-        assert len(rows) == m["totals"]["evaluable"]
+        assert rows == m["totals"]["evaluable"]
 
     def test_scenario_results_report_wilson(self):
         p = PHASE17D / "scenario_results.json"

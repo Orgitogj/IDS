@@ -1,0 +1,154 @@
+{
+ "generated_at": "2026-09-13T15:56:06.869225Z",
+ "threshold": 0.5,
+ "model_a_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+ "model_b_sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+ "n_evaluable": 1180770,
+ "paired_predictions_sha256": "8a5494354be7efc3411fab258c85f7928199afb1f61587b7142d859c77959485",
+ "scenario_results": {
+  "benign": {
+   "n_evaluable": 960,
+   "model_a": {
+    "quantity": "benign_false_positive_rate",
+    "false_positives": 0,
+    "n": 960,
+    "wilson_95": {
+     "point": 0.0,
+     "low": 0.0,
+     "high": 0.003985571263342763,
+     "n": 960,
+     "successes": 0
+    }
+   },
+   "model_b": {
+    "quantity": "benign_false_positive_rate",
+    "false_positives": 85,
+    "n": 960,
+    "wilson_95": {
+     "point": 0.08854166666666667,
+     "low": 0.0721723157791867,
+     "high": 0.10819081057293911,
+     "n": 960,
+     "successes": 85
+    }
+   }
+  },
+  "portscan": {
+   "n_evaluable": 1179630,
+   "model_a": {
+    "quantity": "attack_detection_rate",
+    "detected": 0,
+    "n": 1179630,
+    "wilson_95": {
+     "point": 0.0,
+     "low": 0.0,
+     "high": 3.256484076400775e-06,
+     "n": 1179630,
+     "successes": 0
+    }
+   },
+   "model_b": {
+    "quantity": "attack_detection_rate",
+    "detected": 1179630,
+    "n": 1179630,
+    "wilson_95": {
+     "point": 1.0,
+     "low": 0.9999967435159236,
+     "high": 1.0,
+     "n": 1179630,
+     "successes": 1179630
+    }
+   }
+  },
+  "ssh": {
+   "n_evaluable": 180,
+   "model_a": {
+    "quantity": "attack_detection_rate",
+    "detected": 0,
+    "n": 180,
+    "wilson_95": {
+     "point": 0.0,
+     "low": 0.0,
+     "high": 0.02089549792161305,
+     "n": 180,
+     "successes": 0
+    }
+   },
+   "model_b": {
+    "quantity": "attack_detection_rate",
+    "detected": 0,
+    "n": 180,
+    "wilson_95": {
+     "point": 0.0,
+     "low": 0.0,
+     "high": 0.02089549792161305,
+     "n": 180,
+     "successes": 0
+    }
+   }
+  }
+ },
+ "paired": {
+  "attack_scenarios": {
+   "both_detect": 0,
+   "model_a_only": 0,
+   "model_b_only": 1179630,
+   "neither": 180,
+   "n": 1179810
+  },
+  "benign": {
+   "both_correct": 875,
+   "model_a_fp_only": 0,
+   "model_b_fp_only": 85,
+   "both_fp": 0,
+   "n": 960
+  },
+  "mcnemar_exact_attack_detection": {
+   "b": 0,
+   "c": 1179630,
+   "n_discordant": 1179630,
+   "p_value": 0.0,
+   "test": "two-sided exact binomial (McNemar)"
+  },
+  "mcnemar_exact_benign_fp": {
+   "b": 0,
+   "c": 85,
+   "n_discordant": 85,
+   "p_value": 5.169878828456423e-26,
+   "test": "two-sided exact binomial (McNemar)"
+  },
+  "mcnemar_note": "secondary paired diagnostic on discordant pairs; does not override descriptive results"
+ },
+ "pooled_secondary": {
+  "note": "SECONDARY; PortScan dominates flow count",
+  "n_evaluable": 1180770,
+  "model_a": {
+   "confusion_matrix": {
+    "tn": 960,
+    "fp": 0,
+    "fn": 1179810,
+    "tp": 0
+   },
+   "macro_f1": 0.0008123683074814044,
+   "balanced_accuracy": 0.5,
+   "attack_recall": 0.0,
+   "attack_precision": 0.0,
+   "benign_fpr": 0.0
+  },
+  "model_b": {
+   "confusion_matrix": {
+    "tn": 875,
+    "fp": 85,
+    "fn": 180,
+    "tp": 1179630
+   },
+   "macro_f1": 0.9341870208084054,
+   "balanced_accuracy": 0.9556528831972946,
+   "attack_recall": 0.9998474330612557,
+   "attack_precision": 0.999927948699474,
+   "benign_fpr": 0.08854166666666667,
+   "roc_auc": 0.9999128620286317,
+   "pr_auc": 0.9999999259504027
+  }
+ }
+}

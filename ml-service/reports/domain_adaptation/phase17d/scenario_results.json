@@ -1,0 +1,83 @@
+{
+ "benign": {
+  "n_evaluable": 960,
+  "model_a": {
+   "quantity": "benign_false_positive_rate",
+   "false_positives": 0,
+   "n": 960,
+   "wilson_95": {
+    "point": 0.0,
+    "low": 0.0,
+    "high": 0.003985571263342763,
+    "n": 960,
+    "successes": 0
+   }
+  },
+  "model_b": {
+   "quantity": "benign_false_positive_rate",
+   "false_positives": 85,
+   "n": 960,
+   "wilson_95": {
+    "point": 0.08854166666666667,
+    "low": 0.0721723157791867,
+    "high": 0.10819081057293911,
+    "n": 960,
+    "successes": 85
+   }
+  }
+ },
+ "portscan": {
+  "n_evaluable": 1179630,
+  "model_a": {
+   "quantity": "attack_detection_rate",
+   "detected": 0,
+   "n": 1179630,
+   "wilson_95": {
+    "point": 0.0,
+    "low": 0.0,
+    "high": 3.256484076400775e-06,
+    "n": 1179630,
+    "successes": 0
+   }
+  },
+  "model_b": {
+   "quantity": "attack_detection_rate",
+   "detected": 1179630,
+   "n": 1179630,
+   "wilson_95": {
+    "point": 1.0,
+    "low": 0.9999967435159236,
+    "high": 1.0,
+    "n": 1179630,
+    "successes": 1179630
+   }
+  }
+ },
+ "ssh": {
+  "n_evaluable": 180,
+  "model_a": {
+   "quantity": "attack_detection_rate",
+   "detected": 0,
+   "n": 180,
+   "wilson_95": {
+    "point": 0.0,
+    "low": 0.0,
+    "high": 0.02089549792161305,
+    "n": 180,
+    "successes": 0
+   }
+  },
+  "model_b": {
+   "quantity": "attack_detection_rate",
+   "detected": 0,
+   "n": 180,
+   "wilson_95": {
+    "point": 0.0,
+    "low": 0.0,
+    "high": 0.02089549792161305,
+    "n": 180,
+    "successes": 0
+   }
+  }
+ }
+}
