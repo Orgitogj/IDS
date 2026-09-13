@@ -135,7 +135,7 @@ def score():
                 mapped = lab_runner.map_row(row)
                 validation = validator.validate(mapped)
                 status = lab_runner.schema_guard.status_from_validation(validation, None)
-                if status != protocol.STATUS_VALID:
+                if status["validation_status"] != protocol.STATUS_VALID:
                     continue
 
                 record, _ = lab_runner.process_row(

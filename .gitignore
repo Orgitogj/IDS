@@ -52,3 +52,7 @@ ml-service/models/model_b/*.joblib
 # Phase 17D final-eval raw PCAPs (large; kept local, hashes recorded in manifest)
 ml-service/reports/domain_adaptation/phase17d/captures/*.pcap
 ml-service/reports/domain_adaptation/phase17d/data/captures/*.pcap
+
+# Phase 17D final-eval flow CSVs and meta kept local (large; hashes tracked in manifest)
+ml-service/reports/domain_adaptation/phase17d/captures/*.csv
+ml-service/reports/domain_adaptation/phase17d/captures/*.meta

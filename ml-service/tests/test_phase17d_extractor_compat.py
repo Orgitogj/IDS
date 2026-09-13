@@ -134,3 +134,30 @@ class TestShimCliContract:
         assert args.verbose is False
         assert args.input_interface is None
         assert args.input_directory is None
+
+
+from app.live import protocol as _protocol
+from app.live import schema_guard as _schema_guard
+from training import build_final_eval_dataset as _bfe
+
+
+class TestFlowValidityContract:
+
+    def test_status_from_validation_returns_dict_with_status_key(self):
+        class _V:
+            missing_features = []
+            invalid_features = []
+            unexpected_features = []
+        status = _schema_guard.status_from_validation(_V(), None)
+        assert isinstance(status, dict)
+        assert "validation_status" in status
+
+    def test_flow_is_valid_reads_the_status_key(self):
+        assert _bfe.flow_is_valid({"validation_status": _protocol.STATUS_VALID}) is True
+        assert _bfe.flow_is_valid(
+            {"validation_status": _protocol.STATUS_NONFINITE_VALUE}) is False
+
+    def test_raw_dict_never_equals_the_status_string(self):
+        status = {"validation_status": _protocol.STATUS_VALID}
+        assert status != _protocol.STATUS_VALID
+        assert _bfe.flow_is_valid(status) is True

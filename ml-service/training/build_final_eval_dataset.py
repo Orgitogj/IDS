@@ -54,6 +54,10 @@ def sha256_bytes(payload):
     return hashlib.sha256(payload).hexdigest()
 
 
+def flow_is_valid(status):
+    return status["validation_status"] == protocol.STATUS_VALID
+
+
 def process(run_id, capture_csv, pcap_path=None, capture_started=None,
             capture_stopped=None):
     scenario = SCENARIO_OF[run_id]
@@ -69,7 +73,7 @@ def process(run_id, capture_csv, pcap_path=None, capture_started=None,
             mapped = lab_runner.map_row(row)
             validation = validator.validate(mapped)
             status = lab_runner.schema_guard.status_from_validation(validation, None)
-            is_valid = status == protocol.STATUS_VALID
+            is_valid = flow_is_valid(status)
             if is_valid:
                 valid += 1
             if is_valid and expected in protocol.EXPECTED_BINARY_LABELS:
