@@ -1,0 +1,39 @@
+{
+ "run_id": "eval-v1-portscan-002",
+ "experiment_id": "lab-generalization-v1",
+ "scenario_id": "portscan",
+ "scenario": "portscan",
+ "role": "final_test",
+ "ground_truth_binary_primary": "ATTACK",
+ "expected_family": "PortScan",
+ "expected_label": "PortScan",
+ "ground_truth_mode": "per_flow_selector",
+ "attack_selector": {
+  "source_ip": "192.168.50.10",
+  "destination_ip": "192.168.50.20"
+ },
+ "extractor": {
+  "name": "cicflowmeter",
+  "version": "0.5.0"
+ },
+ "capture_started_utc": "2026-09-12T23:38:20Z",
+ "capture_stopped_utc": "2026-09-12T23:41:45Z",
+ "packet_capture_available": true,
+ "pcap_path": "ml-service\\reports\\domain_adaptation\\phase17d\\captures\\eval-v1-portscan-002.pcap",
+ "pcap_sha256": "57db6122dd511ad501c66b445269236fa91f86e255d43b89caf48fb3e406e666",
+ "flow_csv_path": "ml-service\\reports\\domain_adaptation\\phase17d\\captures\\eval-v1-portscan-002.csv",
+ "flow_csv_sha256": "1c6fa2b7069e0702dee84c49d099b06e5311a308c150f82a79de04fb8a04aac7",
+ "counts": {
+  "total_flows": 393214,
+  "valid_flows": 393214,
+  "evaluable_flows": 393210,
+  "attack_flows": 393210,
+  "benign_flows": 0,
+  "unlabelled_flows": 4
+ },
+ "support_floor": 300,
+ "support_metric": 393210,
+ "acceptance_status": "ACCEPTED",
+ "acceptance_basis": "capture integrity + predefined ground truth + minimum support; independent of any model prediction",
+ "written_at": "2026-09-13T11:05:15.305511Z"
+}

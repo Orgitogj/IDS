@@ -1,0 +1,36 @@
+{
+ "run_id": "eval-v1-benign-001",
+ "experiment_id": "lab-generalization-v1",
+ "scenario_id": "benign",
+ "scenario": "benign",
+ "role": "final_test",
+ "ground_truth_binary_primary": "BENIGN",
+ "expected_family": null,
+ "expected_label": null,
+ "ground_truth_mode": "run_level_uniform",
+ "attack_selector": {},
+ "extractor": {
+  "name": "cicflowmeter",
+  "version": "0.5.0"
+ },
+ "capture_started_utc": "2026-09-12T23:02:55Z",
+ "capture_stopped_utc": "2026-09-12T23:04:11Z",
+ "packet_capture_available": true,
+ "pcap_path": "ml-service\\reports\\domain_adaptation\\phase17d\\captures\\eval-v1-benign-001.pcap",
+ "pcap_sha256": "1337b6550fc3bb87469c3d62ffeb644c764c26bed0abf4b38cde0668e357cc47",
+ "flow_csv_path": "ml-service\\reports\\domain_adaptation\\phase17d\\captures\\eval-v1-benign-001.csv",
+ "flow_csv_sha256": "cca3ceeb9574ca48b4331e5057fa93e10c2d72ecc141b54aade1d34f5b6cff0f",
+ "counts": {
+  "total_flows": 320,
+  "valid_flows": 320,
+  "evaluable_flows": 320,
+  "attack_flows": 0,
+  "benign_flows": 320,
+  "unlabelled_flows": 0
+ },
+ "support_floor": 300,
+ "support_metric": 320,
+ "acceptance_status": "ACCEPTED",
+ "acceptance_basis": "capture integrity + predefined ground truth + minimum support; independent of any model prediction",
+ "written_at": "2026-09-13T11:02:35.744967Z"
+}

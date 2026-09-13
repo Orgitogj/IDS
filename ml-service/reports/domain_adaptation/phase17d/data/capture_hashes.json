@@ -1,0 +1,47 @@
+{
+ "eval-v1-benign-001": {
+  "flow_csv_sha256": "cca3ceeb9574ca48b4331e5057fa93e10c2d72ecc141b54aade1d34f5b6cff0f",
+  "pcap_sha256": "1337b6550fc3bb87469c3d62ffeb644c764c26bed0abf4b38cde0668e357cc47",
+  "packet_capture_available": true
+ },
+ "eval-v1-benign-002": {
+  "flow_csv_sha256": "93f4cd4fca6e0c5b1044135bfc063dd0dda0f9341af2fdd99c0d255d45f49945",
+  "pcap_sha256": "bbb7ac4210c149c87240b0512e59bc5aff9ab7bc612c84e17151888cbfa950d4",
+  "packet_capture_available": true
+ },
+ "eval-v1-benign-003": {
+  "flow_csv_sha256": "731168191c0640e82ce4584da964485f9151943d43c83a52bea8a1300705970e",
+  "pcap_sha256": "086b1f118ae3a8c10b38a708ee252e9ef8b962595750e2f95ecbe4029b215356",
+  "packet_capture_available": true
+ },
+ "eval-v1-portscan-001": {
+  "flow_csv_sha256": "7a38943952a7f724b6b959443312cae6cd9ee28137c89ee2c333645b29af8392",
+  "pcap_sha256": "1bc3cfd400123ae66f9808958fa31c290193f97438bbc418265d290b58cb62cd",
+  "packet_capture_available": true
+ },
+ "eval-v1-portscan-002": {
+  "flow_csv_sha256": "1c6fa2b7069e0702dee84c49d099b06e5311a308c150f82a79de04fb8a04aac7",
+  "pcap_sha256": "57db6122dd511ad501c66b445269236fa91f86e255d43b89caf48fb3e406e666",
+  "packet_capture_available": true
+ },
+ "eval-v1-portscan-003": {
+  "flow_csv_sha256": "df5b6cac35a082d16ccee1fc1de6a94224aae480910bda481d67d7bf3a1610ad",
+  "pcap_sha256": "a3bda2f6b4821284a358753e1a22ae0027f83b957985573343045cc42293c171",
+  "packet_capture_available": true
+ },
+ "eval-v1-ssh-001": {
+  "flow_csv_sha256": "ed19a46d9bb238d4fd8de1aaabbe90ab5f81958a47b5c6b3f1f2e8fd7279ed2a",
+  "pcap_sha256": "7a9ed7b85bfff05ad9a05cc8f04633193a43cc115a91f387ac474ed3a7b60ff1",
+  "packet_capture_available": true
+ },
+ "eval-v1-ssh-002": {
+  "flow_csv_sha256": "b56584885369ed4af0da190174a5901723a5abf71b926c46063175569965562c",
+  "pcap_sha256": "93b04058c0ec422bcac51c9a3a9b6f19a3db1275e512038e668fdf884e7a643b",
+  "packet_capture_available": true
+ },
+ "eval-v1-ssh-003": {
+  "flow_csv_sha256": "2ce0c637afb932638c97052b63d9797ce5ee36ea6a10095cd368c0e61ccf55df",
+  "pcap_sha256": "e61985986d4b81c072340d7a37067000a101152bee6bfae57a8edddc20847702",
+  "packet_capture_available": true
+ }
+}

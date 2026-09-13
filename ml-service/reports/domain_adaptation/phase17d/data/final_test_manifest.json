@@ -1,0 +1,323 @@
+{
+ "disjoint_from_adaptation_and_validation": true,
+ "extractor": {
+  "name": "cicflowmeter",
+  "version": "0.5.0"
+ },
+ "final_test_run_ids": [
+  "eval-v1-benign-001",
+  "eval-v1-benign-002",
+  "eval-v1-benign-003",
+  "eval-v1-portscan-001",
+  "eval-v1-portscan-002",
+  "eval-v1-portscan-003",
+  "eval-v1-ssh-001",
+  "eval-v1-ssh-002",
+  "eval-v1-ssh-003"
+ ],
+ "generated_at": "2026-09-13T15:46:32.180106Z",
+ "n_runs": 9,
+ "protocol_version": "phase17d-final-eval-v1",
+ "raw_binary_distribution": {
+  "ATTACK": 1179810,
+  "BENIGN": 960
+ },
+ "role": "final_test",
+ "runs": [
+  {
+   "acceptance_status": "ACCEPTED",
+   "attack_flows": 0,
+   "attack_selector": {},
+   "benign_flows": 320,
+   "capture_started_utc": "2026-09-12T23:02:55Z",
+   "capture_stopped_utc": "2026-09-12T23:04:11Z",
+   "evaluable_flows": 320,
+   "expected_family": null,
+   "extractor": {
+    "name": "cicflowmeter",
+    "version": "0.5.0"
+   },
+   "flow_csv_sha256": "cca3ceeb9574ca48b4331e5057fa93e10c2d72ecc141b54aade1d34f5b6cff0f",
+   "ground_truth_binary_primary": "BENIGN",
+   "ground_truth_mode": "run_level_uniform",
+   "pcap_sha256": "1337b6550fc3bb87469c3d62ffeb644c764c26bed0abf4b38cde0668e357cc47",
+   "role": "final_test",
+   "run_id": "eval-v1-benign-001",
+   "scenario": "benign",
+   "scenario_id": "benign",
+   "support_floor": 300,
+   "support_metric": 320,
+   "total_flows": 320,
+   "unlabelled_flows": 0,
+   "valid_flows": 320
+  },
+  {
+   "acceptance_status": "ACCEPTED",
+   "attack_flows": 0,
+   "attack_selector": {},
+   "benign_flows": 320,
+   "capture_started_utc": "2026-09-12T23:08:31Z",
+   "capture_stopped_utc": "2026-09-12T23:09:50Z",
+   "evaluable_flows": 320,
+   "expected_family": null,
+   "extractor": {
+    "name": "cicflowmeter",
+    "version": "0.5.0"
+   },
+   "flow_csv_sha256": "93f4cd4fca6e0c5b1044135bfc063dd0dda0f9341af2fdd99c0d255d45f49945",
+   "ground_truth_binary_primary": "BENIGN",
+   "ground_truth_mode": "run_level_uniform",
+   "pcap_sha256": "bbb7ac4210c149c87240b0512e59bc5aff9ab7bc612c84e17151888cbfa950d4",
+   "role": "final_test",
+   "run_id": "eval-v1-benign-002",
+   "scenario": "benign",
+   "scenario_id": "benign",
+   "support_floor": 300,
+   "support_metric": 320,
+   "total_flows": 320,
+   "unlabelled_flows": 0,
+   "valid_flows": 320
+  },
+  {
+   "acceptance_status": "ACCEPTED",
+   "attack_flows": 0,
+   "attack_selector": {},
+   "benign_flows": 320,
+   "capture_started_utc": "2026-09-12T23:10:47Z",
+   "capture_stopped_utc": "2026-09-12T23:12:03Z",
+   "evaluable_flows": 320,
+   "expected_family": null,
+   "extractor": {
+    "name": "cicflowmeter",
+    "version": "0.5.0"
+   },
+   "flow_csv_sha256": "731168191c0640e82ce4584da964485f9151943d43c83a52bea8a1300705970e",
+   "ground_truth_binary_primary": "BENIGN",
+   "ground_truth_mode": "run_level_uniform",
+   "pcap_sha256": "086b1f118ae3a8c10b38a708ee252e9ef8b962595750e2f95ecbe4029b215356",
+   "role": "final_test",
+   "run_id": "eval-v1-benign-003",
+   "scenario": "benign",
+   "scenario_id": "benign",
+   "support_floor": 300,
+   "support_metric": 320,
+   "total_flows": 320,
+   "unlabelled_flows": 0,
+   "valid_flows": 320
+  },
+  {
+   "acceptance_status": "ACCEPTED",
+   "attack_flows": 393210,
+   "attack_selector": {
+    "destination_ip": "192.168.50.20",
+    "source_ip": "192.168.50.10"
+   },
+   "benign_flows": 0,
+   "capture_started_utc": "2026-09-12T23:23:42Z",
+   "capture_stopped_utc": "2026-09-12T23:26:39Z",
+   "evaluable_flows": 393210,
+   "expected_family": "PortScan",
+   "extractor": {
+    "name": "cicflowmeter",
+    "version": "0.5.0"
+   },
+   "flow_csv_sha256": "7a38943952a7f724b6b959443312cae6cd9ee28137c89ee2c333645b29af8392",
+   "ground_truth_binary_primary": "ATTACK",
+   "ground_truth_mode": "per_flow_selector",
+   "pcap_sha256": "1bc3cfd400123ae66f9808958fa31c290193f97438bbc418265d290b58cb62cd",
+   "role": "final_test",
+   "run_id": "eval-v1-portscan-001",
+   "scenario": "portscan",
+   "scenario_id": "portscan",
+   "support_floor": 300,
+   "support_metric": 393210,
+   "total_flows": 393213,
+   "unlabelled_flows": 3,
+   "valid_flows": 393213
+  },
+  {
+   "acceptance_status": "ACCEPTED",
+   "attack_flows": 393210,
+   "attack_selector": {
+    "destination_ip": "192.168.50.20",
+    "source_ip": "192.168.50.10"
+   },
+   "benign_flows": 0,
+   "capture_started_utc": "2026-09-12T23:38:20Z",
+   "capture_stopped_utc": "2026-09-12T23:41:45Z",
+   "evaluable_flows": 393210,
+   "expected_family": "PortScan",
+   "extractor": {
+    "name": "cicflowmeter",
+    "version": "0.5.0"
+   },
+   "flow_csv_sha256": "1c6fa2b7069e0702dee84c49d099b06e5311a308c150f82a79de04fb8a04aac7",
+   "ground_truth_binary_primary": "ATTACK",
+   "ground_truth_mode": "per_flow_selector",
+   "pcap_sha256": "57db6122dd511ad501c66b445269236fa91f86e255d43b89caf48fb3e406e666",
+   "role": "final_test",
+   "run_id": "eval-v1-portscan-002",
+   "scenario": "portscan",
+   "scenario_id": "portscan",
+   "support_floor": 300,
+   "support_metric": 393210,
+   "total_flows": 393214,
+   "unlabelled_flows": 4,
+   "valid_flows": 393214
+  },
+  {
+   "acceptance_status": "ACCEPTED",
+   "attack_flows": 393210,
+   "attack_selector": {
+    "destination_ip": "192.168.50.20",
+    "source_ip": "192.168.50.10"
+   },
+   "benign_flows": 0,
+   "capture_started_utc": "2026-09-12T23:59:42Z",
+   "capture_stopped_utc": "2026-09-13T00:03:21Z",
+   "evaluable_flows": 393210,
+   "expected_family": "PortScan",
+   "extractor": {
+    "name": "cicflowmeter",
+    "version": "0.5.0"
+   },
+   "flow_csv_sha256": "df5b6cac35a082d16ccee1fc1de6a94224aae480910bda481d67d7bf3a1610ad",
+   "ground_truth_binary_primary": "ATTACK",
+   "ground_truth_mode": "per_flow_selector",
+   "pcap_sha256": "a3bda2f6b4821284a358753e1a22ae0027f83b957985573343045cc42293c171",
+   "role": "final_test",
+   "run_id": "eval-v1-portscan-003",
+   "scenario": "portscan",
+   "scenario_id": "portscan",
+   "support_floor": 300,
+   "support_metric": 393210,
+   "total_flows": 393228,
+   "unlabelled_flows": 18,
+   "valid_flows": 393228
+  },
+  {
+   "acceptance_status": "ACCEPTED",
+   "attack_flows": 60,
+   "attack_selector": {
+    "destination_ip": "192.168.50.20",
+    "destination_ports": [
+     22
+    ],
+    "source_ip": "192.168.50.10"
+   },
+   "benign_flows": 0,
+   "capture_started_utc": "2026-09-13T15:41:24Z",
+   "capture_stopped_utc": "2026-09-13T15:41:28Z",
+   "evaluable_flows": 60,
+   "expected_family": "Brute Force",
+   "extractor": {
+    "name": "cicflowmeter",
+    "version": "0.5.0"
+   },
+   "flow_csv_sha256": "ed19a46d9bb238d4fd8de1aaabbe90ab5f81958a47b5c6b3f1f2e8fd7279ed2a",
+   "ground_truth_binary_primary": "ATTACK",
+   "ground_truth_mode": "per_flow_selector",
+   "pcap_sha256": "7a9ed7b85bfff05ad9a05cc8f04633193a43cc115a91f387ac474ed3a7b60ff1",
+   "role": "final_test",
+   "run_id": "eval-v1-ssh-001",
+   "scenario": "ssh",
+   "scenario_id": "ssh-bruteforce",
+   "support_floor": 30,
+   "support_metric": 60,
+   "total_flows": 60,
+   "unlabelled_flows": 0,
+   "valid_flows": 60
+  },
+  {
+   "acceptance_status": "ACCEPTED",
+   "attack_flows": 60,
+   "attack_selector": {
+    "destination_ip": "192.168.50.20",
+    "destination_ports": [
+     22
+    ],
+    "source_ip": "192.168.50.10"
+   },
+   "benign_flows": 0,
+   "capture_started_utc": "2026-09-13T15:42:14Z",
+   "capture_stopped_utc": "2026-09-13T15:42:18Z",
+   "evaluable_flows": 60,
+   "expected_family": "Brute Force",
+   "extractor": {
+    "name": "cicflowmeter",
+    "version": "0.5.0"
+   },
+   "flow_csv_sha256": "b56584885369ed4af0da190174a5901723a5abf71b926c46063175569965562c",
+   "ground_truth_binary_primary": "ATTACK",
+   "ground_truth_mode": "per_flow_selector",
+   "pcap_sha256": "93b04058c0ec422bcac51c9a3a9b6f19a3db1275e512038e668fdf884e7a643b",
+   "role": "final_test",
+   "run_id": "eval-v1-ssh-002",
+   "scenario": "ssh",
+   "scenario_id": "ssh-bruteforce",
+   "support_floor": 30,
+   "support_metric": 60,
+   "total_flows": 60,
+   "unlabelled_flows": 0,
+   "valid_flows": 60
+  },
+  {
+   "acceptance_status": "ACCEPTED",
+   "attack_flows": 60,
+   "attack_selector": {
+    "destination_ip": "192.168.50.20",
+    "destination_ports": [
+     22
+    ],
+    "source_ip": "192.168.50.10"
+   },
+   "benign_flows": 0,
+   "capture_started_utc": "2026-09-13T15:42:22Z",
+   "capture_stopped_utc": "2026-09-13T15:42:26Z",
+   "evaluable_flows": 60,
+   "expected_family": "Brute Force",
+   "extractor": {
+    "name": "cicflowmeter",
+    "version": "0.5.0"
+   },
+   "flow_csv_sha256": "2ce0c637afb932638c97052b63d9797ce5ee36ea6a10095cd368c0e61ccf55df",
+   "ground_truth_binary_primary": "ATTACK",
+   "ground_truth_mode": "per_flow_selector",
+   "pcap_sha256": "e61985986d4b81c072340d7a37067000a101152bee6bfae57a8edddc20847702",
+   "role": "final_test",
+   "run_id": "eval-v1-ssh-003",
+   "scenario": "ssh",
+   "scenario_id": "ssh-bruteforce",
+   "support_floor": 30,
+   "support_metric": 60,
+   "total_flows": 60,
+   "unlabelled_flows": 0,
+   "valid_flows": 60
+  }
+ ],
+ "scenarios": {
+  "benign": [
+   "eval-v1-benign-001",
+   "eval-v1-benign-002",
+   "eval-v1-benign-003"
+  ],
+  "portscan": [
+   "eval-v1-portscan-001",
+   "eval-v1-portscan-002",
+   "eval-v1-portscan-003"
+  ],
+  "ssh": [
+   "eval-v1-ssh-001",
+   "eval-v1-ssh-002",
+   "eval-v1-ssh-003"
+  ]
+ },
+ "schema_version": 1,
+ "totals": {
+  "attack": 1179810,
+  "benign": 960,
+  "evaluable": 1180770,
+  "total": 1180795,
+  "unlabelled": 25
+ }
+}

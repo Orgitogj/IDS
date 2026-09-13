@@ -1,0 +1,46 @@
+{
+ "run_id": "eval-v1-ssh-001",
+ "experiment_id": "lab-generalization-v1",
+ "scenario_id": "ssh-bruteforce",
+ "scenario": "ssh",
+ "role": "final_test",
+ "capture_attempt": 3,
+ "traffic_procedure": "phase17d_ssh_capture_v3.sh",
+ "ground_truth_binary_primary": "ATTACK",
+ "expected_family": "Brute Force",
+ "expected_label": null,
+ "ground_truth_mode": "per_flow_selector",
+ "attack_selector": {
+  "source_ip": "192.168.50.10",
+  "destination_ip": "192.168.50.20",
+  "destination_ports": [
+   22
+  ]
+ },
+ "extractor": {
+  "name": "cicflowmeter",
+  "version": "0.5.0"
+ },
+ "capture_started_utc": "2026-09-13T15:41:24Z",
+ "capture_stopped_utc": "2026-09-13T15:41:28Z",
+ "packet_capture_available": true,
+ "pcap_path": "ml-service\\reports\\domain_adaptation\\phase17d\\captures\\eval-v1-ssh-001.pcap",
+ "pcap_sha256": "7a9ed7b85bfff05ad9a05cc8f04633193a43cc115a91f387ac474ed3a7b60ff1",
+ "pcap_bytes": 100935,
+ "capture_nonempty": true,
+ "flow_csv_path": "ml-service\\reports\\domain_adaptation\\phase17d\\captures\\eval-v1-ssh-001.csv",
+ "flow_csv_sha256": "ed19a46d9bb238d4fd8de1aaabbe90ab5f81958a47b5c6b3f1f2e8fd7279ed2a",
+ "counts": {
+  "total_flows": 60,
+  "valid_flows": 60,
+  "evaluable_flows": 60,
+  "attack_flows": 60,
+  "benign_flows": 0,
+  "unlabelled_flows": 0
+ },
+ "support_floor": 30,
+ "support_metric": 60,
+ "acceptance_status": "ACCEPTED",
+ "acceptance_basis": "capture integrity + predefined ground truth + minimum support; independent of any model prediction",
+ "written_at": "2026-09-13T15:46:15.426465Z"
+}
