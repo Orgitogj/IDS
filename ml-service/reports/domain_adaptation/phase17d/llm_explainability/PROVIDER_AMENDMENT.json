@@ -1,0 +1,68 @@
+{
+ "schema_version": 1,
+ "amendment_id": "phase17d-explainability-amendment-001-provider",
+ "amends": "phase17d-explainability-v1",
+ "status": "FROZEN_BEFORE_CLAUDE_CALLS",
+ "final_h4_provider": "claude",
+ "decision": "Use Claude as the sole provider for the FINAL PK4/H4 explainability evaluation.",
+ "reason": [
+  "Gemini was the pre-registered primary provider.",
+  "The real Gemini batch hit a hard quota/billing block (429 RESOURCE_EXHAUSTED) plus 503s on the resolved gemini-3.8-flash.",
+  "9 of 24 responses were collected; continuing was impossible without billing/quota intervention.",
+  "The user explicitly chose Claude as the final evaluation provider.",
+  "The switch is OPERATIONAL (provider availability), NOT based on explanation-quality results.",
+  "The 9 Gemini outputs are excluded from the final H4 dataset to avoid mixing provider effects."
+ ],
+ "final_evaluation_restarts_from_zero": true,
+ "final_batch": "12 frozen alerts x 2 frozen conditions (with_shap/no_shap) = 24 Claude responses",
+ "no_provider_mixing": true,
+ "gemini_partial_attempt": {
+  "status": "INCOMPLETE_PROVIDER_ATTEMPT / EXCLUDED_FROM_FINAL_H4_ANALYSIS",
+  "intended": 24,
+  "obtained": 9,
+  "missing": 15,
+  "artifacts_preserved": [
+   "explanation_runs.json",
+   "technical_evaluation.json",
+   "latency.json",
+   "batch_config.json"
+  ],
+  "not_a_research_comparison": "This thesis is NOT a provider benchmark; Claude vs Gemini is not reported as a result."
+ },
+ "unchanged_and_reaffirmed": {
+  "frozen_12_alert_sample": true,
+  "sample_identities": "unchanged (evidence_sample.json / sample_manifest.json)",
+  "sample_seed": 42,
+  "model_a_sha256": "2b7625fc32e5f9e066c3a7b356b8a606c9a1f26e5f2a8d1cc4b6fce4ff2fddfa",
+  "model_b_sha256": "c2bb8f0043eb2eb4c9a8d4639e41e86939675a2a0f1d40bf65c3e8ce181cb237",
+  "model_b_threshold": 0.5,
+  "evidence_schema": "unchanged",
+  "top_k_shap": 5,
+  "prompt_semantic_content": "unchanged (v3); only the provider mechanic differs",
+  "prompt_template_sha256": "fc6504407d3fabe3ff5afa80b71802d5eb340ceeff81412a4b64b163b32620c9",
+  "evidence_sample_sha256": "d20c7ee1f833b050a69974be4247b63bc4f97e018989dcdc918ec5c61cecdad5",
+  "with_vs_no_shap_design": "unchanged",
+  "automatic_evaluation_metrics": "unchanged (app/services/explanation_eval.py)",
+  "human_evaluation_dimensions": [
+   "clarity",
+   "usefulness",
+   "perceived evidence support",
+   "conciseness",
+   "confidence"
+  ],
+  "no_ground_truth_leakage_rule": "unchanged"
+ },
+ "provider_freeze": {
+  "requested_claude_model": "claude-sonnet-5",
+  "resolved_model": "to be captured per response (message.model)",
+  "generation_params": {
+   "max_tokens": 400,
+   "temperature": "provider_default_unset"
+  },
+  "retry_policy": "max 3 retries on transient provider/network errors; 429 backoff 25s; inter-call pacing 8s; all retries logged",
+  "timeout_policy": "anthropic SDK default (no explicit override)",
+  "opt_in": "IDS_LLM_INTEGRATION=1"
+ },
+ "sample_not_changed_after_seeing_gemini_outputs": true,
+ "commit_before_any_claude_call": true
+}

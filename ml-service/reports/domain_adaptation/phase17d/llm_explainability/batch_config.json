@@ -55,5 +55,7 @@
   "benign_false_positive_alert|no_shap": 3,
   "correctly_detected_attack_alert|with_shap": 5,
   "correctly_detected_attack_alert|no_shap": 5
- }
+ },
+ "final_h4_status": "INCOMPLETE_PROVIDER_ATTEMPT / EXCLUDED_FROM_FINAL_H4_ANALYSIS",
+ "excluded_reason": "provider amendment 001 switched final provider to Claude; no Gemini output enters final H4"
 }
