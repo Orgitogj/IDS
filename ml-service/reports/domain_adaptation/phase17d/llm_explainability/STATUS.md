@@ -105,3 +105,53 @@ which performs the 24 Claude calls into `explanation_runs_claude.json` /
 technical metrics + latency, build the blinded human-evaluation package from the real
 Claude texts, run the tests, and report. Real human ratings are then still required before
 H4 can be concluded.
+
+---
+
+## Final Claude batch COMPLETE (credential blocker resolved)
+
+`H4 status: PARTIALLY TESTED / NOT FULLY TESTED.` Final report:
+[`RESULTS.md`](RESULTS.md). Manual audit: [`MANUAL_AUDIT.md`](MANUAL_AUDIT.md).
+
+- The Anthropic credential blocker is **resolved** (key supplied via environment; never
+  committed).
+- Final provider **Claude** (`claude-sonnet-5`): **24/24** responses, **0** failed, **0**
+  retries, into the provider-scoped `*_claude.json` files (unmodified). Gemini's 9/24
+  attempt remains preserved and excluded.
+
+### Automated metrics (as computed; JSON not edited)
+
+| metric | with SHAP | no SHAP |
+|---|---|---|
+| prediction consistency | 1.0 | 1.0 |
+| unsupported-claim-free | 1.0 | 1.0 |
+| structural completeness | 0.9167 (11/12) | 1.0 |
+| direction consistency | 17/19 = 0.8947 | n/a (SHAP-only) |
+| mean evidence coverage | 0.85 | n/a (SHAP-only) |
+
+Latency (explanation layer only): SHAP median **4.55 ms**; LLM median with-SHAP **9924.00
+ms**, no-SHAP **10840.04 ms**; total median with-SHAP **9927.93 ms**, no-SHAP **10840.04
+ms**. SHAP is not claimed to make Claude faster — the ~0.91 s median gap is provider
+generation variability; SHAP itself added ~4.55 ms.
+
+### Manual audit (separate from the automated JSON)
+
+- Direction: the 2 automated inconsistencies (`eval-v1-benign-001#29`,
+  `eval-v1-benign-002#85`, both `totlen_fwd_pkts`) are evaluator false positives; texts
+  state `decreases_attack` correctly → **manual 19/19**, automated **17/19** unchanged.
+- Structural: `eval-v1-benign-003#229` flagged missing uncertainty is a heuristic false
+  negative (uncertainty is present); automated **11/12** unchanged. That explanation is
+  genuinely truncated at `max_tokens=400`.
+
+### Human evaluation
+
+**Intentionally not conducted.** No raters/ratings/counts fabricated.
+`HUMAN_EVAL_QUESTIONNAIRE.md` and `human_eval_ratings_template.csv` are preserved unchanged
+as unused protocol artifacts.
+
+### H4
+
+Per the frozen protocol, H4 is **not** "supported" on automated groundedness alone: the
+technical-groundedness and latency limbs are evidenced (small n=12, with documented manual
+caveats), the human-perception limb is untested by decision. **H4 remains partially tested /
+not fully tested** — the final status for this thesis component.
