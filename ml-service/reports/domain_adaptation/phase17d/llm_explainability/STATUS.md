@@ -77,3 +77,31 @@
 3. I then finalize technical metrics + latency over the full 24, prepare the blinded
    human-eval package from the real texts, and report — H4 stays not-fully-tested until real
    human ratings are also collected.
+
+---
+
+## Provider amendment 001 — Claude (frozen); final batch BLOCKED on credentials
+
+`H4 status: still NOT FULLY TESTED. Final Claude batch not yet run.`
+
+- Provider amendment frozen and pushed **before any Claude call**: FINAL H4 PROVIDER =
+  Claude; 24-response batch restarts from zero; Gemini's 9 responses preserved and excluded;
+  frozen sample/prompt/Model B/threshold/top-k/schema unchanged.
+- Runner is now provider-scoped and refuses to mix providers (Claude → `*_claude.json`).
+- **Blocker:** no Anthropic API key is configured (`anthropic_api_key` empty), so the 24
+  real Claude calls, the final technical evaluation, the final latency, and the blinded
+  human-evaluation package (which needs the 24 Claude texts) cannot be produced yet.
+
+### Exact action required from the maintainer
+
+Add the Anthropic key to the same config the Gemini key uses — either set env var
+`ANTHROPIC_API_KEY` or add a line `anthropic_api_key=<key>` to `C:\IDS\.env` (gitignored;
+never commit it). Then run:
+
+`IDS_LLM_INTEGRATION=1 python training/phase17d_explain_run.py --provider claude --conditions both --go`
+
+which performs the 24 Claude calls into `explanation_runs_claude.json` /
+`technical_evaluation_claude.json` / `latency_claude.json`. After that I finalize the
+technical metrics + latency, build the blinded human-evaluation package from the real
+Claude texts, run the tests, and report. Real human ratings are then still required before
+H4 can be concluded.
