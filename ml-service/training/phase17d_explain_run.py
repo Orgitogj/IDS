@@ -16,7 +16,6 @@ if str(_ML_SERVICE_ROOT) not in sys.path:
 from app.ml.detection_engine import METHOD_SUPERVISED
 from app.services import explanation_eval, llm_explainer
 from training.phase17d_explain_sample import (
-    CAPTURES,
     MODEL_B,
     features_b,
     iter_rows,
@@ -33,10 +32,25 @@ RATE_LIMIT_BACKOFF_SECONDS = 25.0
 INTER_CALL_SLEEP_SECONDS = 8.0
 TRANSIENT_MARKERS = ("429", "500", "503", "unavailable", "resource_exhausted",
                      "timeout", "deadline", "temporarily", "overloaded")
-GENERATION_PARAMS = {"temperature": "provider_default_unset",
-                     "max_output_tokens": "provider_default_unset",
-                     "note": "no explicit generation config is set for the gemini call in "
-                             "llm_explainer; provider defaults apply"}
+
+REQUESTED_MODEL = {"gemini": "gemini-flash-latest", "claude": "claude-sonnet-5"}
+GENERATION_PARAMS = {
+    "gemini": {"temperature": "provider_default_unset",
+               "max_output_tokens": "provider_default_unset",
+               "note": "no explicit generation config set; provider defaults apply"},
+    "claude": {"temperature": "provider_default_unset", "max_tokens": 400,
+               "note": "max_tokens=400 set in llm_explainer; temperature unset "
+                       "(provider default)"},
+}
+
+FILES = {
+    "gemini": {"runs": "explanation_runs.json",
+               "tech": "technical_evaluation.json",
+               "latency": "latency.json"},
+    "claude": {"runs": "explanation_runs_claude.json",
+               "tech": "technical_evaluation_claude.json",
+               "latency": "latency_claude.json"},
+}
 
 
 def utc_now():
@@ -45,6 +59,13 @@ def utc_now():
 
 def sha_text(t):
     return hashlib.sha256(t.encode("utf-8")).hexdigest()
+
+
+def _prompt_template_hash():
+    blocks = "\n".join([llm_explainer.PROMPT_VERSION, llm_explainer.ROLE,
+                        llm_explainer.EVIDENCE_BOUNDARY, llm_explainer.INVENTION_RULES,
+                        llm_explainer.STYLE_RULES])
+    return sha_text(blocks)
 
 
 def _is_transient(error):
@@ -111,14 +132,22 @@ def run(provider, conditions, go):
     if os.environ.get("IDS_LLM_INTEGRATION") != "1":
         raise SystemExit("real calls require IDS_LLM_INTEGRATION=1 in the environment")
 
+    requested_model = REQUESTED_MODEL[provider]
+    gen_params = GENERATION_PARAMS[provider]
+    runs_path = OUT / FILES[provider]["runs"]
+
     feats = features_b()
     model = joblib.load(MODEL_B)
     booster = model.get_booster()
 
     existing_ok = {}
-    runs_path = OUT / "explanation_runs.json"
     if runs_path.exists():
-        for r in json.loads(runs_path.read_text(encoding="utf-8")).get("records", []):
+        prior_doc = json.loads(runs_path.read_text(encoding="utf-8"))
+        for r in prior_doc.get("records", []):
+            if r.get("provider") != provider:
+                raise SystemExit(
+                    f"refusing to resume: {runs_path.name} holds a non-{provider} "
+                    f"record ({r.get('provider')}); providers are never mixed")
             if r.get("parse_status") == "ok":
                 existing_ok[(r["alert_id"], r["condition"])] = r
 
@@ -148,61 +177,47 @@ def run(provider, conditions, go):
             start = utc_now()
             gen, attempts = _generate_with_retry(decision, proba, shap_features, provider)
             end = utc_now()
-            if gen is None:
-                records.append({
-                    "alert_id": package["alert_id"], "source_run": package["source_run"],
-                    "flow_index": package["flow_index"], "condition": condition,
-                    "model_decision": decision, "evidence_sha256": evidence_hash,
-                    "prompt_template_sha256": _prompt_template_hash(),
-                    "rendered_prompt_sha256": sha_text(rendered),
-                    "provider": provider, "requested_model": "gemini-flash-latest",
-                    "resolved_model": None, "generation_params": GENERATION_PARAMS,
-                    "start_utc": start, "end_utc": end,
-                    "shap_latency_ms": shap_latency_ms if condition == "with_shap" else None,
-                    "llm_latency_ms": None, "total_explanation_latency_ms": None,
-                    "response_sha256": None, "explanation_text": None,
-                    "parse_status": "failed", "retries": attempts})
-                continue
-
-            text = gen["explanation_text"]
-            llm_latency = gen["generation_latency_ms"]
-            total = (shap_latency_ms + llm_latency) if condition == "with_shap" \
-                else llm_latency
-            resolved = llm_explainer.LAST_RESOLVED_MODEL if provider == "gemini" else None
-            records.append({
+            base = {
                 "alert_id": package["alert_id"], "source_run": package["source_run"],
                 "flow_index": package["flow_index"], "condition": condition,
                 "model_decision": decision, "evidence_sha256": evidence_hash,
                 "prompt_template_sha256": _prompt_template_hash(),
                 "rendered_prompt_sha256": sha_text(rendered),
-                "provider": gen["provider"], "requested_model": "gemini-flash-latest",
-                "resolved_model": resolved, "generation_params": GENERATION_PARAMS,
-                "start_utc": start, "end_utc": end,
+                "provider": provider, "requested_model": requested_model,
+                "generation_params": gen_params, "start_utc": start, "end_utc": end,
                 "shap_latency_ms": shap_latency_ms if condition == "with_shap" else None,
-                "llm_latency_ms": llm_latency,
-                "total_explanation_latency_ms": total,
-                "response_sha256": sha_text(text), "explanation_text": text,
-                "parse_status": "ok", "retries": attempts})
-            ev = explanation_eval.evaluate(text, package)
-            evaluations.append({"condition": condition, **ev})
+                "retries": attempts,
+            }
+            if gen is None:
+                base.update({"resolved_model": None, "llm_latency_ms": None,
+                             "total_explanation_latency_ms": None,
+                             "response_sha256": None, "explanation_text": None,
+                             "parse_status": "failed"})
+                records.append(base)
+                continue
+            text = gen["explanation_text"]
+            llm_latency = gen["generation_latency_ms"]
+            total = (shap_latency_ms + llm_latency) if condition == "with_shap" \
+                else llm_latency
+            base.update({"resolved_model": llm_explainer.LAST_RESOLVED_MODEL,
+                         "llm_latency_ms": llm_latency,
+                         "total_explanation_latency_ms": total,
+                         "response_sha256": sha_text(text), "explanation_text": text,
+                         "parse_status": "ok"})
+            records.append(base)
+            evaluations.append({"condition": condition,
+                                **explanation_eval.evaluate(text, package)})
 
     _write_outputs(provider, packages, conditions, records, evaluations)
     n_ok = sum(1 for r in records if r["parse_status"] == "ok")
     n_fail = sum(1 for r in records if r["parse_status"] == "failed")
     n_retries = sum(len(r["retries"]) for r in records)
-    resolved_models = sorted({r["resolved_model"] for r in records
-                              if r["resolved_model"]})
-    print(f"records={len(records)} ok={n_ok} failed={n_fail} retry_attempts={n_retries}")
-    print(f"resolved_models={resolved_models}")
-    return {"records": len(records), "ok": n_ok, "failed": n_fail,
-            "retry_attempts": n_retries, "resolved_models": resolved_models}
-
-
-def _prompt_template_hash():
-    blocks = "\n".join([llm_explainer.PROMPT_VERSION, llm_explainer.ROLE,
-                        llm_explainer.EVIDENCE_BOUNDARY, llm_explainer.INVENTION_RULES,
-                        llm_explainer.STYLE_RULES])
-    return sha_text(blocks)
+    resolved = sorted({r["resolved_model"] for r in records if r["resolved_model"]})
+    print(f"provider={provider} records={len(records)} ok={n_ok} failed={n_fail} "
+          f"retry_attempts={n_retries}")
+    print(f"resolved_models={resolved}")
+    return {"provider": provider, "records": len(records), "ok": n_ok, "failed": n_fail,
+            "retry_attempts": n_retries, "resolved_models": resolved}
 
 
 def _write_outputs(provider, packages, conditions, records, evaluations):
@@ -214,6 +229,7 @@ def _write_outputs(provider, packages, conditions, records, evaluations):
                              if r["condition"] == cond and r[key] is not None])
 
     latency = {
+        "provider": provider,
         "note": "explanation-layer latency only; separate from frozen ML inference latency",
         "shap_computation_ms": lat("with_shap", "shap_latency_ms"),
         "llm_generation_ms_with_shap": lat("with_shap", "llm_latency_ms"),
@@ -242,26 +258,25 @@ def _write_outputs(provider, packages, conditions, records, evaluations):
             "direction_claims_checked": agg_with.get("direction_claims_checked"),
             "mean_evidence_coverage": agg_with.get("mean_evidence_coverage")},
     }
-
     summary = {
         "generated_at": utc_now(), "provider": provider, "n_alerts": len(packages),
         "conditions": list(conditions),
         "aggregate_with_shap": agg_with, "aggregate_no_shap": agg_no,
         "comparable_paired": comparable,
     }
-    (OUT / "explanation_runs.json").write_text(
-        json.dumps({"generated_at": utc_now(), "records": records}, indent=1) + "\n",
-        encoding="utf-8")
-    (OUT / "technical_evaluation.json").write_text(
+    (OUT / FILES[provider]["runs"]).write_text(
+        json.dumps({"generated_at": utc_now(), "provider": provider,
+                    "records": records}, indent=1) + "\n", encoding="utf-8")
+    (OUT / FILES[provider]["tech"]).write_text(
         json.dumps({"summary": summary, "per_explanation": evaluations}, indent=1) + "\n",
         encoding="utf-8")
-    (OUT / "latency.json").write_text(
+    (OUT / FILES[provider]["latency"]).write_text(
         json.dumps(latency, indent=1) + "\n", encoding="utf-8")
 
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--provider", default="gemini", choices=["gemini", "claude"])
+    p.add_argument("--provider", default="claude", choices=["gemini", "claude"])
     p.add_argument("--conditions", default="both",
                    choices=["both", "with_shap", "no_shap"])
     p.add_argument("--go", action="store_true")

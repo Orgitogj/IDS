@@ -153,6 +153,64 @@ class TestNoRealLLMByDefault:
             raise AssertionError("no real LLM call must occur in the default suite")
         monkeypatch.setattr(llm_explainer, "_generate_with_gemini", boom)
         monkeypatch.setattr(llm_explainer, "_generate_with_claude", boom)
-        result = phase17d_explain_run.run("gemini", ("with_shap", "no_shap"), go=False)
-        assert result["dry_run"] is True
-        assert result["planned_calls"] == 24
+        for provider in ("gemini", "claude"):
+            result = phase17d_explain_run.run(provider, ("with_shap", "no_shap"),
+                                              go=False)
+            assert result["dry_run"] is True
+            assert result["planned_calls"] == 24
+
+
+class TestProviderAmendment:
+
+    def _amendment(self):
+        p = LLM / "PROVIDER_AMENDMENT.json"
+        if not p.exists():
+            pytest.skip("provider amendment not written")
+        return json.load(open(p, encoding="utf-8"))
+
+    def test_final_provider_is_claude(self):
+        a = self._amendment()
+        assert a["final_h4_provider"] == "claude"
+        assert a["amends"] == "phase17d-explainability-v1"
+        assert a["no_provider_mixing"] is True
+
+    def test_amendment_preserves_frozen_invariants(self):
+        u = self._amendment()["unchanged_and_reaffirmed"]
+        assert u["model_b_sha256"] == MODEL_B_SHA
+        assert u["model_b_threshold"] == 0.50
+        assert u["top_k_shap"] == 5
+        assert u["sample_seed"] == 42
+        assert u["prompt_template_sha256"] == _prompt_hash()
+
+    def test_gemini_recorded_as_excluded(self):
+        g = self._amendment()["gemini_partial_attempt"]
+        assert g["intended"] == 24 and g["obtained"] == 9 and g["missing"] == 15
+        assert "EXCLUDED_FROM_FINAL_H4_ANALYSIS" in g["status"]
+
+    def test_requested_claude_model_is_sonnet_5(self):
+        assert self._amendment()["provider_freeze"]["requested_claude_model"] == \
+            "claude-sonnet-5"
+        assert llm_explainer._generate_with_claude.__name__ == "_generate_with_claude"
+
+
+class TestNoProviderMixing:
+
+    def test_gemini_runs_file_is_gemini_only(self):
+        p = LLM / "explanation_runs.json"
+        if not p.exists():
+            pytest.skip("gemini runs absent")
+        d = json.load(open(p, encoding="utf-8"))
+        assert {r["provider"] for r in d["records"]} == {"gemini"}
+
+    def test_runner_uses_separate_files_per_provider(self):
+        assert phase17d_explain_run.FILES["gemini"]["runs"] != \
+            phase17d_explain_run.FILES["claude"]["runs"]
+        assert phase17d_explain_run.REQUESTED_MODEL["claude"] == "claude-sonnet-5"
+
+    def test_claude_final_files_gemini_free_when_present(self):
+        p = LLM / "explanation_runs_claude.json"
+        if not p.exists():
+            pytest.skip("claude batch not run yet")
+        d = json.load(open(p, encoding="utf-8"))
+        assert {r["provider"] for r in d["records"]} == {"claude"}
+        assert len(d["records"]) == 24

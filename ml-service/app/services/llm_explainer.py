@@ -146,7 +146,11 @@ def _build_prompt(predicted_label, confidence, top_shap_features, detection_meth
     return _supervised_prompt(predicted_label, confidence, top_shap_features)
 
 
+LAST_RESOLVED_MODEL = None
+
+
 def _generate_with_claude(prompt):
+    global LAST_RESOLVED_MODEL
     client = _get_anthropic_client()
     model_name = "claude-sonnet-5"
     message = client.messages.create(
@@ -154,10 +158,8 @@ def _generate_with_claude(prompt):
         max_tokens=400,
         messages=[{"role": "user", "content": prompt}]
     )
+    LAST_RESOLVED_MODEL = getattr(message, "model", None)
     return message.content[0].text, model_name
-
-
-LAST_RESOLVED_MODEL = None
 
 
 def _generate_with_gemini(prompt):
