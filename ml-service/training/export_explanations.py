@@ -43,7 +43,7 @@ CSV_COLUMNS = [
     "explanation_text",
 ]
 
-PROVIDER_BY_MODEL_PREFIX = {"claude": "claude", "gemini": "gemini"}
+PROVIDER_BY_MODEL_PREFIX = {"claude": "claude"}
 
 
 def provider_for(llm_model):

@@ -55,7 +55,7 @@ def explanation_payload(**overrides):
     payload = {
         "id": "exp-1",
         "explanationText": "Modeli e klasifikoi kete rrjedhe si PortScan.",
-        "llmModel": "gemini-flash-latest",
+        "llmModel": "claude-sonnet-5",
         "llmPromptVersion": "v3",
         "generationLatencyMs": 812.0,
         "rating": "HELPFUL",
@@ -110,8 +110,8 @@ class TestRowConstruction:
         assert rows[0]["shap_evidence"][0]["feature"] == "Destination Port"
 
     def test_the_provider_is_derived_from_the_model_name(self):
-        assert export.provider_for("gemini-flash-latest") == "gemini"
         assert export.provider_for("claude-sonnet-5") == "claude"
+        assert export.provider_for("claude-sonnet-4-6") == "claude"
         assert export.provider_for("something-else") is None
         assert export.provider_for(None) is None
 
@@ -125,7 +125,7 @@ class TestRowConstruction:
     def test_each_explanation_becomes_its_own_row(self):
         alarms = [{"id": "alarm-1", "networkFlowId": "flow-1"}]
         explanations = {"alarm-1": [
-            explanation_payload(id="exp-1", llmModel="gemini-flash-latest"),
+            explanation_payload(id="exp-1", llmModel="claude-sonnet-4-6"),
             explanation_payload(id="exp-2", llmModel="claude-sonnet-5"),
         ]}
         reader = StubReader(alarms, {"flow-1": flow_payload()}, explanations)
@@ -133,7 +133,7 @@ class TestRowConstruction:
         rows, _ = export.build_rows(reader, predictor=fake_predictor)
 
         assert len(rows) == 2
-        assert {row["provider"] for row in rows} == {"gemini", "claude"}
+        assert [row["provider"] for row in rows] == ["claude", "claude"]
 
     def test_the_limit_is_applied_to_alarms(self):
         alarms = [{"id": f"alarm-{i}", "networkFlowId": "flow-1"} for i in range(5)]
@@ -219,20 +219,20 @@ class TestSummaryAndOutputs:
 
     def test_the_summary_groups_by_provider_and_prompt_version(self):
         rows = [
-            {"provider": "gemini", "rating": "HELPFUL", "generation_latency_ms": 800.0,
+            {"provider": None, "rating": "HELPFUL", "generation_latency_ms": 800.0,
              "groundedness_grounded": True, "llm_prompt_version": "v3"},
             {"provider": "claude", "rating": None, "generation_latency_ms": 1200.0,
              "groundedness_grounded": False, "llm_prompt_version": "v3"},
-            {"provider": "gemini", "rating": "INCORRECT", "generation_latency_ms": 400.0,
+            {"provider": None, "rating": "INCORRECT", "generation_latency_ms": 400.0,
              "groundedness_grounded": True, "llm_prompt_version": "v2"},
         ]
         summary = export.summarise(rows)
 
         assert summary["explanations"] == 3
         assert summary["flagged_by_groundedness_heuristic"] == 1
-        assert summary["by_provider"]["gemini"]["explanations"] == 2
-        assert summary["by_provider"]["gemini"]["rated"] == 2
-        assert summary["by_provider"]["gemini"]["mean_latency_ms"] == 600.0
+        assert summary["by_provider"]["unknown"]["explanations"] == 2
+        assert summary["by_provider"]["unknown"]["rated"] == 2
+        assert summary["by_provider"]["unknown"]["mean_latency_ms"] == 600.0
         assert summary["by_provider"]["claude"]["flagged"] == 1
         assert summary["by_prompt_version"] == {"v3": 2, "v2": 1}
         assert summary["ratings"] == {"HELPFUL": 1, "INCORRECT": 1}
