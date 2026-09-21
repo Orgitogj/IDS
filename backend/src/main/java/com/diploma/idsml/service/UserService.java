@@ -36,10 +36,10 @@ public class UserService {
     @Transactional
     public UserResponse setEnabled(UUID id, boolean enabled, String actingUsername) {
         AppUser user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Perdoruesi nuk u gjet."));
+                .orElseThrow(() -> new ResourceNotFoundException("Përdoruesi nuk u gjet."));
 
         if (user.getUsername().equals(actingUsername) && !enabled) {
-            throw new InvalidRequestException("Nuk mund te cakivizoni llogarine tuaj.");
+            throw new InvalidRequestException("Nuk mund ta çaktivizoni llogarinë tuaj.");
         }
 
         if (user.isEnabled() == enabled) {
@@ -66,7 +66,7 @@ public class UserService {
     @Transactional
     public UserResponse unlock(UUID id) {
         AppUser user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Perdoruesi nuk u gjet."));
+                .orElseThrow(() -> new ResourceNotFoundException("Përdoruesi nuk u gjet."));
 
         user.setFailedLoginAttempts(0);
         user.setLockedUntil(null);
