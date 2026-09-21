@@ -3,6 +3,8 @@ package com.diploma.idsml.security;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,6 +69,16 @@ class JwtServiceTest {
         assertThat(jwtService.parse("not-a-token")).isEmpty();
         assertThat(jwtService.parse("")).isEmpty();
         assertThat(jwtService.parse("a.b.c")).isEmpty();
+    }
+
+    @Test
+    void tokensAreSignedWithHs256EvenWhenTheSecretIsLonger() {
+        String token = jwtService.generateToken("ml-service", "SERVICE");
+        String header = new String(
+                Base64.getUrlDecoder().decode(token.split("\\.")[0]), StandardCharsets.UTF_8);
+
+        assertThat(SECRET.getBytes(StandardCharsets.UTF_8).length).isGreaterThanOrEqualTo(64);
+        assertThat(header).contains("\"alg\":\"HS256\"");
     }
 
     @Test
