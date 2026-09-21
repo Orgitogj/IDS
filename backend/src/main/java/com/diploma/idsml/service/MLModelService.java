@@ -20,11 +20,14 @@ public class MLModelService {
 
     private final MLModelRepository mlModelRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final MlServiceClient mlServiceClient;
 
     public MLModelService(MLModelRepository mlModelRepository,
-                          SimpMessagingTemplate messagingTemplate) {
+                          SimpMessagingTemplate messagingTemplate,
+                          MlServiceClient mlServiceClient) {
         this.mlModelRepository = mlModelRepository;
         this.messagingTemplate = messagingTemplate;
+        this.mlServiceClient = mlServiceClient;
     }
 
     public List<MLModelResponse> getAll() {
@@ -46,12 +49,14 @@ public class MLModelService {
 
     @Transactional
     public MLModelResponse setActive(UUID id) {
+        MLModel model = findEntity(id);
+        mlServiceClient.activate(model.getId());
+
         mlModelRepository.findByActiveTrue().ifPresent(current -> {
             current.setActive(false);
             mlModelRepository.save(current);
         });
 
-        MLModel model = findEntity(id);
         model.setActive(true);
         MLModelResponse response = toResponse(mlModelRepository.save(model));
         messagingTemplate.convertAndSend(ACTIVE_MODEL_TOPIC, response);
