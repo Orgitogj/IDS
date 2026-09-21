@@ -3,7 +3,9 @@ import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { Alarm } from '../models/alarm.model';
 import { Incident } from '../models/incident.model';
+import { MLModel } from '../models/ml-model.model';
 import { AuthService } from './auth.service';
+import { ModelService } from './model.service';
 
 const WS_URL = 'http://localhost:8080/ws';
 
@@ -11,6 +13,7 @@ const WS_URL = 'http://localhost:8080/ws';
 export class WebSocketService {
   private client: Client | null = null;
   private auth = inject(AuthService);
+  private modelService = inject(ModelService);
 
   readonly connected = signal(false);
   readonly liveAlarms = signal<Alarm[]>([]);
@@ -46,6 +49,10 @@ export class WebSocketService {
             incident,
             ...current.filter((existing) => existing.id !== incident.id),
           ]);
+        });
+        this.client!.subscribe('/topic/models/active', (message: IMessage) => {
+          const model: MLModel = JSON.parse(message.body);
+          this.modelService.activeModelId.set(model.id);
         });
       },
       onDisconnect: () => this.connected.set(false),
