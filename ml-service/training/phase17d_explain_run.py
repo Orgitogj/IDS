@@ -33,20 +33,14 @@ INTER_CALL_SLEEP_SECONDS = 8.0
 TRANSIENT_MARKERS = ("429", "500", "503", "unavailable", "resource_exhausted",
                      "timeout", "deadline", "temporarily", "overloaded")
 
-REQUESTED_MODEL = {"gemini": "gemini-flash-latest", "claude": "claude-sonnet-5"}
+REQUESTED_MODEL = {"claude": "claude-sonnet-5"}
 GENERATION_PARAMS = {
-    "gemini": {"temperature": "provider_default_unset",
-               "max_output_tokens": "provider_default_unset",
-               "note": "no explicit generation config set; provider defaults apply"},
     "claude": {"temperature": "provider_default_unset", "max_tokens": 400,
                "note": "max_tokens=400 set in llm_explainer; temperature unset "
                        "(provider default)"},
 }
 
 FILES = {
-    "gemini": {"runs": "explanation_runs.json",
-               "tech": "technical_evaluation.json",
-               "latency": "latency.json"},
     "claude": {"runs": "explanation_runs_claude.json",
                "tech": "technical_evaluation_claude.json",
                "latency": "latency_claude.json"},
@@ -276,7 +270,7 @@ def _write_outputs(provider, packages, conditions, records, evaluations):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--provider", default="claude", choices=["gemini", "claude"])
+    p.add_argument("--provider", default="claude", choices=["claude"])
     p.add_argument("--conditions", default="both",
                    choices=["both", "with_shap", "no_shap"])
     p.add_argument("--go", action="store_true")
