@@ -1,5 +1,5 @@
-﻿import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+﻿import { Component, LOCALE_ID, OnInit, inject, signal, computed } from '@angular/core';
+import { DecimalPipe, formatNumber } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 import { ExperimentService } from '../../core/services/experiment.service';
@@ -22,6 +22,7 @@ export class ExperimentsComponent implements OnInit {
   private experimentService = inject(ExperimentService);
   private modelService = inject(ModelService);
   private toast = inject(ToastService);
+  private locale = inject(LOCALE_ID);
 
   results = signal<ExperimentResult[]>([]);
   activeModelId = this.modelService.activeModelId;
@@ -55,7 +56,7 @@ export class ExperimentsComponent implements OnInit {
       labels: subset.map((r) => r.nFeatures.toString()),
       datasets: [
         {
-          label: 'F1-score (%)',
+          label: 'F1 (%)',
           data: subset.map((r) => +(r.f1Score * 100).toFixed(2)),
           borderColor: '#6366f1',
           backgroundColor: '#6366f1',
@@ -64,7 +65,7 @@ export class ExperimentsComponent implements OnInit {
           pointRadius: 4,
         },
         {
-          label: 'Latency (ms)',
+          label: 'Vonesa (ms)',
           data: subset.map((r) => r.avgLatencyMs ?? 0),
           borderColor: '#f97316',
           backgroundColor: '#f97316',
@@ -88,7 +89,7 @@ export class ExperimentsComponent implements OnInit {
     },
     scales: {
       x: {
-        title: { display: true, text: 'Numri i Features', color: AXIS_COLOR, font: { size: 10 } },
+        title: { display: true, text: 'Numri i veçorive', color: AXIS_COLOR, font: { size: 10 } },
         ticks: { color: AXIS_COLOR },
         grid: { color: GRID_COLOR },
       },
@@ -102,7 +103,7 @@ export class ExperimentsComponent implements OnInit {
       y1: {
         type: 'linear',
         position: 'right',
-        title: { display: true, text: 'Latency (ms)', color: '#f97316', font: { size: 10 } },
+        title: { display: true, text: 'Vonesa (ms)', color: '#f97316', font: { size: 10 } },
         ticks: { color: AXIS_COLOR },
         grid: { display: false },
       },
@@ -139,12 +140,12 @@ export class ExperimentsComponent implements OnInit {
     },
     scales: {
       x: {
-        title: { display: true, text: 'Latency (ms)', color: AXIS_COLOR, font: { size: 10 } },
+        title: { display: true, text: 'Vonesa (ms)', color: AXIS_COLOR, font: { size: 10 } },
         ticks: { color: AXIS_COLOR },
         grid: { color: GRID_COLOR },
       },
       y: {
-        title: { display: true, text: 'F1-score (%)', color: AXIS_COLOR, font: { size: 10 } },
+        title: { display: true, text: 'F1 (%)', color: AXIS_COLOR, font: { size: 10 } },
         ticks: { color: AXIS_COLOR },
         grid: { color: GRID_COLOR },
       },
@@ -157,7 +158,7 @@ export class ExperimentsComponent implements OnInit {
       labels: sorted.map((r) => r.mlModelName),
       datasets: [
         {
-          label: 'F1-score (%)',
+          label: 'F1 (%)',
           data: sorted.map((r) => +(r.f1Score * 100).toFixed(2)),
           backgroundColor: '#6366f1',
           borderRadius: 6,
@@ -200,6 +201,6 @@ export class ExperimentsComponent implements OnInit {
   }
 
   formatPercent(value: number): string {
-    return (value * 100).toFixed(2) + '%';
+    return formatNumber(value * 100, this.locale, '1.2-2') + '%';
   }
 }
