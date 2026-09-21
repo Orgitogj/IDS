@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
 import { ModelService } from '../../core/services/model.service';
 import { MLModel } from '../../core/models/ml-model.model';
@@ -57,11 +58,11 @@ export class ModelsComponent implements OnInit {
         this.loadModels();
         this.activating.set(null);
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
         this.activating.set(null);
         this.toast.show(
           'Aktivizimi deshtoi',
-          `Modeli ${model.name} nuk u aktivizua.`,
+          error.error?.message ?? `Modeli ${model.name} nuk u aktivizua.`,
           'critical',
         );
       },
