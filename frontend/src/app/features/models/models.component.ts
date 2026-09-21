@@ -22,15 +22,21 @@ export class ModelsComponent implements OnInit {
   loading = signal(true);
   loadError = signal(false);
   activating = signal<string | null>(null);
+  activeModelId = this.modelService.activeModelId;
 
   ngOnInit(): void {
     this.loadModels();
+  }
+
+  isActive(model: MLModel): boolean {
+    return model.id === this.activeModelId();
   }
 
   loadModels(): void {
     this.modelService.getAll().subscribe({
       next: (models) => {
         this.models.set(models.sort((a, b) => +new Date(b.trainedAt) - +new Date(a.trainedAt)));
+        this.activeModelId.set(models.find((m) => m.active)?.id ?? null);
         this.loading.set(false);
         this.loadError.set(false);
       },

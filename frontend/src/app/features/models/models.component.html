@@ -19,8 +19,8 @@
     @for (model of models(); track model.id) {
       <div
         class="bg-[var(--color-surface)] border rounded-lg p-4 relative overflow-hidden"
-        [class.border-[var(--color-low)]]="model.active"
-        [class.border-[var(--color-border)]]="!model.active"
+        [class.border-[var(--color-low)]]="isActive(model)"
+        [class.border-[var(--color-border)]]="!isActive(model)"
       >
         <div class="absolute top-0 left-0 w-1 h-full" [class]="algorithmColor(model.algorithm)"></div>
         <div class="pl-2">
@@ -29,7 +29,7 @@
               <p class="text-sm font-semibold text-white truncate">{{ model.name }}</p>
               <p class="text-[10px] text-[var(--color-text-muted)] mt-0.5">{{ model.algorithm }}</p>
             </div>
-            @if (model.active) {
+            @if (isActive(model)) {
               <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-[var(--color-low)]/15 text-[var(--color-low)] border border-[var(--color-low)]/30 shrink-0">
                 AKTIV
               </span>
@@ -49,7 +49,7 @@
             </details>
           }
 
-          @if (!model.active && isAdmin()) {
+          @if (!isActive(model) && isAdmin()) {
             <button
               (click)="activate(model)"
               [disabled]="activating() === model.id"
