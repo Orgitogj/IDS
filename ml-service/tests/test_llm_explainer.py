@@ -149,13 +149,13 @@ def test_the_forbidden_name_detector_actually_detects(monkeypatch):
 def test_the_generated_explanation_records_the_prompt_version(monkeypatch):
     captured = {}
 
-    def fake_gemini(prompt):
+    def fake_claude(prompt):
         captured["prompt"] = prompt
         return "Sistemi vuri re sjellje te pazakonte qe nuk perputhet me profilin normal.", "stub"
 
-    monkeypatch.setattr(llm_explainer, "_generate_with_gemini", fake_gemini)
+    monkeypatch.setattr(llm_explainer, "_generate_with_claude", fake_claude)
 
-    result = generate_explanation("UNKNOWN", None, shap_features(), provider="gemini",
+    result = generate_explanation("UNKNOWN", None, shap_features(),
                                   detection_method=METHOD_ANOMALY,
                                   top_anomaly_features=anomaly_features(),
                                   anomaly_score=0.991)
@@ -303,26 +303,27 @@ def test_the_hardened_anomaly_prompt_still_names_no_attack_class():
     assert attack_names_in(anomaly_prompt()) == []
 
 
-def test_both_providers_receive_byte_identical_prompts(monkeypatch):
-    seen = {}
-
-    def fake_claude(prompt):
-        seen["claude"] = prompt
-        return "shpjegim claude", "claude-sonnet-5"
-
-    def fake_gemini(prompt):
-        seen["gemini"] = prompt
-        return "shpjegim gemini", "gemini-flash-latest"
-
-    monkeypatch.setattr(llm_explainer, "_generate_with_claude", fake_claude)
-    monkeypatch.setattr(llm_explainer, "_generate_with_gemini", fake_gemini)
+def test_claude_is_the_only_provider(monkeypatch):
+    monkeypatch.setattr(llm_explainer, "_generate_with_claude",
+                        lambda prompt: ("shpjegim claude", "claude-sonnet-5"))
 
     results = llm_explainer.generate_all_explanations(
         "PortScan", 0.96, shap_features(), detection_method=METHOD_SUPERVISED)
 
-    assert seen["claude"] == seen["gemini"]
-    assert {result["provider"] for result in results} == {"claude", "gemini"}
+    assert llm_explainer.PROVIDERS == ("claude",)
+    assert [result["provider"] for result in results] == ["claude"]
     assert {result["llm_prompt_version"] for result in results} == {"v3"}
+
+
+def test_an_unknown_provider_is_refused_instead_of_silently_using_claude(monkeypatch):
+    def fail(prompt):
+        raise AssertionError("Claude must not answer for another provider")
+
+    monkeypatch.setattr(llm_explainer, "_generate_with_claude", fail)
+
+    with pytest.raises(ValueError, match="nonexistent"):
+        generate_explanation("DDoS", 0.9, shap_features(), provider="nonexistent",
+                             detection_method=METHOD_SUPERVISED)
 
 
 def test_the_provider_is_reported_on_every_result(monkeypatch):
@@ -337,16 +338,13 @@ def test_the_provider_is_reported_on_every_result(monkeypatch):
     assert result["generation_latency_ms"] >= 0
 
 
-def test_a_failing_provider_does_not_stop_the_other(monkeypatch):
+def test_a_failing_provider_yields_no_results_instead_of_raising(monkeypatch):
     def broken(prompt):
         raise RuntimeError("provider down")
 
     monkeypatch.setattr(llm_explainer, "_generate_with_claude", broken)
-    monkeypatch.setattr(llm_explainer, "_generate_with_gemini",
-                        lambda prompt: ("ok", "gemini-flash-latest"))
 
     results = llm_explainer.generate_all_explanations(
         "DDoS", 0.9, shap_features(), detection_method=METHOD_SUPERVISED)
 
-    assert len(results) == 1
-    assert results[0]["provider"] == "gemini"
+    assert results == []

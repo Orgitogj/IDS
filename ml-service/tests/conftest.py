@@ -69,7 +69,7 @@ def _llm_configured():
         from app.core.config import settings
     except Exception:
         return False
-    return bool(settings.gemini_api_key or settings.anthropic_api_key)
+    return bool(settings.anthropic_api_key)
 
 
 def pytest_collection_modifyitems(config, items):
