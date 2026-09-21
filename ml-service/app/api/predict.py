@@ -2,8 +2,9 @@ import requests
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.core.security import ADMIN, ANALYST, SERVICE, require_roles
-from app.ml.feature_validation import FeatureValidationError
+from app.ml.feature_validation import FeatureValidationError, FeatureVersionMismatch
 from app.ml.inference import (
+    activate,
     active_model,
     drift_monitor,
     predict,
@@ -46,6 +47,20 @@ def get_active_model():
         return active_model().identity.to_dict()
     except RuntimeError as error:
         raise HTTPException(status_code=503, detail=str(error))
+
+
+@router.post("/models/{model_id}/activate",
+             dependencies=[Depends(require_roles(SERVICE, ADMIN))])
+def activate_model(model_id: str):
+    try:
+        return activate(model_id).identity.to_dict()
+    except requests.exceptions.HTTPError:
+        raise HTTPException(status_code=404,
+                            detail=f"Modeli '{model_id}' s'u gjet ne regjistrin e modeleve.")
+    except requests.exceptions.RequestException as error:
+        raise HTTPException(status_code=503, detail=f"Regjistri i modeleve s'u arrit: {error}")
+    except (RuntimeError, FeatureVersionMismatch) as error:
+        raise HTTPException(status_code=422, detail=str(error))
 
 
 @router.post("/models/reload", dependencies=[Depends(require_roles(ADMIN))])
