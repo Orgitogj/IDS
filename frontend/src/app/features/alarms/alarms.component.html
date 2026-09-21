@@ -1,24 +1,24 @@
 <div class="p-6">
   <div class="flex items-center justify-between mb-4">
     <div>
-      <h2 class="text-xl font-semibold text-white">Alarms</h2>
+      <h2 class="text-xl font-semibold text-white">Alarmet</h2>
       <p class="text-xs text-[var(--color-text-muted)] mt-0.5">{{ rangeStart() }}-{{ rangeEnd() }} nga {{ totalElements() }} alarme</p>
     </div>
     <button
       (click)="toggleIncidents()"
       class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20"
     >
-      {{ showIncidents() ? 'Fshih incidentet' : 'Grupo ne incidente' }}
+      {{ showIncidents() ? 'Fshih incidentet' : 'Grupo në incidente' }}
     </button>
   </div>
 
   @if (loading()) {
-    <p class="text-xs text-[var(--color-text-muted)] mb-4">Duke ngarkuar te dhenat...</p>
+    <p class="text-xs text-[var(--color-text-muted)] mb-4">Duke ngarkuar të dhënat...</p>
   } @else if (loadError()) {
     <div class="mb-4 rounded-lg border border-[var(--color-critical)]/30 bg-[var(--color-critical)]/10 px-4 py-3">
-      <p class="text-xs font-semibold text-[var(--color-critical)]">Ngarkimi deshtoi</p>
+      <p class="text-xs font-semibold text-[var(--color-critical)]">Ngarkimi dështoi</p>
       <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
-        Backend-i nuk pergjigjet. Kontrollo nese Spring Boot eshte i ndezur ne localhost:8080.
+        Serveri nuk përgjigjet. Kontrolloni nëse Spring Boot është i ndezur (localhost:8080).
       </p>
     </div>
   }
@@ -27,8 +27,8 @@
     <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg mb-4 overflow-hidden">
       <div class="flex items-center gap-2 px-4 py-3 border-b border-[var(--color-border)]">
         <span class="w-1 h-3.5 bg-[var(--color-high)] rounded-full"></span>
-        <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Incidente</h3>
-        <span class="text-[10px] text-[var(--color-text-muted)]">grupuar sipas source IP dhe llojit te sulmit</span>
+        <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Incidentet</h3>
+        <span class="text-[10px] text-[var(--color-text-muted)]">të grupuara sipas IP-së burimore dhe llojit të sulmit</span>
       </div>
 
       @if (incidentsLoading()) {
@@ -37,10 +37,10 @@
         <table class="w-full text-xs">
           <thead>
             <tr class="border-b border-[var(--color-border)] text-left text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">
-              <th class="px-4 py-2.5 font-semibold">Source IP</th>
-              <th class="px-4 py-2.5 font-semibold">Lloji</th>
+              <th class="px-4 py-2.5 font-semibold">IP burimore</th>
+              <th class="px-4 py-2.5 font-semibold">Lloji i sulmit</th>
               <th class="px-4 py-2.5 font-semibold text-right">Alarme</th>
-              <th class="px-4 py-2.5 font-semibold">Severity</th>
+              <th class="px-4 py-2.5 font-semibold">Niveli i kërcënimit</th>
               <th class="px-4 py-2.5 font-semibold">Fillimi</th>
               <th class="px-4 py-2.5 font-semibold">Fundi</th>
             </tr>
@@ -49,18 +49,18 @@
             @for (incident of incidents(); track incident.sourceIp + incident.attackType) {
               <tr class="border-b border-[var(--color-border)] last:border-0">
                 <td class="px-4 py-2.5 font-mono text-[var(--color-text)]">{{ incident.sourceIp }}</td>
-                <td class="px-4 py-2.5 text-[var(--color-text-muted)]">{{ incident.attackType ?? 'BENIGN' }}</td>
+                <td class="px-4 py-2.5 text-[var(--color-text-muted)]">{{ incident.attackType ?? 'Normal' }}</td>
                 <td class="px-4 py-2.5 text-right tabular-nums font-semibold text-white">{{ incident.alarmCount }}</td>
                 <td class="px-4 py-2.5">
                   <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [class]="severityClass(incident.topSeverity)">
-                    {{ incident.topSeverity }}
+                    {{ incident.topSeverity | label: 'severity' }}
                   </span>
                 </td>
                 <td class="px-4 py-2.5 text-[var(--color-text-muted)]">{{ incident.firstSeen | date: 'dd/MM HH:mm' }}</td>
                 <td class="px-4 py-2.5 text-[var(--color-text-muted)]">{{ incident.lastSeen | date: 'dd/MM HH:mm' }}</td>
               </tr>
             } @empty {
-              <tr><td colspan="6" class="px-4 py-8 text-center text-[var(--color-text-muted)]">Asnje incident.</td></tr>
+              <tr><td colspan="6" class="px-4 py-8 text-center text-[var(--color-text-muted)]">Nuk ka incidente.</td></tr>
             }
           </tbody>
         </table>
@@ -70,19 +70,19 @@
 
   <div class="grid grid-cols-4 gap-3 mb-4">
     <div class="bg-[var(--color-surface)] border border-[var(--color-border)] border-t-2 border-t-[var(--color-critical)] rounded-lg p-3">
-      <p class="text-[10px] text-[var(--color-text-muted)] font-semibold uppercase tracking-wider">Critical</p>
+      <p class="text-[10px] text-[var(--color-text-muted)] font-semibold uppercase tracking-wider">Kritik</p>
       <p class="text-xl font-bold text-[var(--color-critical)] mt-0.5 tabular-nums">{{ severityCounts().CRITICAL }}</p>
     </div>
     <div class="bg-[var(--color-surface)] border border-[var(--color-border)] border-t-2 border-t-[var(--color-high)] rounded-lg p-3">
-      <p class="text-[10px] text-[var(--color-text-muted)] font-semibold uppercase tracking-wider">High</p>
+      <p class="text-[10px] text-[var(--color-text-muted)] font-semibold uppercase tracking-wider">I lartë</p>
       <p class="text-xl font-bold text-[var(--color-high)] mt-0.5 tabular-nums">{{ severityCounts().HIGH }}</p>
     </div>
     <div class="bg-[var(--color-surface)] border border-[var(--color-border)] border-t-2 border-t-[var(--color-medium)] rounded-lg p-3">
-      <p class="text-[10px] text-[var(--color-text-muted)] font-semibold uppercase tracking-wider">Medium</p>
+      <p class="text-[10px] text-[var(--color-text-muted)] font-semibold uppercase tracking-wider">Mesatar</p>
       <p class="text-xl font-bold text-[var(--color-medium)] mt-0.5 tabular-nums">{{ severityCounts().MEDIUM }}</p>
     </div>
     <div class="bg-[var(--color-surface)] border border-[var(--color-border)] border-t-2 border-t-[var(--color-low)] rounded-lg p-3">
-      <p class="text-[10px] text-[var(--color-text-muted)] font-semibold uppercase tracking-wider">Low</p>
+      <p class="text-[10px] text-[var(--color-text-muted)] font-semibold uppercase tracking-wider">I ulët</p>
       <p class="text-xl font-bold text-[var(--color-low)] mt-0.5 tabular-nums">{{ severityCounts().LOW }}</p>
     </div>
   </div>
@@ -91,23 +91,23 @@
     <input
       type="text"
       [(ngModel)]="searchTerm"
-      placeholder="Kerko sipas ID..."
+      placeholder="Kërko sipas ID-së..."
       class="flex-1 min-w-[200px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-primary)]"
     />
     <select [(ngModel)]="severityFilter" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]">
-      <option value="ALL">Te gjitha severity</option>
-      <option value="CRITICAL">Critical</option>
-      <option value="HIGH">High</option>
-      <option value="MEDIUM">Medium</option>
-      <option value="LOW">Low</option>
+      <option value="ALL">Çdo nivel kërcënimi</option>
+      <option value="CRITICAL">Kritik</option>
+      <option value="HIGH">I lartë</option>
+      <option value="MEDIUM">Mesatar</option>
+      <option value="LOW">I ulët</option>
     </select>
     <select [(ngModel)]="statusFilter" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]">
-      <option value="ALL">Te gjitha status</option>
-      <option value="NEW">New</option>
-      <option value="ACKNOWLEDGED">Acknowledged</option>
-      <option value="CONFIRMED">Confirmed</option>
-      <option value="FALSE_POSITIVE">False Positive</option>
-      <option value="RESOLVED">Resolved</option>
+      <option value="ALL">Çdo status</option>
+      <option value="NEW">I ri</option>
+      <option value="ACKNOWLEDGED">Në shqyrtim</option>
+      <option value="CONFIRMED">I konfirmuar</option>
+      <option value="FALSE_POSITIVE">Pozitiv i rremë</option>
+      <option value="RESOLVED">I zgjidhur</option>
     </select>
   </div>
 
@@ -121,14 +121,14 @@
           [class.border-[var(--color-border)]]="selectedAlarmId() !== alarm.id"
         >
           <div class="flex items-center justify-between">
-            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [class]="severityClass(alarm.severity)">{{ alarm.severity }}</span>
-            <span class="text-[10px] text-[var(--color-text-muted)]">{{ alarm.status }}</span>
+            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [class]="severityClass(alarm.severity)">{{ alarm.severity | label: 'severity' }}</span>
+            <span class="text-[10px] text-[var(--color-text-muted)]">{{ alarm.status | label: 'status' }}</span>
           </div>
           <p class="text-xs text-white mt-2 font-mono truncate">{{ alarm.id }}</p>
           <p class="text-[10px] text-[var(--color-text-muted)] mt-1">{{ alarm.createdAt | date: 'short' }}</p>
         </button>
       } @empty {
-        <p class="text-sm text-[var(--color-text-muted)]">Asnje alarm s'perputhet.</p>
+        <p class="text-sm text-[var(--color-text-muted)]">Asnjë alarm nuk përputhet me filtrat.</p>
       }
 
       <div class="flex items-center justify-between pt-3 mt-1 border-t border-[var(--color-border)]">
@@ -141,14 +141,14 @@
             [disabled]="!hasPrevious() || loading()"
             class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20 disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Para
+            E mëparshmja
           </button>
           <button
             (click)="nextPage()"
             [disabled]="!hasNext() || loading()"
             class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20 disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Pas
+            Tjetra
           </button>
         </div>
       </div>
@@ -165,8 +165,8 @@
             <div class="flex gap-2">
               @for (alarm of alarms(); track alarm.id) {
                 @if (alarm.id === id) {
-                  <button (click)="updateStatus(alarm, 'ACKNOWLEDGED')" class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20">Konfirmo</button>
-                  <button (click)="updateStatus(alarm, 'FALSE_POSITIVE')" class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-critical)]/20">False Positive</button>
+                  <button (click)="updateStatus(alarm, 'ACKNOWLEDGED')" class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20">Merr në shqyrtim</button>
+                  <button (click)="updateStatus(alarm, 'FALSE_POSITIVE')" class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-critical)]/20">Pozitiv i rremë</button>
                 }
               }
             </div>
@@ -201,40 +201,40 @@
                   <p class="text-sm text-[var(--color-text)] leading-relaxed whitespace-pre-line flex-1">{{ exp.explanationText }}</p>
 
                   <div class="mt-3 pt-3 border-t border-[var(--color-border)]">
-                    <p class="text-[10px] text-[var(--color-text-muted)] mb-1.5">Prompt: {{ exp.llmPromptVersion }}</p>
+                    <p class="text-[10px] text-[var(--color-text-muted)] mb-1.5">Versioni i prompt-it: {{ exp.llmPromptVersion }}</p>
                     <div class="flex gap-1.5">
-                      <button (click)="rateExplanation(exp, 'HELPFUL')" [class]="ratingButtonClass(exp, 'HELPFUL')" class="text-[10px] px-2 py-0.5 rounded transition-colors">I dobishem</button>
-                      <button (click)="rateExplanation(exp, 'UNCLEAR')" [class]="ratingButtonClass(exp, 'UNCLEAR')" class="text-[10px] px-2 py-0.5 rounded transition-colors">I paqarte</button>
-                      <button (click)="rateExplanation(exp, 'INCORRECT')" [class]="ratingButtonClass(exp, 'INCORRECT')" class="text-[10px] px-2 py-0.5 rounded transition-colors">I gabuar</button>
+                      <button (click)="rateExplanation(exp, 'HELPFUL')" [class]="ratingButtonClass(exp, 'HELPFUL')" class="text-[10px] px-2 py-0.5 rounded transition-colors">I dobishëm</button>
+                      <button (click)="rateExplanation(exp, 'UNCLEAR')" [class]="ratingButtonClass(exp, 'UNCLEAR')" class="text-[10px] px-2 py-0.5 rounded transition-colors">I paqartë</button>
+                      <button (click)="rateExplanation(exp, 'INCORRECT')" [class]="ratingButtonClass(exp, 'INCORRECT')" class="text-[10px] px-2 py-0.5 rounded transition-colors">I pasaktë</button>
                     </div>
                   </div>
                 </div>
               }
             </div>
           } @else {
-            <p class="text-sm text-[var(--color-text-muted)]">Ende s'ka shpjegim per kete alarm.</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Ky alarm nuk ka ende shpjegim.</p>
           }
         </div>
 
         <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-5">
           <div class="flex items-center gap-2 mb-3">
             <span class="w-1 h-3.5 bg-[var(--color-high)] rounded-full"></span>
-            <h3 class="text-xs font-semibold text-white uppercase tracking-wide">SHAP - Kontributi i Features</h3>
+            <h3 class="text-xs font-semibold text-white uppercase tracking-wide">SHAP – kontributi i veçorive</h3>
           </div>
           @if (shapLoading()) {
-            <p class="text-sm text-[var(--color-text-muted)]">Duke llogaritur SHAP...</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Duke llogaritur vlerat SHAP...</p>
           } @else if (shapFeatures(); as features) {
             <div class="h-56">
               <canvas baseChart [data]="shapChartData()" [options]="shapChartOptions" type="bar"></canvas>
             </div>
-            <p class="text-[10px] text-[var(--color-text-muted)] mt-2">Kuq = shtyn drejt ATTACK, Jeshil = shtyn drejt BENIGN</p>
+            <p class="text-[10px] text-[var(--color-text-muted)] mt-2">Shiritat e kuq e shtyjnë parashikimin drejt sulmit, ata të gjelbër drejt trafikut normal.</p>
           } @else {
-            <p class="text-sm text-[var(--color-text-muted)]">SHAP s'eshte i disponueshem.</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Vlerat SHAP nuk janë të disponueshme.</p>
           }
         </div>
       } @else {
         <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-6 flex items-center justify-center h-64">
-          <p class="text-sm text-[var(--color-text-muted)]">Zgjidh nje alarm per te pare detajet</p>
+          <p class="text-sm text-[var(--color-text-muted)]">Zgjidhni një alarm për të parë detajet.</p>
         </div>
       }
     </div>

@@ -12,6 +12,7 @@ import { AlarmStats } from '../../core/models/alarm-stats.model';
 import { AlarmGroup } from '../../core/models/alarm-group.model';
 import { Explanation, ExplanationRating } from '../../core/models/explanation.model';
 import { ToastService } from '../../core/services/toast.service';
+import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 const PAGE_SIZE = 50;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -21,7 +22,7 @@ const GRID_COLOR = '#1d2440';
 @Component({
   selector: 'app-alarms',
   standalone: true,
-  imports: [DatePipe, DecimalPipe, FormsModule, BaseChartDirective],
+  imports: [DatePipe, DecimalPipe, FormsModule, BaseChartDirective, LabelPipe],
   templateUrl: './alarms.component.html',
   styleUrl: './alarms.component.css',
 })
@@ -87,7 +88,7 @@ export class AlarmsComponent implements OnInit {
       labels: sorted.map((f) => f.feature),
       datasets: [
         {
-          label: 'SHAP contribution',
+          label: 'Kontributi SHAP',
           data: sorted.map((f) => f.shap_contribution),
           backgroundColor: sorted.map((f) => (f.shap_contribution >= 0 ? '#ef4444' : '#22c55e')),
           borderRadius: 4,
@@ -281,15 +282,17 @@ export class AlarmsComponent implements OnInit {
         this.loadExplanations(alarmId);
         this.toast.show(
           'Shpjegimi u gjenerua',
-          `${result.explanations.length} shpjegim(e) nga LLM.`,
+          result.explanations.length === 1
+            ? 'U ruajt 1 shpjegim.'
+            : `U ruajtën ${result.explanations.length} shpjegime.`,
           'low',
         );
       },
       error: () => {
         this.generating.set(false);
         this.toast.show(
-          'Gjenerimi i shpjegimit deshtoi',
-          'Kontrollo nese ml-service eshte i ndezur ne localhost:8000.',
+          'Shpjegimi nuk u gjenerua',
+          'Kontrolloni nëse ml-service është i ndezur (localhost:8000).',
           'critical',
         );
       },
@@ -307,7 +310,7 @@ export class AlarmsComponent implements OnInit {
         );
       },
       error: () => {
-        this.toast.show('Vleresimi deshtoi', 'Provo perseri.', 'critical');
+        this.toast.show('Vlerësimi dështoi', 'Provoni përsëri.', 'critical');
       },
     });
   }
@@ -331,8 +334,8 @@ export class AlarmsComponent implements OnInit {
       },
       error: () => {
         this.toast.show(
-          'Ndryshimi i statusit deshtoi',
-          `Alarmi mbeti ne statusin e meparshem.`,
+          'Statusi nuk u ndryshua',
+          'Alarmi mbeti në statusin e mëparshëm.',
           'critical',
         );
       },
