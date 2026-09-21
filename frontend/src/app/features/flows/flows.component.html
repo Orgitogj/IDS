@@ -1,18 +1,18 @@
 <div class="p-6">
   <div class="flex items-center justify-between mb-4">
     <div>
-      <h2 class="text-xl font-semibold text-white">Network Flows</h2>
-      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">{{ rangeStart() }}-{{ rangeEnd() }} nga {{ totalElements() }} flows</p>
+      <h2 class="text-xl font-semibold text-white">Trafiku i rrjetit</h2>
+      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">{{ rangeStart() }}-{{ rangeEnd() }} nga {{ totalElements() }} regjistrime</p>
     </div>
   </div>
 
   @if (loading()) {
-    <p class="text-xs text-[var(--color-text-muted)] mb-4">Duke ngarkuar te dhenat...</p>
+    <p class="text-xs text-[var(--color-text-muted)] mb-4">Duke ngarkuar të dhënat...</p>
   } @else if (loadError()) {
     <div class="mb-4 rounded-lg border border-[var(--color-critical)]/30 bg-[var(--color-critical)]/10 px-4 py-3">
-      <p class="text-xs font-semibold text-[var(--color-critical)]">Ngarkimi deshtoi</p>
+      <p class="text-xs font-semibold text-[var(--color-critical)]">Ngarkimi dështoi</p>
       <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
-        Backend-i nuk pergjigjet. Kontrollo nese Spring Boot eshte i ndezur ne localhost:8080.
+        Serveri nuk përgjigjet. Kontrolloni nëse Spring Boot është i ndezur (localhost:8080).
       </p>
     </div>
   }
@@ -21,17 +21,17 @@
     <input
       type="text"
       [(ngModel)]="searchTerm"
-      placeholder="Kerko sipas ID, IP, ose attack type..."
+      placeholder="Kërko sipas ID-së, IP-së ose llojit të sulmit..."
       class="flex-1 min-w-[240px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-primary)]"
     />
     <select
       [(ngModel)]="labelFilter"
       class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]"
     >
-      <option value="ALL">Te gjitha</option>
-      <option value="ATTACK">ATTACK</option>
-      <option value="BENIGN">BENIGN</option>
-      <option value="UNKNOWN">UNKNOWN</option>
+      <option value="ALL">Të gjitha</option>
+      <option value="ATTACK">Sulm</option>
+      <option value="BENIGN">Normal</option>
+      <option value="UNKNOWN">I panjohur</option>
     </select>
   </div>
 
@@ -40,12 +40,12 @@
       <table class="w-full text-xs">
         <thead>
         <tr class="border-b border-[var(--color-border)] text-left text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">
-          <th class="px-3 py-2.5 font-semibold">Label</th>
-          <th class="px-3 py-2.5 font-semibold">Source IP</th>
-          <th class="px-3 py-2.5 font-semibold">Dest IP</th>
-          <th class="px-3 py-2.5 font-semibold">Port</th>
-          <th class="px-3 py-2.5 font-semibold">Attack Type</th>
-          <th class="px-3 py-2.5 font-semibold text-right">Confidence</th>
+          <th class="px-3 py-2.5 font-semibold">Etiketa</th>
+          <th class="px-3 py-2.5 font-semibold">IP burimore</th>
+          <th class="px-3 py-2.5 font-semibold">IP e destinacionit</th>
+          <th class="px-3 py-2.5 font-semibold">Porta</th>
+          <th class="px-3 py-2.5 font-semibold">Lloji i sulmit</th>
+          <th class="px-3 py-2.5 font-semibold text-right">Besueshmëria</th>
         </tr>
         </thead>
         <tbody>
@@ -57,7 +57,7 @@
             >
               <td class="px-3 py-2.5">
                 <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [class]="labelClass(flow.predictedLabel)">
-                  {{ flow.predictedLabel ?? 'UNKNOWN' }}
+                  {{ (flow.predictedLabel ?? 'UNKNOWN') | label: 'flowLabel' }}
                 </span>
               </td>
               <td class="px-3 py-2.5 font-mono text-[var(--color-text)]">{{ flow.sourceIp ?? '—' }}</td>
@@ -65,11 +65,11 @@
               <td class="px-3 py-2.5 text-[var(--color-text-muted)]">{{ flow.destinationPort ?? '—' }}</td>
               <td class="px-3 py-2.5 text-[var(--color-text-muted)]">{{ flow.attackType ?? '—' }}</td>
               <td class="px-3 py-2.5 text-right tabular-nums text-[var(--color-text)]">
-                {{ flow.predictionConfidence ? (flow.predictionConfidence * 100).toFixed(1) + '%' : '—' }}
+                {{ flow.predictionConfidence ? (flow.predictionConfidence * 100 | number: '1.1-1') + '%' : '—' }}
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="6" class="px-3 py-8 text-center text-[var(--color-text-muted)]">Asnje flow s'perputhet.</td></tr>
+            <tr><td colspan="6" class="px-3 py-8 text-center text-[var(--color-text-muted)]">Asnjë regjistrim trafiku nuk përputhet me filtrat.</td></tr>
           }
         </tbody>
       </table>
@@ -84,14 +84,14 @@
             [disabled]="!hasPrevious() || loading()"
             class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20 disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Para
+            E mëparshmja
           </button>
           <button
             (click)="nextPage()"
             [disabled]="!hasNext() || loading()"
             class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20 disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Pas
+            Tjetra
           </button>
         </div>
       </div>
@@ -102,16 +102,16 @@
         <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
           <div class="flex items-center gap-2 mb-3">
             <span class="w-1 h-3.5 bg-[var(--color-primary)] rounded-full"></span>
-            <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Detajet e Flow-it</h3>
+            <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Detajet e trafikut</h3>
           </div>
           <p class="text-[10px] font-mono text-[var(--color-text-muted)] mb-3 break-all">{{ flow.id }}</p>
           <div class="space-y-1.5 text-xs">
-            <div class="flex justify-between"><span class="text-[var(--color-text-muted)]">Dataset Source</span><span class="text-white">{{ flow.datasetSource }}</span></div>
-            <div class="flex justify-between"><span class="text-[var(--color-text-muted)]">Protocol</span><span class="text-white">{{ flow.protocol ?? '—' }}</span></div>
-            <div class="flex justify-between"><span class="text-[var(--color-text-muted)]">Timestamp</span><span class="text-white">{{ flow.flowTimestamp | date: 'medium' }}</span></div>
+            <div class="flex justify-between"><span class="text-[var(--color-text-muted)]">Burimi i të dhënave</span><span class="text-white">{{ flow.datasetSource | label: 'source' }}</span></div>
+            <div class="flex justify-between"><span class="text-[var(--color-text-muted)]">Protokolli</span><span class="text-white">{{ flow.protocol ?? '—' }}</span></div>
+            <div class="flex justify-between"><span class="text-[var(--color-text-muted)]">Koha</span><span class="text-white">{{ flow.flowTimestamp | date: 'medium' }}</span></div>
           </div>
           <div class="mt-4 pt-4 border-t border-[var(--color-border)]">
-            <p class="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider mb-2">Top Features (12)</p>
+            <p class="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider mb-2">Veçoritë kryesore (12)</p>
             <div class="space-y-1 max-h-64 overflow-y-auto">
               @for (entry of featureEntries(flow); track entry[0]) {
                 <div class="flex justify-between text-[11px]">
@@ -124,7 +124,7 @@
         </div>
       } @else {
         <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-6 flex items-center justify-center h-full">
-          <p class="text-sm text-[var(--color-text-muted)]">Zgjidh nje flow per detaje</p>
+          <p class="text-sm text-[var(--color-text-muted)]">Zgjidhni një rresht nga tabela për të parë detajet.</p>
         </div>
       }
     </div>

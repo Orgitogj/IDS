@@ -4,6 +4,7 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { FlowService } from '../../core/services/flow.service';
 import { NetworkFlow, FlowLabel } from '../../core/models/network-flow.model';
 import { ToastService } from '../../core/services/toast.service';
+import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 const PAGE_SIZE = 50;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -11,7 +12,7 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-flows',
   standalone: true,
-  imports: [FormsModule, DatePipe, DecimalPipe],
+  imports: [FormsModule, DatePipe, DecimalPipe, LabelPipe],
   templateUrl: './flows.component.html',
   styleUrl: './flows.component.css',
 })
