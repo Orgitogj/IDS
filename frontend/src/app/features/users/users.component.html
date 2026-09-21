@@ -1,24 +1,24 @@
 <div class="p-6">
   <div class="mb-5 flex items-start justify-between gap-4">
     <div>
-      <h2 class="text-xl font-semibold text-white">Perdoruesit</h2>
+      <h2 class="text-xl font-semibold text-white">Përdoruesit</h2>
       <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
-        Cakivizimi shkeput menjehere te gjitha sesionet e perdoruesit
+        Çaktivizimi e shkëput menjëherë përdoruesin nga të gjitha sesionet.
       </p>
     </div>
     <a
       routerLink="/users/new"
       class="text-xs font-medium px-3 py-2 rounded-lg bg-[var(--color-primary)]/20 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/30 shrink-0"
     >
-      Krijo perdorues
+      Shto përdorues
     </a>
   </div>
 
   @if (loading()) {
-    <p class="text-xs text-[var(--color-text-muted)]">Duke ngarkuar ...</p>
+    <p class="text-xs text-[var(--color-text-muted)]">Duke u ngarkuar...</p>
   } @else if (loadError()) {
     <p class="text-xs text-[var(--color-critical)]">
-      Lista e perdoruesve s'u ngarkua. Kontrollo backend-in.
+      Lista e përdoruesve nuk u ngarkua. Kontrolloni nëse serveri është i ndezur.
     </p>
   } @else {
     <div
@@ -27,12 +27,12 @@
       <table class="w-full text-xs">
         <thead>
           <tr class="border-b border-[var(--color-border)] text-[var(--color-text-muted)]">
-            <th class="text-left font-semibold uppercase tracking-wider px-4 py-3">Perdoruesi</th>
+            <th class="text-left font-semibold uppercase tracking-wider px-4 py-3">Përdoruesi</th>
             <th class="text-left font-semibold uppercase tracking-wider px-4 py-3">Roli</th>
             <th class="text-left font-semibold uppercase tracking-wider px-4 py-3">Statusi</th>
             <th class="text-left font-semibold uppercase tracking-wider px-4 py-3">Hyrja e fundit</th>
-            <th class="text-left font-semibold uppercase tracking-wider px-4 py-3">Krijuar</th>
-            <th class="text-right font-semibold uppercase tracking-wider px-4 py-3">Veprime</th>
+            <th class="text-left font-semibold uppercase tracking-wider px-4 py-3">Krijuar më</th>
+            <th class="text-right font-semibold uppercase tracking-wider px-4 py-3">Veprimet</th>
           </tr>
         </thead>
         <tbody>
@@ -44,10 +44,10 @@
                   <span class="ml-2 text-[10px] text-[var(--color-text-muted)]">(ju)</span>
                 }
               </td>
-              <td class="px-4 py-3 text-[var(--color-text-muted)]">{{ user.role }}</td>
+              <td class="px-4 py-3 text-[var(--color-text-muted)]">{{ user.role | label: 'role' }}</td>
               <td class="px-4 py-3">
                 @if (!user.enabled) {
-                  <span class="text-[var(--color-critical)]">I cakivizuar</span>
+                  <span class="text-[var(--color-critical)]">I çaktivizuar</span>
                 } @else if (isLocked(user)) {
                   <span class="text-[var(--color-high)]">I bllokuar</span>
                 } @else {
@@ -74,7 +74,7 @@
                   <button
                     (click)="toggleEnabled(user)"
                     [disabled]="pending() !== null || isSelf(user)"
-                    [title]="isSelf(user) ? 'Nuk mund te cakivizoni llogarine tuaj' : ''"
+                    [title]="isSelf(user) ? 'Nuk mund ta çaktivizoni llogarinë tuaj' : ''"
                     class="text-[10px] px-2 py-1 rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
                     [class]="
                       user.enabled
@@ -82,7 +82,7 @@
                         : 'bg-[var(--color-low)]/20 text-[var(--color-low)] hover:bg-[var(--color-low)]/30'
                     "
                   >
-                    {{ user.enabled ? 'Cakivizo' : 'Aktivizo' }}
+                    {{ user.enabled ? 'Çaktivizo' : 'Aktivizo' }}
                   </button>
                 </div>
               </td>
@@ -90,7 +90,7 @@
           } @empty {
             <tr>
               <td colspan="6" class="px-4 py-6 text-center text-[var(--color-text-muted)]">
-                Asnje perdorues.
+                Nuk ka përdorues.
               </td>
             </tr>
           }

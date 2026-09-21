@@ -5,11 +5,12 @@ import { UserResponse } from '../../core/models/auth.model';
 import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../core/services/toast.service';
 import { UserService } from '../../core/services/user.service';
+import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, LabelPipe],
   templateUrl: './users.component.html',
 })
 export class UsersComponent implements OnInit {
@@ -45,16 +46,16 @@ export class UsersComponent implements OnInit {
         this.replace(updated);
         this.pending.set(null);
         this.toast.show(
-          updated.enabled ? 'Perdoruesi u aktivizua' : 'Perdoruesi u cakivizua',
+          updated.enabled ? 'Përdoruesi u aktivizua' : 'Përdoruesi u çaktivizua',
           updated.enabled
-            ? `${updated.username} mund te hyje perseri.`
-            : `${updated.username} u shkeput menjehere nga te gjitha sesionet.`,
+            ? `${updated.username} mund të hyjë përsëri.`
+            : `${updated.username} u shkëput menjëherë nga të gjitha sesionet.`,
           updated.enabled ? 'low' : 'high',
         );
       },
       error: () => {
         this.pending.set(null);
-        this.toast.show('Veprimi deshtoi', 'Perdoruesi mbeti si me pare.', 'critical');
+        this.toast.show('Veprimi dështoi', 'Përdoruesi mbeti siç ishte.', 'critical');
       },
     });
   }
@@ -67,11 +68,11 @@ export class UsersComponent implements OnInit {
       next: (updated) => {
         this.replace(updated);
         this.pending.set(null);
-        this.toast.show('Llogaria u zhbllokua', `${updated.username} mund te provoje perseri.`, 'low');
+        this.toast.show('Llogaria u zhbllokua', `${updated.username} mund të provojë përsëri.`, 'low');
       },
       error: () => {
         this.pending.set(null);
-        this.toast.show('Zhbllokimi deshtoi', 'Provoni perseri.', 'critical');
+        this.toast.show('Zhbllokimi dështoi', 'Provoni përsëri.', 'critical');
       },
     });
   }
