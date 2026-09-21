@@ -4,11 +4,12 @@ import { WebSocketService } from '../../core/services/websocket.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../core/services/toast.service';
 import { ToastContainerComponent } from '../../shared/toast/toast-container.component';
+import { LabelPipe, label } from '../../shared/pipes/label.pipe';
 
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, ToastContainerComponent],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, ToastContainerComponent, LabelPipe],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.css',
 })
@@ -33,8 +34,8 @@ export class ShellComponent implements OnInit {
       if (live.length === 0) return;
       const [newest] = live;
       this.toast.show(
-        `Alarm i ri: ${newest.severity}`,
-        `ID: ${newest.id.slice(0, 8)}... - Status: ${newest.status}`,
+        'Alarm i ri',
+        `Niveli i kërcënimit: ${label('severity', newest.severity)} · Statusi: ${label('status', newest.status)} · ID: ${newest.id.slice(0, 8)}`,
         newest.severity.toLowerCase() as 'critical' | 'high' | 'medium' | 'low',
       );
     });

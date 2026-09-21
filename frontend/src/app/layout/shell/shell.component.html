@@ -1,8 +1,8 @@
 ﻿<div class="flex h-screen bg-[var(--color-bg)]">
   <aside class="w-60 shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col">
     <div class="px-5 py-6">
-      <h1 class="text-lg font-semibold tracking-tight text-white">IDS Dashboard</h1>
-      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">ML + LLM Explainability</p>
+      <h1 class="text-lg font-semibold tracking-tight text-white">Paneli IDS</h1>
+      <p class="text-xs text-[var(--color-text-muted)] mt-0.5">Zbulim ndërhyrjesh me ML dhe LLM</p>
     </div>
 
     <nav class="flex-1 px-3 space-y-1">
@@ -11,7 +11,7 @@
         routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
       >
-        <span>Overview</span>
+        <span>Përmbledhja</span>
       </a>
       <a
         routerLink="/topology"
@@ -25,28 +25,28 @@
         routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
       >
-        <span>Alarms</span>
+        <span>Alarmet</span>
       </a>
       <a
         routerLink="/flows"
         routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
       >
-        <span>Flows</span>
+        <span>Trafiku</span>
       </a>
       <a
         routerLink="/experiments"
         routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
       >
-        <span>Experiments</span>
+        <span>Eksperimentet</span>
       </a>
       <a
         routerLink="/models"
         routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
       >
-        <span>Models</span>
+        <span>Modelet</span>
       </a>
       @if (isAdmin()) {
         <a
@@ -54,14 +54,14 @@
           routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
         >
-          <span>Users</span>
+          <span>Përdoruesit</span>
         </a>
         <a
           routerLink="/settings"
           routerLinkActive="bg-[var(--color-surface-elevated)] text-white"
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-elevated)] hover:text-white transition-colors"
         >
-          <span>Settings</span>
+          <span>Cilësimet</span>
         </a>
       }
     </nav>
@@ -73,7 +73,7 @@
           [class]="wsConnected() ? 'bg-[var(--color-low)]' : 'bg-[var(--color-text-muted)]'"
         ></span>
         <span class="text-xs text-[var(--color-text-muted)]">
-          {{ wsConnected() ? 'Live - i lidhur' : 'Offline' }}
+          {{ wsConnected() ? 'Lidhje në kohë reale' : 'Pa lidhje' }}
         </span>
       </div>
       @if (username(); as user) {
@@ -81,16 +81,16 @@
           <div class="min-w-0">
             <span class="block text-xs text-[var(--color-text)] truncate">{{ user }}</span>
             @if (role(); as r) {
-              <span class="block text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">{{ r }}</span>
+              <span class="block text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">{{ r | label: 'role' }}</span>
             }
           </div>
           <div class="flex items-center gap-1 shrink-0">
             <a
               routerLink="/account/password"
-              title="Ndrysho fjalekalimin"
+              title="Ndrysho fjalëkalimin"
               class="text-[10px] px-2 py-0.5 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text-muted)] hover:text-white"
             >
-              Fjalekalimi
+              Fjalëkalimi
             </a>
             <button
               (click)="logout()"
