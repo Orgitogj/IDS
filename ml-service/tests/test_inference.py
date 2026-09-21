@@ -252,3 +252,42 @@ def test_adoption_refuses_a_conflicting_feature_version(fallback_then_registry, 
     with pytest.raises(FeatureVersionMismatch):
         inference.predict(full_vector, include_shap=False, model_id=payload["id"])
     assert inference.active_model().identity.model_id is None
+
+
+MLP_PAYLOAD = {
+    "id": "cccccccc-0000-0000-0000-0000000000c0",
+    "algorithm": "NeuralNetwork",
+    "name": "mlp-smote-cicids2017-v1",
+    "version": "1.0",
+    "featureVersion": None,
+    "artifactPath": "models/mlp_smote_cicids2017_v1.joblib",
+}
+
+
+@pytest.fixture
+def mlp_artifact():
+    if not (inference._models_dir() / "mlp_smote_cicids2017_v1.joblib").exists():
+        pytest.skip("mlp_smote_cicids2017_v1.joblib mungon ne models/")
+
+
+def test_activating_a_model_makes_it_the_default_for_predictions(registry_backed, full_vector):
+    inference.activate(FULL78_PAYLOAD["id"])
+    assert inference.active_model().identity.name == "xgb-smote-cicids2017-v1"
+    result = inference.predict(full_vector, include_shap=False)
+    assert result["model_id"] == FULL78_PAYLOAD["id"]
+
+
+def test_activating_an_unsupported_model_keeps_the_active_one(registry_backed, mlp_artifact,
+                                                              monkeypatch):
+    monkeypatch.setattr(model_registry.spring_client, "get_model", lambda model_id: MLP_PAYLOAD)
+    with pytest.raises(inference.UnsupportedModelError, match="XGBoost"):
+        inference.activate(MLP_PAYLOAD["id"])
+    assert inference.active_model().identity.name == "xgb-smote-top50features-v1"
+    assert "mlp_smote_cicids2017_v1.joblib" not in inference._loaded
+
+
+def test_startup_falls_back_when_the_registry_model_is_unsupported(mlp_artifact, monkeypatch):
+    monkeypatch.setattr(model_registry.spring_client, "get_active_model", lambda: MLP_PAYLOAD)
+    loaded = inference.load_artifacts()
+    assert loaded.identity.source == "fallback"
+    assert loaded.model is not None
