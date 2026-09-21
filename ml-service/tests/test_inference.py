@@ -4,7 +4,7 @@ import pytest
 import requests
 
 from app.ml import inference, model_registry
-from app.ml.feature_validation import FeatureValidationError
+from app.ml.feature_validation import FeatureValidationError, FeatureVersionMismatch
 
 pytestmark = pytest.mark.artifacts
 
@@ -210,3 +210,45 @@ def test_cache_never_evicts_the_active_model(registry_backed, full_vector, monke
     assert len(inference._loaded) <= inference.MAX_CACHED_MODELS
     assert inference._active_key in inference._loaded
     assert inference.active_model().identity.name == "xgb-smote-top50features-v1"
+
+
+@pytest.fixture
+def fallback_then_registry(monkeypatch):
+    def boom():
+        raise requests.exceptions.ConnectionError("refused")
+
+    calls = []
+
+    def get_model(model_id):
+        calls.append(model_id)
+        return TOP50_PAYLOAD
+
+    monkeypatch.setattr(model_registry.spring_client, "get_active_model", boom)
+    monkeypatch.setattr(model_registry.spring_client, "get_model", get_model)
+    inference.load_artifacts()
+    return calls
+
+
+def test_fallback_model_adopts_its_registry_identity(fallback_then_registry, full_vector):
+    result = inference.predict(full_vector, include_shap=False, model_id=TOP50_PAYLOAD["id"])
+    assert result["model_id"] == TOP50_PAYLOAD["id"]
+    assert result["model_name"] == "xgb-smote-top50features-v1"
+    assert result["registry_source"] == "registry"
+    assert result["feature_version"] == "cicids2017-top50-v1"
+    assert inference.active_model().identity.model_id == TOP50_PAYLOAD["id"]
+
+
+def test_adopted_identity_stops_further_registry_lookups(fallback_then_registry, full_vector):
+    for _ in range(3):
+        inference.predict(full_vector, include_shap=False, model_id=TOP50_PAYLOAD["id"])
+    assert fallback_then_registry == [TOP50_PAYLOAD["id"]]
+    assert len(inference._loaded) == 1
+
+
+def test_adoption_refuses_a_conflicting_feature_version(fallback_then_registry, full_vector,
+                                                       monkeypatch):
+    payload = dict(TOP50_PAYLOAD, featureVersion="cicids2017-78-v1")
+    monkeypatch.setattr(model_registry.spring_client, "get_model", lambda model_id: payload)
+    with pytest.raises(FeatureVersionMismatch):
+        inference.predict(full_vector, include_shap=False, model_id=payload["id"])
+    assert inference.active_model().identity.model_id is None
