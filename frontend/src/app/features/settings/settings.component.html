@@ -1,14 +1,14 @@
 <div class="p-6 max-w-3xl">
   <div class="mb-5">
-    <h2 class="text-xl font-semibold text-white">Settings</h2>
+    <h2 class="text-xl font-semibold text-white">Cilësimet</h2>
     <p class="text-xs text-[var(--color-text-muted)] mt-0.5">Konfigurimi i sistemit</p>
   </div>
 
   @if (loadError()) {
     <div class="mb-4 rounded-lg border border-[var(--color-critical)]/30 bg-[var(--color-critical)]/10 px-4 py-3">
-      <p class="text-xs font-semibold text-[var(--color-critical)]">Ngarkimi deshtoi</p>
+      <p class="text-xs font-semibold text-[var(--color-critical)]">Ngarkimi dështoi</p>
       <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
-        Backend-i nuk pergjigjet. Kontrollo nese Spring Boot eshte i ndezur ne localhost:8080.
+        Serveri nuk përgjigjet. Kontrolloni nëse Spring Boot është i ndezur (localhost:8080).
       </p>
     </div>
   }
@@ -16,10 +16,10 @@
   <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 mb-4">
     <div class="flex items-center gap-2 mb-1">
       <span class="w-1 h-3.5 bg-[var(--color-critical)] rounded-full"></span>
-      <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Pragjet e Severity</h3>
+      <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Pragjet e nivelit të kërcënimit</h3>
     </div>
     <p class="text-[11px] text-[var(--color-text-muted)] mb-4">
-      Besueshmeria e parashikimit mbi te cilen nje alarm merr secilin nivel. Prek vetem alarmet e reja.
+      Besueshmëria minimale e parashikimit që i duhet një alarmi për të marrë secilin nivel. Ndryshimet vlejnë vetëm për alarmet e reja.
     </p>
 
     @if (loading()) {
@@ -27,7 +27,7 @@
     } @else {
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-critical)] mb-1">Critical</label>
+          <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-critical)] mb-1">Kritik</label>
           <input
             type="number" step="0.01" min="0" max="1"
             [(ngModel)]="criticalMin"
@@ -35,7 +35,7 @@
           />
         </div>
         <div>
-          <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-high)] mb-1">High</label>
+          <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-high)] mb-1">I lartë</label>
           <input
             type="number" step="0.01" min="0" max="1"
             [(ngModel)]="highMin"
@@ -43,7 +43,7 @@
           />
         </div>
         <div>
-          <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-medium)] mb-1">Medium</label>
+          <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-medium)] mb-1">Mesatar</label>
           <input
             type="number" step="0.01" min="0" max="1"
             [(ngModel)]="mediumMin"
@@ -53,7 +53,7 @@
       </div>
 
       <p class="text-[11px] text-[var(--color-text-muted)] mt-3">
-        Nen pragun Medium, alarmi merr nivelin Low.
+        Nën pragun „Mesatar“, alarmi merr nivelin „I ulët“.
       </p>
 
       @if (validationError(); as error) {
@@ -70,7 +70,7 @@
         </button>
         @if (updatedAt(); as updated) {
           <span class="text-[10px] text-[var(--color-text-muted)]">
-            Perditesuar: {{ updated | date: 'dd/MM/yyyy HH:mm' }}
+            Përditësuar më: {{ updated | date: 'dd/MM/yyyy HH:mm' }}
           </span>
         }
       </div>
@@ -80,7 +80,7 @@
   <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 mb-4">
     <div class="flex items-center gap-2 mb-3">
       <span class="w-1 h-3.5 bg-[var(--color-primary)] rounded-full"></span>
-      <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Endpoints</h3>
+      <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Adresat e shërbimeve</h3>
     </div>
     <div class="space-y-2">
       @for (ep of endpoints; track ep.name) {
@@ -95,7 +95,7 @@
   <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4">
     <div class="flex items-center gap-2 mb-3">
       <span class="w-1 h-3.5 bg-[var(--color-low)] rounded-full"></span>
-      <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Tech Stack</h3>
+      <h3 class="text-xs font-semibold text-white uppercase tracking-wide">Teknologjitë e përdorura</h3>
     </div>
     <div class="space-y-3">
       @for (item of stack; track item.layer) {

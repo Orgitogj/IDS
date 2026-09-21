@@ -34,31 +34,31 @@ export class SettingsComponent implements OnInit {
 
     for (const value of [critical, high, medium]) {
       if (value === null || value === undefined || isNaN(value)) {
-        return 'Te gjitha pragjet duhet te jene numra.';
+        return 'Të gjitha pragjet duhet të jenë numra.';
       }
       if (value < 0 || value > 1) {
-        return 'Pragjet duhet te jene mes 0 dhe 1.';
+        return 'Pragjet duhet të jenë ndërmjet 0 dhe 1.';
       }
     }
 
     if (!(critical > high && high > medium)) {
-      return 'Rendi duhet te jete zbrites: critical > high > medium.';
+      return 'Pragjet duhet të jenë në rend zbritës: Kritik > I lartë > Mesatar.';
     }
     return null;
   });
 
   endpoints = [
-    { name: 'Spring Boot API', url: 'http://localhost:8080/api' },
-    { name: 'Spring Boot WebSocket', url: 'ws://localhost:8080/ws' },
-    { name: 'Python ML Service', url: 'http://localhost:8000/api' },
+    { name: 'API e Spring Boot', url: 'http://localhost:8080/api' },
+    { name: 'WebSocket i Spring Boot', url: 'ws://localhost:8080/ws' },
+    { name: 'Shërbimi ML (Python)', url: 'http://localhost:8000/api' },
     { name: 'PostgreSQL (Docker)', url: 'localhost:5433 / IDS' },
   ];
 
   stack = [
-    { layer: 'Backend', tech: 'Spring Boot 3.3, Java 17, PostgreSQL, Flyway, WebSocket (STOMP)' },
-    { layer: 'ML Service', tech: 'Python 3.11, FastAPI, XGBoost, scikit-learn, SHAP' },
-    { layer: 'Frontend', tech: 'Angular (standalone, signals), Tailwind CSS v4, Chart.js' },
-    { layer: 'LLM Explainability', tech: 'Claude Sonnet 5' },
+    { layer: 'Serveri', tech: 'Spring Boot 3.3, Java 17, PostgreSQL, Flyway, WebSocket (STOMP)' },
+    { layer: 'Shërbimi ML', tech: 'Python 3.11, FastAPI, XGBoost, scikit-learn, SHAP' },
+    { layer: 'Ndërfaqja e përdoruesit', tech: 'Angular, Tailwind CSS v4, Chart.js' },
+    { layer: 'Shpjegimet me LLM', tech: 'Claude Sonnet 5' },
   ];
 
   ngOnInit(): void {
@@ -89,14 +89,14 @@ export class SettingsComponent implements OnInit {
           this.updatedAt.set(thresholds.updatedAt);
           this.saving.set(false);
           this.toast.show(
-            'Pragjet u ruajten',
-            'Alarmet e reja do perdorin keto vlera.',
+            'Pragjet u ruajtën',
+            'Alarmet e reja do të përdorin këto vlera.',
             'low',
           );
         },
         error: () => {
           this.saving.set(false);
-          this.toast.show('Ruajtja deshtoi', 'Pragjet mbeten si me pare.', 'critical');
+          this.toast.show('Ruajtja dështoi', 'Pragjet mbetën siç ishin.', 'critical');
         },
       });
   }
