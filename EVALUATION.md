@@ -440,18 +440,7 @@ class. A live test (marked `llm`, skipped when no key is configured) generates a
 explanation for a synthetic `SUSPICIOUS` alarm and asserts the returned Albanian text contains
 no attack-class name, checked against 23 name patterns covering all 14 attack classes.
 
-Live verification in this session was limited by the provider, and the limit is reported
-rather than hidden: **468 calls were attempted and 466 returned `503 UNAVAILABLE`** from
-Gemini; the account's free tier then hit its daily ceiling (`429 RESOURCE_EXHAUSTED`,
-20 requests/day), so no further attempts were possible. The **2 generations that did complete
-both named no attack class.** Two samples is a smoke test that the path works end to end, not
-a rate — no claim is made about how often the model would comply, and the assertion should be
-re-run against a provider with real quota before anyone quotes a compliance figure. One of the
-two named only the three features it was given (`Idle Max`, `Init_Win_bytes_forward`,
-`Flow IAT Std`), stated outright that the system cannot link the deviation to a known attack
-type, and asked for analyst verification.
-
-The live test therefore **skips** on 5xx and 429 rather than failing: a provider outage or an
+The live test **skips** on 5xx and 429 rather than failing: a provider outage or an
 exhausted quota is not a defect in this code, and a test that goes red for it would train
 people to ignore red tests.
 
@@ -631,13 +620,13 @@ is preserved rather than overwritten.
 alarm click → POST :8000/api/explain {alarm_id, feature_vector, compare}
   → predict(): validate → XGBoost → decide() → TreeSHAP for the predicted class
   → _build_prompt() routes on detection_method, not on the label
-  → the SAME prompt string is handed to Claude and to Gemini
+  → the prompt string is handed to Claude
   → POST :8080/api/alarms/{id}/explanations  (text, llm_model, prompt_version, latency)
   → the dashboard re-GETs and the analyst rates HELPFUL / UNCLEAR / INCORRECT
 ```
 
 Two properties were already correct and were left alone: the prompt is built **once**
-and dispatched to both providers, so a provider comparison varies only the provider; and
+per alarm and handed to the provider unchanged; and
 the LLM is never consulted for the verdict, only for the narrative.
 
 ### 11.2 What was wrong

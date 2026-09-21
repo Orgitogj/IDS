@@ -434,10 +434,10 @@ recovery on some unseen attack families and none on others."*
 | Item | Proposal |
 |---|---|
 | Alarms | **60**, stratified: 30 `KNOWN_ATTACK` across ≥5 distinct classes, 20 `SUSPICIOUS` (anomaly path), 10 low-confidence (below the MEDIUM severity threshold) |
-| Explanations | 60 alarms × 2 providers = **120** |
+| Explanations | 60 alarms × 1 provider = **60** |
 | Prompt version | **v3 only** for the headline comparison. `v1`/`v2` rows are retained and reported as a version count, never pooled with v3 — different prompts are different treatments |
-| Providers | Claude (`claude-sonnet-5`) and Gemini (`gemini-flash-latest`), byte-identical prompts (already guaranteed and tested) |
-| Presentation | Blind to provider, randomised order per participant |
+| Provider | Claude (`claude-sonnet-5`) |
+| Presentation | Randomised order per participant |
 
 ### Participants
 
@@ -480,9 +480,8 @@ own sheet keyed by `explanation_id`.
 
 Recorded, never silently dropped. Report **availability** (successful generations /
 attempts) separately from quality; exclude failures from quality statistics and state the
-exclusion count. Note the known constraint: the free Gemini tier allowed 20 requests/day
-and returned `503` on 466 of 468 attempts during P2-6. **A provider with real quota is a
-precondition for this study** — see the checklist.
+exclusion count. **A provider with real quota is a precondition for this study** — see
+the checklist.
 
 ### Export
 
@@ -580,7 +579,7 @@ Every line must be **TRUE** before the full retraining command is given.
 | 17 | Disk space for v2 artifacts (~300 MB incl. RF baseline) | ⬜ VERIFY (644 GB free — fine) |
 | 18 | Machine on mains power, no other heavy load, for stable latency figures | ⬜ VERIFY AT RUN TIME |
 | 19 | Postgres + backend up, for step 14 only | ⬜ NOT REQUIRED UNTIL STEP 14 |
-| 20 | LLM provider with real quota, for Table G only | ⬜ BLOCKED — free Gemini tier is 20 req/day |
+| 20 | LLM provider with real quota, for Table G only | ⬜ VERIFY AT RUN TIME — Claude (`claude-sonnet-5`) |
 | 21 | Live testbed gaps L-1…L-4 closed, for Table F only | ⬜ P1 TASK |
 
 **Blocking for full retraining: none.** Preconditions 1–16 are all TRUE.

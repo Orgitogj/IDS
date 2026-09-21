@@ -52,7 +52,7 @@ app/replay/feature_columns.json                (byte-identical to models/ copy)
         │                    │
         │                    ├─ XGBoost (78-feature model, hardcoded)
         │                    ├─ TreeSHAP via xgboost pred_contribs
-        │                    └─ Claude / Gemini  → explanation text
+        │                    └─ Claude  → explanation text
         │                             │
         └─────────────────────────────┘  (explanation POSTed back to Spring
                                           by ml-service as user `ml-service`)
@@ -139,7 +139,7 @@ Analyst clicks an alarm (alarms.component.ts:229)
    → POST http://localhost:8000/api/predict  (ml-service, DIFFERENT model — see §4.3)
         → SHAP top-5 rendered as a bar chart
    → "Generate explanation" → POST :8000/api/explain
-        → ml-service re-predicts, calls Gemini and/or Claude,
+        → ml-service re-predicts, calls Claude,
           POSTs the text back to Spring as ml-service, then the UI re-GETs it.
 ```
 
@@ -153,7 +153,7 @@ Analyst clicks an alarm (alarms.component.ts:229)
 | `ml-service/app/replay/live_agent.py` | Standalone live agent. Owns the CICFlowMeter→CICIDS2017 name map (lines 11-88) and its own zero-fill (lines 130-142). |
 | `ml-service/app/replay/cicids_replay.py` | Dataset replay driver. |
 | `ml-service/app/api/predict.py` | `/api/predict`, `/api/explain`. **No authentication.** |
-| `ml-service/app/services/llm_explainer.py` | Prompt construction + Claude/Gemini calls. Prompt is in Albanian, version `v1`. |
+| `ml-service/app/services/llm_explainer.py` | Prompt construction + Claude calls. Prompt is in Albanian, version `v1`. |
 | `ml-service/app/services/spring_client.py` | JWT login + retry-once wrapper for all Spring calls. |
 | `ml-service/models/feature_columns.json` | The 78 training feature names, in training order. |
 | `backend/.../service/NetworkFlowService.java` | Ingest → flow → alarm → WebSocket. |
@@ -355,7 +355,7 @@ Authorisation is declared **twice** — in `SecurityConfig` URL matchers *and* i
 |---|---|---|
 | GET | `/health` | **none** |
 | POST | `/api/predict` | **none** |
-| POST | `/api/explain` | **none** — triggers paid Claude/Gemini calls |
+| POST | `/api/explain` | **none** — triggers paid Claude calls |
 
 ---
 
@@ -406,7 +406,7 @@ Tests: `app.spec.ts` only (the CLI stub). Vitest and jsdom are installed as devD
    first/last seen. Not persisted, no time window, no destination, no status, no dedup;
    the alarms themselves are still 1-per-flow.
 4. **SHAP** (TreeSHAP via `pred_contribs`) — explanation only, top 5 features.
-5. **LLM narrative** (Gemini `gemini-flash-latest` default, or Claude `claude-sonnet-5`)
+5. **LLM narrative** (Claude `claude-sonnet-5`)
    — explanation only. It receives label, confidence and the SHAP top-5, and is instructed
    to explain, not to decide. That boundary is currently respected in code.
 6. **Isolation Forest** — trained and registered, **not wired into anything**.
@@ -487,7 +487,7 @@ that setting is contaminated.
 
 ### L10 — ml-service is unauthenticated *(medium/security)*
 `/api/predict` and `/api/explain` accept anonymous requests. `/api/explain` spends money
-(Gemini/Claude) and writes to the database through the `ml-service` service account. CORS
+(Claude) and writes to the database through the `ml-service` service account. CORS
 is limited to `localhost:4200`, but CORS does not stop a non-browser client.
 
 ### L11 — Public self-service registration *(medium/security)*
@@ -498,7 +498,7 @@ policy (only whatever `RegisterRequest` bean validation declares).
 ### L12 — Committed default secrets *(medium/security)*
 `application.yml` ships fallback values for `IDS_JWT_SECRET`, `admin/admin123` and
 `ml-service/ml-service-secret`. `ml-service/.env` (correctly gitignored, verified not
-tracked) holds real Anthropic and Gemini keys. Nothing is currently leaked to git, but the
+tracked) holds a real Anthropic key. Nothing is currently leaked to git, but the
 defaults will silently be used if the env vars are unset.
 
 ### L13 — Error handling gaps *(medium)*

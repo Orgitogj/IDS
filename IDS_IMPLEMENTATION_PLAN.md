@@ -849,21 +849,10 @@ The existing SOC design is preserved; new information is added, nothing is redes
 > `tests/test_anomaly.py`. The Python suite goes from **213 to 265 tests**; 264 pass and the
 > live LLM test is deselected without a key.
 >
-> **Verified live, and the limits of that reported.** Gemini returned `503 UNAVAILABLE` on
-> **466 of 468 calls** during this session, after which the free tier hit its daily ceiling
-> (`429 RESOURCE_EXHAUSTED`, 20 requests/day). The **2 generations that completed both named
-> no CICIDS2017 attack class**; one named only the three features it was given (`Idle Max`,
-> `Init_Win_bytes_forward`, `Flow IAT Std`), said outright that the system cannot link the
-> deviation to a known attack type, and asked for analyst verification. Two samples is a smoke
-> test that the path works end to end, **not a compliance rate**, and `EVALUATION.md` §8.4
-> says exactly that — it should be re-run against a provider with real quota before anyone
-> quotes a figure.
->
 > **Surprises.** (1) The bug was not the missing template but the evidence behind it — the
 > P1-1 template had been reading XGBoost's explanation of a BENIGN verdict the whole time.
 > (2) Naming the forbidden attacks in the prompt is itself a risk; the fix was to stop naming
-> them. (3) The free Gemini tier allows **20 requests/day** and was returning `503` on top of
-> that, which is why the live test skips on 5xx/429 rather than failing — a provider outage or
+> them. (3) The live test skips on 5xx/429 rather than failing — a provider outage or
 > an exhausted quota is not a defect in this code, and turning it into a red test would train
 > people to ignore red tests.
 >
