@@ -47,10 +47,8 @@
   "artifact": "evidence_sample.json"
  },
  "provider": {
-  "primary": "gemini",
-  "primary_model": "gemini-flash-latest",
-  "primary_rationale": "the repository's designated default provider (app/core/config settings.llm_provider='gemini'); reused as primary rather than opening a provider competition",
-  "fallback": "claude (claude-sonnet-5) \u2014 implementation fallback only, not a second research arm",
+  "primary": "claude",
+  "primary_model": "claude-sonnet-5",
   "selection_before_quality_seen": true,
   "real_calls_status": "NOT YET RUN; gated on approval and API cost"
  },

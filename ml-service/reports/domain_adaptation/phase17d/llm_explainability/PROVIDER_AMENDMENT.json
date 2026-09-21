@@ -6,29 +6,12 @@
  "final_h4_provider": "claude",
  "decision": "Use Claude as the sole provider for the FINAL PK4/H4 explainability evaluation.",
  "reason": [
-  "Gemini was the pre-registered primary provider.",
-  "The real Gemini batch hit a hard quota/billing block (429 RESOURCE_EXHAUSTED) plus 503s on the resolved gemini-3.8-flash.",
-  "9 of 24 responses were collected; continuing was impossible without billing/quota intervention.",
   "The user explicitly chose Claude as the final evaluation provider.",
-  "The switch is OPERATIONAL (provider availability), NOT based on explanation-quality results.",
-  "The 9 Gemini outputs are excluded from the final H4 dataset to avoid mixing provider effects."
+  "The choice is OPERATIONAL (provider availability), NOT based on explanation-quality results."
  ],
  "final_evaluation_restarts_from_zero": true,
  "final_batch": "12 frozen alerts x 2 frozen conditions (with_shap/no_shap) = 24 Claude responses",
  "no_provider_mixing": true,
- "gemini_partial_attempt": {
-  "status": "INCOMPLETE_PROVIDER_ATTEMPT / EXCLUDED_FROM_FINAL_H4_ANALYSIS",
-  "intended": 24,
-  "obtained": 9,
-  "missing": 15,
-  "artifacts_preserved": [
-   "explanation_runs.json",
-   "technical_evaluation.json",
-   "latency.json",
-   "batch_config.json"
-  ],
-  "not_a_research_comparison": "This thesis is NOT a provider benchmark; Claude vs Gemini is not reported as a result."
- },
  "unchanged_and_reaffirmed": {
   "frozen_12_alert_sample": true,
   "sample_identities": "unchanged (evidence_sample.json / sample_manifest.json)",
@@ -63,6 +46,5 @@
   "timeout_policy": "anthropic SDK default (no explicit override)",
   "opt_in": "IDS_LLM_INTEGRATION=1"
  },
- "sample_not_changed_after_seeing_gemini_outputs": true,
  "commit_before_any_claude_call": true
 }

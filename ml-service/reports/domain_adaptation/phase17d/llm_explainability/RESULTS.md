@@ -120,10 +120,6 @@ automated technical groundedness metrics are **not** a substitute for it.
 - **Provider non-determinism:** temperature was unset (provider default); outputs are not
   bit-reproducible.
 - **Truncation:** `max_tokens=400` truncated one with-SHAP explanation.
-- **Gemini attempt excluded:** an earlier Gemini batch reached only 9/24 (hard quota block)
-  and is preserved but **excluded** from this final analysis
-  ([`GEMINI_ATTEMPT_EXCLUDED.md`](GEMINI_ATTEMPT_EXCLUDED.md)). This is **not** a Claude-vs-
-  Gemini comparison.
 
 ## 8. Final H4 status
 

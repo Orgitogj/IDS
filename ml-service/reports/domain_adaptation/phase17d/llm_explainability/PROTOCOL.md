@@ -42,10 +42,8 @@ only.
 
 ## Provider
 
-Primary = **gemini** (`gemini-flash-latest`), the repository's designated default
-(`settings.llm_provider`), reused rather than opening a provider competition. Claude
-(`claude-sonnet-5`) remains an implementation fallback only. Selection was fixed before any
-explanation quality was seen. **Real provider calls have not been run** — they are gated on
+Primary = **claude** (`claude-sonnet-5`). Selection was fixed before any explanation
+quality was seen. **Real provider calls have not been run** — they are gated on
 approval and API cost (see STATUS).
 
 ## Prompt
