@@ -4,11 +4,12 @@ import { WebSocketService } from '../../core/services/websocket.service';
 import { AlarmService } from '../../core/services/alarm.service';
 import { FlowService } from '../../core/services/flow.service';
 import { Alarm } from '../../core/models/alarm.model';
+import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 @Component({
   selector: 'app-topology',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, LabelPipe],
   templateUrl: './topology.component.html',
   styleUrl: './topology.component.css',
 })
