@@ -3,6 +3,8 @@ package com.diploma.idsml.controller;
 import com.diploma.idsml.config.SecurityConfig;
 import com.diploma.idsml.dto.MLModelResponse;
 import com.diploma.idsml.exception.GlobalExceptionHandler;
+import com.diploma.idsml.exception.MlServiceUnavailableException;
+import com.diploma.idsml.exception.ModelActivationException;
 import com.diploma.idsml.exception.ResourceNotFoundException;
 import com.diploma.idsml.security.JwtAuthenticationFilter;
 import com.diploma.idsml.repository.AppUserRepository;
@@ -29,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -168,6 +171,28 @@ class MLModelControllerTest {
                 .andExpect(status().isUnauthorized());
 
         verifyNoInteractions(mlModelService);
+    }
+
+    @Test
+    void aModelTheMlServiceCannotServeIsRejectedWithItsReason() throws Exception {
+        given(mlModelService.setActive(MODEL_ID)).willThrow(new ModelActivationException(
+                "Modeli 'mlp-smote-cicids2017-v1' (MLPClassifier) nuk mbeshtetet nga ml-service: "
+                        + "lejohen vetem modele XGBoost."));
+
+        mockMvc.perform(patch("/api/models/" + MODEL_ID + "/activate")
+                        .header("Authorization", token("ADMIN")))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message").value(containsString("XGBoost")));
+    }
+
+    @Test
+    void anUnreachableMlServiceBlocksActivation() throws Exception {
+        given(mlModelService.setActive(MODEL_ID)).willThrow(new MlServiceUnavailableException(
+                "ml-service s'u arrit ose deshtoi; modeli nuk u aktivizua."));
+
+        mockMvc.perform(patch("/api/models/" + MODEL_ID + "/activate")
+                        .header("Authorization", token("ADMIN")))
+                .andExpect(status().isServiceUnavailable());
     }
 
     @Test
