@@ -38,14 +38,19 @@ export class LoginComponent {
         this.submitting.set(false);
         this.router.navigate(['/overview']);
       },
-      error: (error: { status?: number }) => {
+      error: (error: { status?: number; error?: { message?: string } }) => {
         this.submitting.set(false);
-        this.errorMessage.set(
-          error.status === 401
-            ? 'Përdoruesi ose fjalëkalimi është i pasaktë.'
-            : 'Serveri nuk përgjigjet. Kontrolloni nëse është i ndezur (localhost:8080).',
-        );
+        this.errorMessage.set(this.messageFor(error));
       },
     });
+  }
+
+  private messageFor(error: { status?: number; error?: { message?: string } }): string {
+    if (error.status === 401) return 'Përdoruesi ose fjalëkalimi është i pasaktë.';
+    if (error.status === 429) {
+      return error.error?.message ?? 'Shumë tentativa të dështuara. Provoni përsëri më vonë.';
+    }
+    if (error.status === 0) return 'Serveri nuk përgjigjet. Kontrolloni nëse është i ndezur (localhost:8080).';
+    return 'Hyrja dështoi. Provoni përsëri.';
   }
 }
