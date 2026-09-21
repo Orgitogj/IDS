@@ -173,6 +173,20 @@ def test_explain_rejects_an_invalid_vector_before_calling_an_llm(client, monkeyp
     assert response.status_code == 422
 
 
+def test_explain_reports_an_unavailable_llm_provider_as_a_bad_gateway(client, monkeypatch,
+                                                                    full_vector):
+    def overloaded(*args, **kwargs):
+        raise RuntimeError("503 UNAVAILABLE. This model is currently experiencing high demand.")
+
+    monkeypatch.setattr("app.api.predict.generate_explanation", overloaded)
+
+    body = json.dumps({"alarm_id": "00000000-0000-0000-0000-000000000000",
+                       "feature_vector": full_vector})
+    response = client.post("/api/explain", content=body, headers=JSON_HEADERS)
+    assert response.status_code == 502
+    assert "LLM" in response.json()["detail"]
+
+
 def test_malformed_request_body_is_a_client_error(client):
     response = client.post("/api/predict", content="{not json", headers=JSON_HEADERS)
     assert response.status_code == 422
