@@ -35,6 +35,10 @@ _drift_monitor = None
 _since_publish = 0
 
 
+class UnsupportedModelError(RuntimeError):
+    pass
+
+
 class LoadedModel:
     def __init__(self, identity, model, label_encoder, feature_columns, validator):
         self.identity = identity
@@ -120,6 +124,11 @@ def _load(identity):
         policy=STRICT_POLICY,
     )
     identity.feature_version = validator.feature_version
+
+    if not hasattr(model, "get_booster"):
+        raise UnsupportedModelError(
+            f"Modeli '{identity.name}' ({type(model).__name__}) nuk mbeshtetet nga ml-service: "
+            f"lejohen vetem modele XGBoost.")
 
     loaded = LoadedModel(identity, model, _label_encoder, feature_columns, validator)
 
