@@ -5,11 +5,12 @@ import { AuthService } from '../../core/services/auth.service';
 import { ModelService } from '../../core/services/model.service';
 import { MLModel } from '../../core/models/ml-model.model';
 import { ToastService } from '../../core/services/toast.service';
+import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 @Component({
   selector: 'app-models',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, LabelPipe],
   templateUrl: './models.component.html',
   styleUrl: './models.component.css',
 })
@@ -61,7 +62,7 @@ export class ModelsComponent implements OnInit {
       error: (error: HttpErrorResponse) => {
         this.activating.set(null);
         this.toast.show(
-          'Aktivizimi deshtoi',
+          'Aktivizimi dështoi',
           error.error?.message ?? `Modeli ${model.name} nuk u aktivizua.`,
           'critical',
         );
