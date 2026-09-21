@@ -38,6 +38,8 @@ ids:
       purge-interval-ms: ${IDS_LOGIN_PURGE_INTERVAL_MS:300000}
   correlation:
     window-seconds: ${IDS_CORRELATION_WINDOW_SECONDS:120}
+  ml-service:
+    base-url: ${IDS_ML_SERVICE_URL:http://localhost:8000}
   bootstrap:
     admin-username: ${IDS_ADMIN_USERNAME:admin}
     admin-password: ${IDS_ADMIN_PASSWORD:}
