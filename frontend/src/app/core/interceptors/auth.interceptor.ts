@@ -26,11 +26,11 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
       }
 
       return auth.refreshAccessToken().pipe(
-        switchMap((token) => next(prepare(request, token))),
         catchError((refreshError) => {
           auth.forceLogout();
           return throwError(() => refreshError);
         }),
+        switchMap((token) => next(prepare(request, token))),
       );
     }),
   );
