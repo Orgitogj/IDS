@@ -14,8 +14,6 @@ class Settings(BaseSettings):
     spring_service_password: str = ""
     jwt_secret: str = Field(default="", validation_alias="IDS_JWT_SECRET")
     anthropic_api_key: str = ""
-    gemini_api_key: str = ""
-    llm_provider: str = "gemini"
     mlflow_tracking_uri: str = "http://localhost:5000"
     fallback_model_file: str = "xgb_smote_top50features_v1.joblib"
     anomaly_detection_enabled: bool = True
