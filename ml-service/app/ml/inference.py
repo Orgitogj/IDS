@@ -237,9 +237,23 @@ def model_for(model_id=None):
             return loaded
 
     identity = fetch_identity_by_id(model_id)
-    if identity.artifact_file in _loaded:
-        return _loaded[identity.artifact_file]
-    return _load(identity)
+    cached = _loaded.get(identity.artifact_file)
+    if cached is None:
+        return _load(identity)
+    if cached.identity.model_id is None:
+        return _adopt_registry_identity(cached, identity)
+    return cached
+
+
+def _adopt_registry_identity(loaded, identity):
+    if identity.feature_version and identity.feature_version != loaded.identity.feature_version:
+        return _load(identity)
+
+    identity.feature_version = loaded.identity.feature_version
+    loaded.identity = identity
+    print(f"[inference] {identity.artifact_file} mori identitetin nga regjistri: "
+          f"model_id={identity.model_id}, model={identity.name} v{identity.version}")
+    return loaded
 
 
 def _observe_drift(validation):
