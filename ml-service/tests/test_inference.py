@@ -181,7 +181,7 @@ def test_unknown_model_id_propagates_the_registry_error(registry_backed, full_ve
 def test_missing_artifact_is_reported_clearly(monkeypatch):
     payload = dict(TOP50_PAYLOAD, artifactPath="models/does_not_exist.joblib")
     monkeypatch.setattr(model_registry.spring_client, "get_active_model", lambda: payload)
-    with pytest.raises(RuntimeError, match="s'u gjet"):
+    with pytest.raises(RuntimeError, match="nuk u gjet"):
         inference.load_artifacts()
 
 

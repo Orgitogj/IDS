@@ -100,7 +100,7 @@ def _load(identity):
     models_dir = _models_dir()
     artifact = models_dir / identity.artifact_file
     if not artifact.exists():
-        raise RuntimeError(f"Artefakti i modelit s'u gjet: {artifact}")
+        raise RuntimeError(f"Artefakti i modelit nuk u gjet: {artifact}")
 
     model = joblib.load(artifact)
 
@@ -127,8 +127,8 @@ def _load(identity):
 
     if not hasattr(model, "get_booster"):
         raise UnsupportedModelError(
-            f"Modeli '{identity.name}' ({type(model).__name__}) nuk mbeshtetet nga ml-service: "
-            f"lejohen vetem modele XGBoost.")
+            f"Modeli '{identity.name}' ({type(model).__name__}) nuk mbështetet nga ml-service: "
+            f"lejohen vetëm modele XGBoost.")
 
     loaded = LoadedModel(identity, model, _label_encoder, feature_columns, validator)
 

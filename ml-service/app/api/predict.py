@@ -32,11 +32,11 @@ def _run_prediction(feature_vector: dict, include_shap: bool, model_id=None) -> 
         raise HTTPException(status_code=422, detail=error.result.to_dict())
     except requests.exceptions.HTTPError as error:
         raise HTTPException(status_code=404,
-                            detail=f"Modeli '{model_id}' s'u gjet ne regjistrin e modeleve.")
+                            detail=f"Modeli „{model_id}“ nuk u gjet në regjistrin e modeleve.")
     except requests.exceptions.RequestException as error:
         print(f"[predict] Regjistri s'u arrit per model_id={model_id}: {error!r}")
         raise HTTPException(status_code=503,
-                            detail=f"Regjistri i modeleve s'u arrit: {error}")
+                            detail=f"Regjistri i modeleve nuk u arrit: {error}")
     except RuntimeError as error:
         raise HTTPException(status_code=503, detail=str(error))
 
@@ -56,9 +56,9 @@ def activate_model(model_id: str):
         return activate(model_id).identity.to_dict()
     except requests.exceptions.HTTPError:
         raise HTTPException(status_code=404,
-                            detail=f"Modeli '{model_id}' s'u gjet ne regjistrin e modeleve.")
+                            detail=f"Modeli „{model_id}“ nuk u gjet në regjistrin e modeleve.")
     except requests.exceptions.RequestException as error:
-        raise HTTPException(status_code=503, detail=f"Regjistri i modeleve s'u arrit: {error}")
+        raise HTTPException(status_code=503, detail=f"Regjistri i modeleve nuk u arrit: {error}")
     except (RuntimeError, FeatureVersionMismatch) as error:
         raise HTTPException(status_code=422, detail=str(error))
 
