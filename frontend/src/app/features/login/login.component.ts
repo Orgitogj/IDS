@@ -26,7 +26,7 @@ export class LoginComponent {
     const password = this.password();
 
     if (!username || !password) {
-      this.errorMessage.set('Plotesoni perdoruesin dhe fjalekalimin.');
+      this.errorMessage.set('Shkruani përdoruesin dhe fjalëkalimin.');
       return;
     }
 
@@ -42,8 +42,8 @@ export class LoginComponent {
         this.submitting.set(false);
         this.errorMessage.set(
           error.status === 401
-            ? 'Perdorues ose fjalekalim i pasakte.'
-            : 'Lidhja me serverin deshtoi. Kontrollo localhost:8080.',
+            ? 'Përdoruesi ose fjalëkalimi është i pasaktë.'
+            : 'Serveri nuk përgjigjet. Kontrolloni nëse është i ndezur (localhost:8080).',
         );
       },
     });
