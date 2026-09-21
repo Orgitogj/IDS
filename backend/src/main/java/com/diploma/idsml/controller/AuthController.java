@@ -51,7 +51,7 @@ public class AuthController {
             @CookieValue(name = RefreshCookie.NAME, required = false) String refreshToken) {
 
         if (refreshToken == null || refreshToken.isBlank()) {
-            throw new InvalidCredentialsException("Sesioni nuk eshte i vlefshem. Hyni perseri.");
+            throw new InvalidCredentialsException("Sesioni nuk është më i vlefshëm. Hyni përsëri.");
         }
 
         return withRefreshCookie(authService.refresh(refreshToken));

@@ -147,11 +147,11 @@ class AuthServiceTest {
 
         assertThatThrownBy(() -> authService.login("ghost", PASSWORD, CLIENT))
                 .isInstanceOf(InvalidCredentialsException.class)
-                .hasMessage("Kredenciale te pasakta.");
+                .hasMessage("Përdoruesi ose fjalëkalimi është i pasaktë.");
 
         assertThatThrownBy(() -> authService.login("analyst-1", "wrong", CLIENT))
                 .isInstanceOf(InvalidCredentialsException.class)
-                .hasMessage("Kredenciale te pasakta.");
+                .hasMessage("Përdoruesi ose fjalëkalimi është i pasaktë.");
     }
 
     @Test

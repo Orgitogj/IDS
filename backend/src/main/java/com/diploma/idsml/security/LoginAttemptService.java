@@ -40,7 +40,7 @@ public class LoginAttemptService {
             if (attempts.count >= maxAttempts) {
                 long retryAfter = Duration.between(now, windowEnd).toSeconds();
                 throw new TooManyAttemptsException(
-                        "Shume perpjekje hyrjeje nga kjo adrese. Provoni perseri me vone.",
+                        "Shumë tentativa hyrjeje nga kjo adresë. Provoni përsëri më vonë.",
                         Math.max(retryAfter, 1));
             }
         }

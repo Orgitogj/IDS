@@ -29,7 +29,7 @@ import java.util.Optional;
 public class AuthService {
 
     private static final Logger log = LoggerFactory.getLogger(AuthService.class);
-    private static final String BAD_CREDENTIALS = "Kredenciale te pasakta.";
+    private static final String BAD_CREDENTIALS = "Përdoruesi ose fjalëkalimi është i pasaktë.";
 
     private final AppUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -67,7 +67,7 @@ public class AuthService {
         if (user.isLockedAt(now)) {
             loginAttemptService.recordFailure(client);
             throw new TooManyAttemptsException(
-                    "Llogaria eshte bllokuar perkohesisht pas disa perpjekjeve te deshtuara.",
+                    "Llogaria është bllokuar përkohësisht pas disa tentativave të dështuara. Provoni përsëri më vonë.",
                     Math.max(Duration.between(now, user.getLockedUntil()).toSeconds(), 1));
         }
 
@@ -98,11 +98,11 @@ public class AuthService {
         String username = request.username().trim();
 
         if (!request.password().equals(request.confirmPassword())) {
-            throw new InvalidRequestException("Fjalekalimet nuk perputhen.");
+            throw new InvalidRequestException("Fjalëkalimet nuk përputhen.");
         }
 
         if (userRepository.existsByUsernameIgnoreCase(username)) {
-            throw new InvalidRequestException("Ky perdorues ekziston tashme.");
+            throw new InvalidRequestException("Ky përdorues ekziston tashmë.");
         }
 
         AppUser user = AppUser.builder()
@@ -114,7 +114,7 @@ public class AuthService {
         try {
             userRepository.saveAndFlush(user);
         } catch (DataIntegrityViolationException ex) {
-            throw new InvalidRequestException("Ky perdorues ekziston tashme.");
+            throw new InvalidRequestException("Ky përdorues ekziston tashmë.");
         }
 
         return UserResponse.from(user);
@@ -126,15 +126,15 @@ public class AuthService {
                 .orElseThrow(() -> new InvalidCredentialsException(BAD_CREDENTIALS));
 
         if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
-            throw new InvalidCredentialsException("Fjalekalimi aktual nuk eshte i sakte.");
+            throw new InvalidCredentialsException("Fjalëkalimi aktual është i pasaktë.");
         }
 
         if (!request.newPassword().equals(request.confirmPassword())) {
-            throw new InvalidRequestException("Fjalekalimet nuk perputhen.");
+            throw new InvalidRequestException("Fjalëkalimet nuk përputhen.");
         }
 
         if (passwordEncoder.matches(request.newPassword(), user.getPasswordHash())) {
-            throw new InvalidRequestException("Fjalekalimi i ri duhet te jete i ndryshem nga aktuali.");
+            throw new InvalidRequestException("Fjalëkalimi i ri duhet të jetë i ndryshëm nga ai aktual.");
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.newPassword()));

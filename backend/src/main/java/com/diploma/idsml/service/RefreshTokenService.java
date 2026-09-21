@@ -26,7 +26,7 @@ public class RefreshTokenService {
 
     private static final Logger log = LoggerFactory.getLogger(RefreshTokenService.class);
     private static final int TOKEN_BYTES = 32;
-    private static final String INVALID_SESSION = "Sesioni nuk eshte i vlefshem. Hyni perseri.";
+    private static final String INVALID_SESSION = "Sesioni nuk është më i vlefshëm. Hyni përsëri.";
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final SessionRevoker sessionRevoker;
