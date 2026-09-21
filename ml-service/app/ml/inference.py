@@ -217,6 +217,17 @@ def load_artifacts():
     return loaded
 
 
+def activate(model_id):
+    global _active_key
+
+    identity = fetch_identity_by_id(model_id)
+    loaded = _load(identity)
+    _active_key = identity.artifact_file
+    _load_drift_monitor(loaded.feature_columns, loaded.identity.feature_version)
+    print(f"[inference] Modeli aktiv u nderrua ne {identity.name} v{identity.version}")
+    return loaded
+
+
 def reload_active():
     global _active_key
 
