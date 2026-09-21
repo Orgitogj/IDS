@@ -29,26 +29,26 @@ export class PasswordComponent {
   });
 
   currentPasswordError = computed(() =>
-    this.currentPassword() ? null : 'Fjalekalimi aktual eshte i detyrueshem.',
+    this.currentPassword() ? null : 'Fjalëkalimi aktual është i detyrueshëm.',
   );
 
   newPasswordError = computed(() => {
     const value = this.newPassword();
-    if (!value) return 'Fjalekalimi i ri eshte i detyrueshem.';
-    if (value.length < 8) return 'Fjalekalimi duhet te kete te pakten 8 karaktere.';
+    if (!value) return 'Fjalëkalimi i ri është i detyrueshëm.';
+    if (value.length < 8) return 'Fjalëkalimi duhet të ketë të paktën 8 karaktere.';
     if (!/[A-Za-z]/.test(value) || !/\d/.test(value)) {
-      return 'Duhet te permbaje te pakten nje shkronje dhe nje numer.';
+      return 'Duhet të përmbajë të paktën një shkronjë dhe një numër.';
     }
     if (value === this.currentPassword()) {
-      return 'Fjalekalimi i ri duhet te jete i ndryshem nga aktuali.';
+      return 'Fjalëkalimi i ri duhet të jetë i ndryshëm nga ai aktual.';
     }
     return null;
   });
 
   confirmPasswordError = computed(() => {
     const value = this.confirmPassword();
-    if (!value) return 'Konfirmoni fjalekalimin e ri.';
-    if (value !== this.newPassword()) return 'Fjalekalimet nuk perputhen.';
+    if (!value) return 'Konfirmoni fjalëkalimin e ri.';
+    if (value !== this.newPassword()) return 'Fjalëkalimet nuk përputhen.';
     return null;
   });
 
@@ -85,8 +85,8 @@ export class PasswordComponent {
         next: () => {
           this.submitting.set(false);
           this.toast.show(
-            'Fjalekalimi u ndryshua',
-            'Te gjitha sesionet u mbyllen. Hyni perseri me fjalekalimin e ri.',
+            'Fjalëkalimi u ndryshua',
+            'Të gjitha sesionet u mbyllën. Hyni përsëri me fjalëkalimin e ri.',
             'low',
           );
           this.auth.forceLogout();
@@ -99,8 +99,8 @@ export class PasswordComponent {
   }
 
   private describe(error: { status?: number; error?: { message?: string } }): string {
-    if (error.status === 0) return 'Lidhja me serverin deshtoi. Kontrollo localhost:8080.';
+    if (error.status === 0) return 'Serveri nuk përgjigjet. Kontrolloni nëse është i ndezur (localhost:8080).';
     if (error.error?.message) return error.error.message;
-    return 'Ndryshimi i fjalekalimit deshtoi. Provoni perseri.';
+    return 'Fjalëkalimi nuk u ndryshua. Provoni përsëri.';
   }
 }
