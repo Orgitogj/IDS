@@ -5,16 +5,16 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record ChangePasswordRequest(
-        @NotBlank(message = "Fjalekalimi aktual eshte i detyrueshem.")
+        @NotBlank(message = "Fjalëkalimi aktual është i detyrueshëm.")
         String currentPassword,
 
-        @NotBlank(message = "Fjalekalimi i ri eshte i detyrueshem.")
-        @Size(min = 8, max = 100, message = "Fjalekalimi duhet te kete te pakten 8 karaktere.")
+        @NotBlank(message = "Fjalëkalimi i ri është i detyrueshëm.")
+        @Size(min = 8, max = 100, message = "Fjalëkalimi duhet të ketë të paktën 8 karaktere.")
         @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d).+$",
-                message = "Fjalekalimi duhet te permbaje te pakten nje shkronje dhe nje numer.")
+                message = "Fjalëkalimi duhet të përmbajë të paktën një shkronjë dhe një numër.")
         String newPassword,
 
-        @NotBlank(message = "Konfirmimi i fjalekalimit eshte i detyrueshem.")
+        @NotBlank(message = "Konfirmimi i fjalëkalimit është i detyrueshëm.")
         String confirmPassword
 ) {
 }
