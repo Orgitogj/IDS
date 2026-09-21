@@ -20,7 +20,7 @@ from app.ml.anomaly import load_anomaly_detector
 from app.ml.detection_engine import METHOD_ANOMALY, decide
 from app.ml.drift import DriftMonitor, load_thresholds
 from app.ml.feature_validation import FeatureValidationError
-from app.ml.model_registry import fetch_active_identity, fetch_identity_by_id
+from app.ml.model_registry import fallback_identity, fetch_active_identity, fetch_identity_by_id
 from app.services import spring_client
 
 MAX_CACHED_MODELS = 4
@@ -205,7 +205,12 @@ def load_artifacts():
               "validimi i intervaleve eshte i cakivizuar.")
 
     identity = fetch_active_identity()
-    loaded = _load(identity)
+    try:
+        loaded = _load(identity)
+    except UnsupportedModelError as error:
+        print(f"[inference] {error} Po perdoret fallback '{settings.fallback_model_file}'.")
+        identity = fallback_identity()
+        loaded = _load(identity)
     _active_key = identity.artifact_file
     _load_anomaly_detector()
     _load_drift_monitor(loaded.feature_columns, loaded.identity.feature_version)
