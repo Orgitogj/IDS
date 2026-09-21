@@ -1,8 +1,8 @@
 <div class="p-6 max-w-xl">
   <div class="mb-5">
-    <h2 class="text-xl font-semibold text-white">Krijo perdorues</h2>
+    <h2 class="text-xl font-semibold text-white">Përdorues i ri</h2>
     <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
-      Vetem administratori mund te krijoje llogari te reja
+      Vetëm administratori mund të krijojë llogari të reja.
     </p>
   </div>
 
@@ -12,7 +12,7 @@
   >
     <div class="mb-3">
       <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">
-        Perdoruesi
+        Përdoruesi
       </label>
       <input
         type="text"
@@ -42,17 +42,17 @@
         class="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)]"
       >
         @for (option of roles; track option) {
-          <option [value]="option">{{ option }}</option>
+          <option [value]="option">{{ option | label: 'role' }}</option>
         }
       </select>
       <p class="text-[10px] text-[var(--color-text-muted)] mt-1">
-        ANALYST lexon dhe triazhon, ADMIN administron, SERVICE vetem dergon te dhena.
+        Analisti shqyrton alarmet, administratori menaxhon sistemin, ndërsa llogaria e shërbimit vetëm dërgon të dhëna.
       </p>
     </div>
 
     <div class="mb-3">
       <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">
-        Fjalekalimi
+        Fjalëkalimi
       </label>
       <input
         type="password"
@@ -71,14 +71,14 @@
         <p class="text-[11px] text-[var(--color-critical)] mt-1">{{ error }}</p>
       } @else {
         <p class="text-[10px] text-[var(--color-text-muted)] mt-1">
-          Te pakten 8 karaktere, me shkronja dhe numra.
+          Të paktën 8 karaktere, me shkronja dhe numra.
         </p>
       }
     </div>
 
     <div class="mb-4">
       <label class="block text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">
-        Konfirmo fjalekalimin
+        Konfirmo fjalëkalimin
       </label>
       <input
         type="password"
@@ -111,7 +111,7 @@
       [disabled]="submitting()"
       class="w-full text-xs font-medium px-3 py-2 rounded-lg bg-[var(--color-primary)]/20 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/30 disabled:opacity-40 disabled:cursor-not-allowed"
     >
-      {{ submitting() ? 'Duke krijuar...' : 'Krijo perdorues' }}
+      {{ submitting() ? 'Duke krijuar...' : 'Krijo përdoruesin' }}
     </button>
   </form>
 </div>
