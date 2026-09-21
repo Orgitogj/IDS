@@ -7,6 +7,16 @@ export interface Toast {
   variant: 'critical' | 'high' | 'medium' | 'low' | 'info';
 }
 
+const RESOURCE_NAMES: Record<string, string> = {
+  alarms: 'Alarmet',
+  experiments: 'Eksperimentet',
+  flows: 'Të dhënat e trafikut',
+  incidents: 'Incidentet',
+  models: 'Modelet',
+  settings: 'Cilësimet',
+  users: 'Përdoruesit',
+};
+
 let nextId = 1;
 
 @Injectable({ providedIn: 'root' })
@@ -26,8 +36,8 @@ export class ToastService {
 
   backendError(resource: string): void {
     this.show(
-      `Deshtoi ngarkimi: ${resource}`,
-      'Backend-i nuk pergjigjet. Kontrollo localhost:8080.',
+      `${RESOURCE_NAMES[resource] ?? 'Të dhënat'} nuk u ngarkuan`,
+      'Serveri nuk përgjigjet. Kontrolloni nëse është i ndezur (localhost:8080).',
       'critical',
     );
   }
