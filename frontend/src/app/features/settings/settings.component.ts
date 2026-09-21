@@ -58,7 +58,7 @@ export class SettingsComponent implements OnInit {
     { layer: 'Backend', tech: 'Spring Boot 3.3, Java 17, PostgreSQL, Flyway, WebSocket (STOMP)' },
     { layer: 'ML Service', tech: 'Python 3.11, FastAPI, XGBoost, scikit-learn, SHAP' },
     { layer: 'Frontend', tech: 'Angular (standalone, signals), Tailwind CSS v4, Chart.js' },
-    { layer: 'LLM Explainability', tech: 'Gemini (dev) / Claude Sonnet (production)' },
+    { layer: 'LLM Explainability', tech: 'Claude Sonnet 5' },
   ];
 
   ngOnInit(): void {
