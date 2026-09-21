@@ -5,6 +5,7 @@ import com.diploma.idsml.dto.MLModelResponse;
 import com.diploma.idsml.entity.MLModel;
 import com.diploma.idsml.exception.ResourceNotFoundException;
 import com.diploma.idsml.repository.MLModelRepository;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +16,15 @@ import java.util.stream.Collectors;
 @Service
 public class MLModelService {
 
-    private final MLModelRepository mlModelRepository;
+    public static final String ACTIVE_MODEL_TOPIC = "/topic/models/active";
 
-    public MLModelService(MLModelRepository mlModelRepository) {
+    private final MLModelRepository mlModelRepository;
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public MLModelService(MLModelRepository mlModelRepository,
+                          SimpMessagingTemplate messagingTemplate) {
         this.mlModelRepository = mlModelRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     public List<MLModelResponse> getAll() {
@@ -47,7 +53,9 @@ public class MLModelService {
 
         MLModel model = findEntity(id);
         model.setActive(true);
-        return toResponse(mlModelRepository.save(model));
+        MLModelResponse response = toResponse(mlModelRepository.save(model));
+        messagingTemplate.convertAndSend(ACTIVE_MODEL_TOPIC, response);
+        return response;
     }
 
     @Transactional
