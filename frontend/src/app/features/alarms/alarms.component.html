@@ -174,18 +174,11 @@
 
           <div class="flex gap-2 mb-4">
             <button
-              (click)="generateExplanation(false)"
+              (click)="generateExplanation()"
               [disabled]="generating() || !selectedFeatureVector()"
               class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Gjenero shpjegim
-            </button>
-            <button
-              (click)="generateExplanation(true)"
-              [disabled]="generating() || !selectedFeatureVector()"
-              class="text-[10px] px-2.5 py-1 rounded-md bg-[var(--color-surface-elevated)] text-[var(--color-text)] hover:bg-[var(--color-primary)]/20 disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Krahaso Claude vs Gemini
             </button>
             @if (generating()) {
               <span class="text-[10px] text-[var(--color-text-muted)] self-center">Duke gjeneruar...</span>

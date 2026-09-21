@@ -269,18 +269,18 @@ export class AlarmsComponent implements OnInit {
     });
   }
 
-  generateExplanation(compare: boolean): void {
+  generateExplanation(): void {
     const alarmId = this.selectedAlarmId();
     const featureVector = this.selectedFeatureVector();
     if (!alarmId || !featureVector || this.generating()) return;
 
     this.generating.set(true);
-    this.predictionService.explain(alarmId, featureVector, compare, this.selectedModelId()).subscribe({
+    this.predictionService.explain(alarmId, featureVector, this.selectedModelId()).subscribe({
       next: (result) => {
         this.generating.set(false);
         this.loadExplanations(alarmId);
         this.toast.show(
-          compare ? 'Krahasimi u gjenerua' : 'Shpjegimi u gjenerua',
+          'Shpjegimi u gjenerua',
           `${result.explanations.length} shpjegim(e) nga LLM.`,
           'low',
         );

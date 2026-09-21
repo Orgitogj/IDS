@@ -53,13 +53,11 @@ export class PredictionService {
   explain(
     alarmId: string,
     featureVector: Record<string, number>,
-    compare = false,
     modelId: string | null = null,
   ): Observable<ExplainResult> {
     return this.http.post<ExplainResult>(`${ML_SERVICE_URL}/explain`, {
       alarm_id: alarmId,
       feature_vector: featureVector,
-      compare,
       model_id: modelId,
     });
   }
