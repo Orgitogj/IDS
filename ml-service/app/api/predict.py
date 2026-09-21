@@ -33,6 +33,7 @@ def _run_prediction(feature_vector: dict, include_shap: bool, model_id=None) -> 
         raise HTTPException(status_code=404,
                             detail=f"Modeli '{model_id}' s'u gjet ne regjistrin e modeleve.")
     except requests.exceptions.RequestException as error:
+        print(f"[predict] Regjistri s'u arrit per model_id={model_id}: {error!r}")
         raise HTTPException(status_code=503,
                             detail=f"Regjistri i modeleve s'u arrit: {error}")
     except RuntimeError as error:
