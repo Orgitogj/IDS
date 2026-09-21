@@ -98,14 +98,18 @@ def explain_alarm(request: ExplainRequest):
             anomaly_score=prediction["anomaly_score"],
         )
     else:
-        llm_results = [generate_explanation(
-            predicted_label=prediction["prediction"],
-            confidence=prediction["confidence"],
-            top_shap_features=prediction["top_shap_features"],
-            detection_method=prediction["detection_method"],
-            top_anomaly_features=prediction["top_anomaly_features"],
-            anomaly_score=prediction["anomaly_score"],
-        )]
+        try:
+            llm_results = [generate_explanation(
+                predicted_label=prediction["prediction"],
+                confidence=prediction["confidence"],
+                top_shap_features=prediction["top_shap_features"],
+                detection_method=prediction["detection_method"],
+                top_anomaly_features=prediction["top_anomaly_features"],
+                anomaly_score=prediction["anomaly_score"],
+            )]
+        except Exception as error:
+            print(f"Ofruesi claude deshtoi: {error}")
+            llm_results = []
 
     if not llm_results:
         raise HTTPException(status_code=502, detail="Asnje ofrues LLM s'u pergjigj.")
