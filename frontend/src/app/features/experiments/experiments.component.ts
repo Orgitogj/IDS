@@ -3,6 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 import { ExperimentService } from '../../core/services/experiment.service';
+import { ModelService } from '../../core/services/model.service';
 import { ExperimentResult } from '../../core/models/experiment-result.model';
 import { ToastService } from '../../core/services/toast.service';
 
@@ -19,9 +20,11 @@ const GRID_COLOR = '#1d2440';
 })
 export class ExperimentsComponent implements OnInit {
   private experimentService = inject(ExperimentService);
+  private modelService = inject(ModelService);
   private toast = inject(ToastService);
 
   results = signal<ExperimentResult[]>([]);
+  activeModelId = this.modelService.activeModelId;
   loading = signal(true);
   loadError = signal(false);
 
@@ -181,6 +184,8 @@ export class ExperimentsComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    this.modelService.refreshActive();
+
     this.experimentService.getAll().subscribe({
       next: (results) => {
         this.results.set(results.sort((a, b) => b.f1Score - a.f1Score));

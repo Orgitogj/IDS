@@ -75,12 +75,12 @@
       </tr>
       </thead>
       <tbody>
-        @for (result of results(); track result.id; let i = $index) {
+        @for (result of results(); track result.id) {
           <tr class="border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-surface-elevated)]/50">
             <td class="px-4 py-2.5">
               <div class="flex items-center gap-2">
-                @if (i === 0) {
-                  <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-low)]"></span>
+                @if (result.mlModelId === activeModelId()) {
+                  <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-low)]" title="Modeli aktiv"></span>
                 }
                 <span class="text-white font-medium">{{ result.mlModelName }}</span>
               </div>
