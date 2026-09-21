@@ -34,7 +34,10 @@ export class OverviewComponent implements OnInit {
 
   loading = signal(true);
   loadError = signal(false);
-  activeModel = signal<MLModel | null>(null);
+  private models = signal<MLModel[]>([]);
+  activeModel = computed(
+    () => this.models().find((m) => m.id === this.modelService.activeModelId()) ?? null,
+  );
 
   private alarms = signal<Alarm[]>([]);
   private flowStats = signal<FlowStats | null>(null);
@@ -244,8 +247,8 @@ export class OverviewComponent implements OnInit {
 
     this.modelService.getAll().subscribe({
       next: (models: MLModel[]) => {
-        const active = models.find((m) => m.active);
-        this.activeModel.set(active ?? null);
+        this.models.set(models);
+        this.modelService.activeModelId.set(models.find((m) => m.active)?.id ?? null);
       },
       error: () => this.handleLoadError('models'),
     });
