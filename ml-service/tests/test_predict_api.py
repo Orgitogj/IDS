@@ -288,3 +288,64 @@ def test_a_token_without_an_issued_at_claim_is_rejected(client, full_vector):
                            headers={"Content-Type": "application/json",
                                     "Authorization": f"Bearer {token}"})
     assert response.status_code == 401
+
+
+FULL78_PAYLOAD = {
+    "id": "aaaaaaaa-0000-0000-0000-000000000078",
+    "algorithm": "XGBoost",
+    "name": "xgb-smote-cicids2017-v1",
+    "version": "2.0",
+    "featureVersion": None,
+    "artifactPath": "models/xgb_smote_cicids2017_v1.joblib",
+}
+
+MLP_PAYLOAD = {
+    "id": "cccccccc-0000-0000-0000-0000000000c0",
+    "algorithm": "NeuralNetwork",
+    "name": "mlp-smote-cicids2017-v1",
+    "version": "1.0",
+    "featureVersion": None,
+    "artifactPath": "models/mlp_smote_cicids2017_v1.joblib",
+}
+
+
+def test_activate_endpoint_switches_the_active_model(client, monkeypatch):
+    monkeypatch.setattr(model_registry.spring_client, "get_model",
+                        lambda model_id: FULL78_PAYLOAD)
+    response = client.post(f"/api/models/{FULL78_PAYLOAD['id']}/activate",
+                           headers=auth_headers("SERVICE"))
+    assert response.status_code == 200
+    assert response.json()["model_name"] == "xgb-smote-cicids2017-v1"
+
+    active = client.get("/api/models/active", headers=auth_headers("ANALYST"))
+    assert active.json()["model_id"] == FULL78_PAYLOAD["id"]
+
+
+def test_activate_endpoint_refuses_an_unsupported_model(client, monkeypatch):
+    if not (inference._models_dir() / "mlp_smote_cicids2017_v1.joblib").exists():
+        pytest.skip("mlp_smote_cicids2017_v1.joblib mungon ne models/")
+    monkeypatch.setattr(model_registry.spring_client, "get_model", lambda model_id: MLP_PAYLOAD)
+
+    response = client.post(f"/api/models/{MLP_PAYLOAD['id']}/activate",
+                           headers=auth_headers("ADMIN"))
+    assert response.status_code == 422
+    assert "XGBoost" in response.json()["detail"]
+
+    active = client.get("/api/models/active", headers=auth_headers("ANALYST"))
+    assert active.json()["model_name"] == "xgb-smote-top50features-v1"
+
+
+def test_activate_endpoint_reports_an_unknown_model_as_not_found(client, monkeypatch):
+    def boom(model_id):
+        raise requests.exceptions.HTTPError("404")
+
+    monkeypatch.setattr(model_registry.spring_client, "get_model", boom)
+    response = client.post("/api/models/00000000-0000-0000-0000-000000000000/activate",
+                           headers=auth_headers("ADMIN"))
+    assert response.status_code == 404
+
+
+def test_activate_endpoint_is_closed_to_analysts(client):
+    response = client.post(f"/api/models/{FULL78_PAYLOAD['id']}/activate",
+                           headers=auth_headers("ANALYST"))
+    assert response.status_code == 403
