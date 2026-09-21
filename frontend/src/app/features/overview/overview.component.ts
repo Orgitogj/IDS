@@ -109,7 +109,7 @@ export class OverviewComponent implements OnInit {
       LOW: source['LOW'] ?? 0,
     };
     return {
-      labels: ['Critical', 'High', 'Medium', 'Low'],
+      labels: ['Kritik', 'I lartë', 'Mesatar', 'I ulët'],
       datasets: [
         {
           data: [counts['CRITICAL'], counts['HIGH'], counts['MEDIUM'], counts['LOW']],
@@ -176,7 +176,7 @@ export class OverviewComponent implements OnInit {
       labels: top.map((e) => e.mlModelName),
       datasets: [
         {
-          label: 'F1-score',
+          label: 'F1 (%)',
           data: top.map((e) => +(e.f1Score * 100).toFixed(2)),
           backgroundColor: '#6366f1',
           borderRadius: 6,
