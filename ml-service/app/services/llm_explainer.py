@@ -1,7 +1,6 @@
 import time
 
 from anthropic import Anthropic
-from google import genai
 
 from app.core.config import settings
 from app.ml.detection_engine import METHOD_ANOMALY
@@ -9,7 +8,6 @@ from app.ml.detection_engine import METHOD_ANOMALY
 PROMPT_VERSION = "v3"
 
 _anthropic_client = None
-_gemini_client = None
 
 
 def _get_anthropic_client():
@@ -17,13 +15,6 @@ def _get_anthropic_client():
     if _anthropic_client is None:
         _anthropic_client = Anthropic(api_key=settings.anthropic_api_key)
     return _anthropic_client
-
-
-def _get_gemini_client():
-    global _gemini_client
-    if _gemini_client is None:
-        _gemini_client = genai.Client(api_key=settings.gemini_api_key)
-    return _gemini_client
 
 
 ROLE = ("Je nje asistent sigurie qe shpjegon alarme te sistemit IDS per nje administrator "
@@ -162,19 +153,7 @@ def _generate_with_claude(prompt):
     return message.content[0].text, model_name
 
 
-def _generate_with_gemini(prompt):
-    global LAST_RESOLVED_MODEL
-    client = _get_gemini_client()
-    model_name = "gemini-flash-latest"
-    response = client.models.generate_content(
-        model=model_name,
-        contents=prompt,
-    )
-    LAST_RESOLVED_MODEL = getattr(response, "model_version", None)
-    return response.text, model_name
-
-
-PROVIDERS = ("claude", "gemini")
+PROVIDERS = ("claude",)
 
 
 def generate_explanation(predicted_label, confidence, top_shap_features, provider=None,
@@ -182,13 +161,12 @@ def generate_explanation(predicted_label, confidence, top_shap_features, provide
                          anomaly_score=None):
     prompt = _build_prompt(predicted_label, confidence, top_shap_features, detection_method,
                            top_anomaly_features, anomaly_score)
-    chosen = provider or settings.llm_provider
+    chosen = provider or "claude"
+    if chosen not in PROVIDERS:
+        raise ValueError(f"Ofrues LLM i panjohur: {chosen}")
 
     started = time.perf_counter()
-    if chosen == "claude":
-        explanation_text, model_name = _generate_with_claude(prompt)
-    else:
-        explanation_text, model_name = _generate_with_gemini(prompt)
+    explanation_text, model_name = _generate_with_claude(prompt)
     latency_ms = (time.perf_counter() - started) * 1000
 
     return {
