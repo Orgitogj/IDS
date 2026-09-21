@@ -114,9 +114,10 @@ class TestPromptAndProtocol:
     def test_top_k_rule_frozen_at_five(self):
         assert _protocol()["shap"]["top_k"] == 5
 
-    def test_provider_primary_is_designated_default(self):
+    def test_provider_primary_is_claude(self):
         p = _protocol()["provider"]
-        assert p["primary"] == "gemini"
+        assert p["primary"] == "claude"
+        assert p["primary_model"] == "claude-sonnet-5"
         assert p["real_calls_status"].startswith("NOT YET RUN")
 
     def test_h4_status_not_fully_tested(self):
@@ -151,13 +152,10 @@ class TestNoRealLLMByDefault:
     def test_batch_runner_dry_run_makes_no_calls(self, monkeypatch):
         def boom(*a, **k):
             raise AssertionError("no real LLM call must occur in the default suite")
-        monkeypatch.setattr(llm_explainer, "_generate_with_gemini", boom)
         monkeypatch.setattr(llm_explainer, "_generate_with_claude", boom)
-        for provider in ("gemini", "claude"):
-            result = phase17d_explain_run.run(provider, ("with_shap", "no_shap"),
-                                              go=False)
-            assert result["dry_run"] is True
-            assert result["planned_calls"] == 24
+        result = phase17d_explain_run.run("claude", ("with_shap", "no_shap"), go=False)
+        assert result["dry_run"] is True
+        assert result["planned_calls"] == 24
 
 
 class TestProviderAmendment:
@@ -182,11 +180,6 @@ class TestProviderAmendment:
         assert u["sample_seed"] == 42
         assert u["prompt_template_sha256"] == _prompt_hash()
 
-    def test_gemini_recorded_as_excluded(self):
-        g = self._amendment()["gemini_partial_attempt"]
-        assert g["intended"] == 24 and g["obtained"] == 9 and g["missing"] == 15
-        assert "EXCLUDED_FROM_FINAL_H4_ANALYSIS" in g["status"]
-
     def test_requested_claude_model_is_sonnet_5(self):
         assert self._amendment()["provider_freeze"]["requested_claude_model"] == \
             "claude-sonnet-5"
@@ -195,19 +188,12 @@ class TestProviderAmendment:
 
 class TestNoProviderMixing:
 
-    def test_gemini_runs_file_is_gemini_only(self):
-        p = LLM / "explanation_runs.json"
-        if not p.exists():
-            pytest.skip("gemini runs absent")
-        d = json.load(open(p, encoding="utf-8"))
-        assert {r["provider"] for r in d["records"]} == {"gemini"}
-
-    def test_runner_uses_separate_files_per_provider(self):
-        assert phase17d_explain_run.FILES["gemini"]["runs"] != \
-            phase17d_explain_run.FILES["claude"]["runs"]
+    def test_runner_is_claude_only(self):
+        assert set(phase17d_explain_run.FILES) == {"claude"}
+        assert set(phase17d_explain_run.REQUESTED_MODEL) == {"claude"}
         assert phase17d_explain_run.REQUESTED_MODEL["claude"] == "claude-sonnet-5"
 
-    def test_claude_final_files_gemini_free_when_present(self):
+    def test_claude_final_files_are_claude_only_when_present(self):
         p = LLM / "explanation_runs_claude.json"
         if not p.exists():
             pytest.skip("claude batch not run yet")
