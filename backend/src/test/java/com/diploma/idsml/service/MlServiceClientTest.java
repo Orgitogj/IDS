@@ -70,8 +70,8 @@ class MlServiceClientTest {
         server.expect(requestTo(activateUrl()))
                 .andRespond(withStatus(HttpStatus.UNPROCESSABLE_ENTITY)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"detail\":\"Modeli 'mlp' (MLPClassifier) nuk mbeshtetet nga "
-                                + "ml-service: lejohen vetem modele XGBoost.\"}"));
+                        .body("{\"detail\":\"Modeli 'mlp' (MLPClassifier) nuk mbështetet nga "
+                                + "ml-service: lejohen vetëm modele XGBoost.\"}"));
 
         assertThatThrownBy(() -> client.activate(modelId))
                 .isInstanceOf(ModelActivationException.class)

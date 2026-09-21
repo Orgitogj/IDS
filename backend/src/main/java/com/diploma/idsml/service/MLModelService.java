@@ -85,7 +85,7 @@ public class MLModelService {
 
     private MLModel findEntity(UUID id) {
         return mlModelRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("MLModel s'u gjet: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Modeli nuk u gjet: " + id));
     }
 
     private MLModelResponse toResponse(MLModel model) {

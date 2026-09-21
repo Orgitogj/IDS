@@ -54,7 +54,7 @@ public class MlServiceClient {
             throw new ModelActivationException(detailOf(ex));
         } catch (RestClientException ex) {
             throw new MlServiceUnavailableException(
-                    "ml-service s'u arrit ose deshtoi; modeli nuk u aktivizua.");
+                    "ml-service nuk u arrit ose dështoi; modeli nuk u aktivizua.");
         }
     }
 

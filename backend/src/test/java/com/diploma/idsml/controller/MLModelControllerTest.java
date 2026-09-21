@@ -176,8 +176,8 @@ class MLModelControllerTest {
     @Test
     void aModelTheMlServiceCannotServeIsRejectedWithItsReason() throws Exception {
         given(mlModelService.setActive(MODEL_ID)).willThrow(new ModelActivationException(
-                "Modeli 'mlp-smote-cicids2017-v1' (MLPClassifier) nuk mbeshtetet nga ml-service: "
-                        + "lejohen vetem modele XGBoost."));
+                "Modeli 'mlp-smote-cicids2017-v1' (MLPClassifier) nuk mbështetet nga ml-service: "
+                        + "lejohen vetëm modele XGBoost."));
 
         mockMvc.perform(patch("/api/models/" + MODEL_ID + "/activate")
                         .header("Authorization", token("ADMIN")))
@@ -188,7 +188,7 @@ class MLModelControllerTest {
     @Test
     void anUnreachableMlServiceBlocksActivation() throws Exception {
         given(mlModelService.setActive(MODEL_ID)).willThrow(new MlServiceUnavailableException(
-                "ml-service s'u arrit ose deshtoi; modeli nuk u aktivizua."));
+                "ml-service nuk u arrit ose dështoi; modeli nuk u aktivizua."));
 
         mockMvc.perform(patch("/api/models/" + MODEL_ID + "/activate")
                         .header("Authorization", token("ADMIN")))
