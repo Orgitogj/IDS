@@ -13,8 +13,21 @@ _anthropic_client = None
 def _get_anthropic_client():
     global _anthropic_client
     if _anthropic_client is None:
-        _anthropic_client = Anthropic(api_key=settings.anthropic_api_key)
+        _anthropic_client = Anthropic(
+            api_key=settings.anthropic_api_key,
+            timeout=60.0,
+            max_retries=5,
+        )
     return _anthropic_client
+
+
+def describe_error(error):
+    parts = [f"{type(error).__name__}: {error}"]
+    cause = error.__cause__ or error.__context__
+    while cause is not None and len(parts) < 4:
+        parts.append(f"{type(cause).__name__}: {cause}")
+        cause = cause.__cause__ or cause.__context__
+    return " <- ".join(parts)
 
 
 ROLE = ("Je nje asistent sigurie qe shpjegon alarme te sistemit IDS per nje administrator "
@@ -189,5 +202,5 @@ def generate_all_explanations(predicted_label, confidence, top_shap_features,
                                      detection_method, top_anomaly_features, anomaly_score)
             )
         except Exception as error:
-            print(f"Ofruesi {provider} deshtoi: {error}")
+            print(f"Ofruesi {provider} deshtoi: {describe_error(error)}")
     return results

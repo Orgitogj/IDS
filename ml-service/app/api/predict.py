@@ -19,7 +19,8 @@ from app.schemas.prediction import (
 )
 from app.services.groundedness import check as check_groundedness
 from app.services.groundedness import evidence_from_prediction
-from app.services.llm_explainer import generate_all_explanations, generate_explanation
+from app.services.llm_explainer import (describe_error, generate_all_explanations,
+                                        generate_explanation)
 from app.services.spring_client import create_explanation
 
 router = APIRouter(prefix="/api", tags=["prediction"])
@@ -123,7 +124,7 @@ def explain_alarm(request: ExplainRequest):
                 anomaly_score=prediction["anomaly_score"],
             )]
         except Exception as error:
-            print(f"Ofruesi claude deshtoi: {error}")
+            print(f"Ofruesi claude deshtoi: {describe_error(error)}")
             llm_results = []
 
     if not llm_results:
