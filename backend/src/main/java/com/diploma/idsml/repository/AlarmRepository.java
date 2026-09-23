@@ -27,12 +27,16 @@ public interface AlarmRepository extends JpaRepository<Alarm, UUID>,
     List<Object[]> countGroupedByStatus();
 
     @Query(value = """
-            SELECT to_char(date_trunc('hour', created_at AT TIME ZONE 'UTC'),
-                           'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS bucket,
-                   COUNT(*)
-            FROM alarms
-            WHERE created_at >= now() - INTERVAL '24 hours'
-            GROUP BY bucket
+            SELECT bucket, alarm_count
+            FROM (
+                SELECT to_char(date_trunc('hour', created_at AT TIME ZONE 'UTC'),
+                               'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS bucket,
+                       COUNT(*) AS alarm_count
+                FROM alarms
+                GROUP BY bucket
+                ORDER BY bucket DESC
+                LIMIT 24
+            ) recent
             ORDER BY bucket
             """, nativeQuery = true)
     List<Object[]> countGroupedByHour();

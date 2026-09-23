@@ -9,7 +9,7 @@ import { ExperimentService } from '../../core/services/experiment.service';
 import { WebSocketService } from '../../core/services/websocket.service';
 import { Alarm } from '../../core/models/alarm.model';
 import { FlowStats } from '../../core/models/flow-stats.model';
-import { AlarmStats } from '../../core/models/alarm-stats.model';
+import { AlarmStats, HourlyCount } from '../../core/models/alarm-stats.model';
 import { MLModel } from '../../core/models/ml-model.model';
 import { ExperimentResult } from '../../core/models/experiment-result.model';
 import { ToastService } from '../../core/services/toast.service';
@@ -67,14 +67,21 @@ export class OverviewComponent implements OnInit {
 
   timelineChartData = computed<ChartConfiguration<'line'>['data']>(() => {
     const hourly = this.alarmStats()?.hourlyCounts ?? [];
-    const sortedKeys = hourly.map((h) => h.hour);
-    const buckets = new Map(hourly.map((h) => [h.hour, h.count]));
+    let previousDay = '';
+    const labels = hourly.map((h) => {
+      const date = new Date(h.hour);
+      const hour = `${date.getHours().toString().padStart(2, '0')}:00`;
+      const day = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+      const label = day === previousDay ? hour : `${day} ${hour}`;
+      previousDay = day;
+      return label;
+    });
     return {
-      labels: sortedKeys.map((k) => `${new Date(k).getHours()}:00`),
+      labels,
       datasets: [
         {
           label: 'Alarme',
-          data: sortedKeys.map((k) => buckets.get(k) ?? 0),
+          data: hourly.map((h) => h.count),
           borderColor: '#6366f1',
           backgroundColor: 'rgba(99, 102, 241, 0.15)',
           fill: true,
@@ -217,7 +224,14 @@ export class OverviewComponent implements OnInit {
         statusCounts['NEW'] = (statusCounts['NEW'] ?? 0) + 1;
         const severityCounts = { ...stats.severityCounts };
         severityCounts[newest.severity] = (severityCounts[newest.severity] ?? 0) + 1;
-        return { ...stats, totalAlarms: stats.totalAlarms + 1, statusCounts, severityCounts };
+        const hourlyCounts = this.withHourlyAlarm(stats.hourlyCounts, newest.createdAt);
+        return {
+          ...stats,
+          totalAlarms: stats.totalAlarms + 1,
+          statusCounts,
+          severityCounts,
+          hourlyCounts,
+        };
       });
       this.flowStats.update((stats) => {
         if (!stats) return stats;
@@ -257,6 +271,17 @@ export class OverviewComponent implements OnInit {
       next: (results) => this.experiments.set(results),
       error: () => this.handleLoadError('experiments'),
     });
+  }
+
+  private withHourlyAlarm(counts: HourlyCount[], createdAt: string): HourlyCount[] {
+    const bucket = `${new Date(createdAt).toISOString().slice(0, 13)}:00:00Z`;
+    const index = counts.findIndex((c) => c.hour === bucket);
+    if (index >= 0) {
+      const updated = [...counts];
+      updated[index] = { ...updated[index], count: updated[index].count + 1 };
+      return updated;
+    }
+    return [...counts, { hour: bucket, count: 1 }].slice(-24);
   }
 
   private handleLoadError(resource: string): void {
