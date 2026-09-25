@@ -4,6 +4,13 @@
 **Audit date:** 2026-08-30
 **Scope:** Phase 0 — read-only audit. No application behaviour was modified.
 
+> **Historical snapshot.** This describes the codebase *before* the hardening work, and
+> several limitations below were addressed afterwards — for example, the ml-service now
+> requires JWT roles (L10), alarms are correlated into incidents (L6), and `ml-service/tests/`
+> exists (L16). The limitation codes (L1–L17) are still cited by
+> [`EVALUATION.md`](EVALUATION.md). For the current system, see the root
+> [`README.md`](../README.md).
+
 Every claim below was verified against source code or against the dataset/model artifacts
 themselves. Where a claim could **not** be verified in this environment (e.g. the runtime
 behaviour of CICFlowMeter on the Linux capture host), it is explicitly marked

@@ -23,7 +23,7 @@ ml-service/datasets/**/*.csv
 ml-service/datasets/*.parquet
 ml-service/mlruns/
 ml-service/mlartifacts/
-ml-service/.ipynb_checkpoints/
+ml-service/**/.ipynb_checkpoints/
 ml-service/notebooks/session_checkpoint.pkl
 
 # ===== Frontend (Angular/Node) =====

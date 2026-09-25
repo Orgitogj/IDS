@@ -48,7 +48,7 @@ python -m training.train training/configs/xgb_smote_v2.yaml
 | 3 | Balance | `balancing.py` | **Training rows only.** See below. |
 | 4 | Scale | `models.py` | `StandardScaler` fitted on the balanced *training* matrix only; test is transformed, never re-fitted. Only the MLP asks for one. |
 | 5 | Train | `models.py` | Model factory; the single `seed` is injected as `random_state`. |
-| 6 | Evaluate | `evaluation.py` | Reuses the metric functions in `training/evaluate.py`, so the numbers are computed by the same code that produced `EVALUATION.md`. |
+| 6 | Evaluate | `evaluation.py` | Reuses the metric functions in `training/evaluate.py`, so the numbers are computed by the same code that produced [`docs/EVALUATION.md`](../../docs/EVALUATION.md). |
 | 7 | Save | `artifacts.py` | Artifact bundle + reports. |
 
 No metric is ever written by hand: every number in `metrics.json` is computed from the

@@ -31,6 +31,15 @@ def calibration():
         return json.load(handle)
 
 
+@pytest.fixture(scope="module")
+def isolation_forest():
+    if not ARTIFACT_FILE.exists():
+        pytest.skip("artefakti i detektorit te anomalive mungon")
+    import joblib
+
+    return joblib.load(ARTIFACT_FILE)
+
+
 def test_detector_reports_its_identity(detector):
     identity = detector.identity()
     assert identity["anomaly_artifact_file"] == "isolation_forest_benign_v2.joblib"
@@ -138,19 +147,14 @@ def test_unavailable_result_serialises_too():
     json.dumps(payload)
 
 
-def test_an_unknown_threshold_rate_is_rejected(calibration):
-    import joblib
-
+def test_an_unknown_threshold_rate_is_rejected(isolation_forest, calibration):
     with pytest.raises(ValueError, match="s'ekziston"):
-        AnomalyDetector(joblib.load(ARTIFACT_FILE), calibration, threshold_rate="0.999")
+        AnomalyDetector(isolation_forest, calibration, threshold_rate="0.999")
 
 
-def test_a_stricter_threshold_flags_fewer_flows(calibration):
-    import joblib
-
-    model = joblib.load(ARTIFACT_FILE)
-    strict = AnomalyDetector(model, calibration, threshold_rate="0.001")
-    loose = AnomalyDetector(model, calibration, threshold_rate="0.050")
+def test_a_stricter_threshold_flags_fewer_flows(isolation_forest, calibration):
+    strict = AnomalyDetector(isolation_forest, calibration, threshold_rate="0.001")
+    loose = AnomalyDetector(isolation_forest, calibration, threshold_rate="0.050")
     assert strict.threshold < loose.threshold
 
 
@@ -206,10 +210,8 @@ def test_attribution_is_unavailable_when_features_are_missing(detector, full_vec
     assert detector.attribute(partial) is None
 
 
-def test_attribution_is_unavailable_without_a_baseline(calibration):
-    import joblib
-
-    detector = AnomalyDetector(joblib.load(ARTIFACT_FILE), calibration, baseline=None)
+def test_attribution_is_unavailable_without_a_baseline(isolation_forest, calibration):
+    detector = AnomalyDetector(isolation_forest, calibration, baseline=None)
     assert detector.attribute({}) is None
 
 
@@ -236,8 +238,7 @@ def test_the_identity_names_the_attribution_method_when_a_baseline_is_loaded(det
     assert detector.identity()["anomaly_attribution_method"] == "median_substitution_v1"
 
 
-def test_the_identity_reports_no_attribution_method_without_a_baseline(calibration):
-    import joblib
-
-    detector = AnomalyDetector(joblib.load(ARTIFACT_FILE), calibration, baseline=None)
+def test_the_identity_reports_no_attribution_method_without_a_baseline(isolation_forest,
+                                                                         calibration):
+    detector = AnomalyDetector(isolation_forest, calibration, baseline=None)
     assert detector.identity()["anomaly_attribution_method"] is None

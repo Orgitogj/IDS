@@ -37,6 +37,17 @@ def isolated_inference_state(monkeypatch):
     yield
 
 
+def require_artifacts(*names):
+    missing = [name for name in names if not (inference._models_dir() / name).exists()]
+    if missing:
+        pytest.skip(f"{', '.join(missing)} mungon ne models/")
+
+
+@pytest.fixture
+def full78_artifact():
+    require_artifacts("xgb_smote_cicids2017_v1.joblib")
+
+
 @pytest.fixture
 def registry_backed(monkeypatch):
     monkeypatch.setattr(model_registry.spring_client, "get_active_model", lambda: TOP50_PAYLOAD)
@@ -137,7 +148,7 @@ def test_predicting_before_load_is_an_explicit_error():
         inference.active_model()
 
 
-def test_targeting_another_model_uses_that_model(registry_backed, full_vector):
+def test_targeting_another_model_uses_that_model(full78_artifact, registry_backed, full_vector):
     result = inference.predict(full_vector, include_shap=False,
                                model_id=FULL78_PAYLOAD["id"])
     assert result["model_name"] == "xgb-smote-cicids2017-v1"
@@ -153,14 +164,14 @@ def test_targeting_the_active_model_by_id_does_not_reload(registry_backed, full_
     assert set(inference._loaded) == set(before)
 
 
-def test_a_targeted_model_is_cached_after_first_use(registry_backed, full_vector):
+def test_a_targeted_model_is_cached_after_first_use(full78_artifact, registry_backed, full_vector):
     inference.predict(full_vector, include_shap=False, model_id=FULL78_PAYLOAD["id"])
     assert "xgb_smote_cicids2017_v1.joblib" in inference._loaded
     inference.predict(full_vector, include_shap=False, model_id=FULL78_PAYLOAD["id"])
     assert len(inference._loaded) == 2
 
 
-def test_different_models_can_disagree_on_feature_attribution(registry_backed, full_vector):
+def test_different_models_can_disagree_on_feature_attribution(full78_artifact, registry_backed, full_vector):
     top50 = inference.predict(full_vector, include_shap=True)
     full78 = inference.predict(full_vector, include_shap=True, model_id=FULL78_PAYLOAD["id"])
     assert top50["feature_version"] != full78["feature_version"]
@@ -185,7 +196,7 @@ def test_missing_artifact_is_reported_clearly(monkeypatch):
         inference.load_artifacts()
 
 
-def test_reload_picks_up_a_changed_active_model(registry_backed, monkeypatch):
+def test_reload_picks_up_a_changed_active_model(full78_artifact, registry_backed, monkeypatch):
     assert inference.active_model().identity.name == "xgb-smote-top50features-v1"
     monkeypatch.setattr(model_registry.spring_client, "get_active_model", lambda: FULL78_PAYLOAD)
     reloaded = inference.reload_active()
@@ -200,6 +211,7 @@ def test_cache_never_evicts_the_active_model(registry_backed, full_vector, monke
         ("xgb_smote_top30features_v1.joblib", "30"),
         ("xgb_smote_top78features_v1.joblib", "78"),
     ]
+    require_artifacts(*(artifact for artifact, _ in others))
     for artifact, suffix in others:
         payload = dict(TOP50_PAYLOAD, id=f"bbbbbbbb-0000-0000-0000-0000000000{suffix}",
                        name=f"model-{suffix}", artifactPath=f"models/{artifact}")
@@ -266,11 +278,10 @@ MLP_PAYLOAD = {
 
 @pytest.fixture
 def mlp_artifact():
-    if not (inference._models_dir() / "mlp_smote_cicids2017_v1.joblib").exists():
-        pytest.skip("mlp_smote_cicids2017_v1.joblib mungon ne models/")
+    require_artifacts("mlp_smote_cicids2017_v1.joblib")
 
 
-def test_activating_a_model_makes_it_the_default_for_predictions(registry_backed, full_vector):
+def test_activating_a_model_makes_it_the_default_for_predictions(full78_artifact, registry_backed, full_vector):
     inference.activate(FULL78_PAYLOAD["id"])
     assert inference.active_model().identity.name == "xgb-smote-cicids2017-v1"
     result = inference.predict(full_vector, include_shap=False)
