@@ -310,6 +310,8 @@ MLP_PAYLOAD = {
 
 
 def test_activate_endpoint_switches_the_active_model(client, monkeypatch):
+    if not (inference._models_dir() / "xgb_smote_cicids2017_v1.joblib").exists():
+        pytest.skip("xgb_smote_cicids2017_v1.joblib mungon ne models/")
     monkeypatch.setattr(model_registry.spring_client, "get_model",
                         lambda model_id: FULL78_PAYLOAD)
     response = client.post(f"/api/models/{FULL78_PAYLOAD['id']}/activate",

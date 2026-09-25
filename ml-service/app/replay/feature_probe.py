@@ -28,7 +28,7 @@ _ML_SERVICE_ROOT = Path(__file__).resolve().parent.parent.parent
 
 DEFAULT_REFERENCE = "reports/training_feature_reference.json"
 DEFAULT_OUT = "reports/live_feature_profile.json"
-DEFAULT_MARKDOWN = "FEATURE_COMPATIBILITY.md"
+DEFAULT_MARKDOWN = "docs/FEATURE_COMPATIBILITY.md"
 DEFAULT_FEATURE_VERSION = "cicids2017-top50-v1"
 
 VERDICT_PENDING = "PENDING_CAPTURE"

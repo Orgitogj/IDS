@@ -1,0 +1,12 @@
+ml-service/reports/domain_adaptation/data/captures/adapt-v1-*.csv text eol=crlf
+ml-service/reports/live_evaluation/captures/lab-v1-benign-001.csv text eol=crlf
+ml-service/reports/live_evaluation/captures/lab-v1-portscan-001.csv text eol=crlf
+ml-service/reports/live_evaluation/captures/lab-v1-ssh-bruteforce-001.csv text eol=crlf
+ml-service/reports/domain_adaptation/phase17c/protocol.json text eol=crlf
+ml-service/reports/domain_adaptation/phase17d/llm_explainability/evidence_sample.json text eol=crlf
+
+ml-service/reports/domain_adaptation/phase17d/data/final_test_manifest.json text eol=lf
+ml-service/training/phase17d_capture.sh text eol=lf
+ml-service/training/phase17d_ssh_capture_v2.sh text eol=lf
+ml-service/training/phase17d_ssh_capture_v3.sh text eol=lf
+ml-service/training/phase17d_cicflowmeter_shim.py text eol=lf

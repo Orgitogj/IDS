@@ -1,59 +1,65 @@
-# IDSFrontend
+# IDS dashboard (Angular)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.4.
+This is the analyst dashboard for the IDS. It shows detected alarms and incidents live,
+explains individual detections, and gives admins control over users, models and severity
+thresholds. The UI text is in Albanian. For the whole system, see the
+[root README](../README.md).
 
-## Development server
+## What it does
 
-To start a local development server, run:
+| Page | Purpose |
+|---|---|
+| Login | JWT sign-in against the backend. A refresh token is kept in an HTTP-only cookie. |
+| Overview | Alarm, flow, model and experiment summaries, updated live. |
+| Alarms | Live alarm list and grouped incidents. Opening an alarm shows the flow's top SHAP features and can request an LLM explanation. |
+| Flows | Ingested network flows with their predictions. |
+| Experiments | Recorded model evaluation results. |
+| Models | Registered models; admins can activate one. |
+| Topology | Diagram of the isolated lab network (Kali `192.168.50.10` → Metasploitable2 `192.168.50.20`). |
+| Users, Settings | Admin only: manage accounts and alarm-severity thresholds. |
 
-```bash
-ng serve
-```
+Standalone Angular 22 components with signals, Tailwind CSS 4, Chart.js through ng2-charts,
+and STOMP over SockJS for live updates.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## What it expects to be running
 
-## Code scaffolding
+The service addresses are hard-coded; there are no environment files. Each service file in
+`src/app/core/services/` defines its own URL constant.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+| Service | Address | Used for |
+|---|---|---|
+| Spring Boot backend | `http://localhost:8080/api/...` | Authentication and all data |
+| Backend WebSocket | `http://localhost:8080/ws` (SockJS) | `/topic/alarms`, `/topic/incidents`, `/topic/models/active` |
+| ml-service | `http://localhost:8000/api` | `/predict` (SHAP) and `/explain` (LLM) on the Alarms page |
 
-```bash
-ng generate component component-name
-```
+Every request and the WebSocket connection carry the JWT issued by the backend.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- **Port.** The dev server must run on `http://localhost:4200`. That is the only origin the
+  backend allows by default (`IDS_ALLOWED_ORIGINS`) and the only one ml-service allows.
+- **Explanations.** SHAP and explanations work only when ml-service is up and shares the
+  backend's `IDS_JWT_SECRET`. LLM explanations also need `ANTHROPIC_API_KEY` in ml-service.
 
-```bash
-ng generate --help
-```
+## Run locally
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Requires Node.js 24 and npm 11 (the versions verified here). Start the database, backend
+and ml-service first (see the [root README](../README.md#5-running-locally)). Then:
 
 ```bash
-ng e2e
+npm ci
+npm start                # ng serve → http://localhost:4200
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Sign in as `admin` with the `IDS_ADMIN_PASSWORD` you gave the backend. The dashboard stays
+empty until flows are ingested, for example with the CICIDS2017 replay script described in
+the root README.
 
-## Additional Resources
+## Build and test
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+npm run build            # production build → dist/IDS-Frontend/
+npm test                 # Vitest via ng test (watch mode; add -- --watch=false for one run)
+```
+
+`app.spec.ts` covers the routing. The root renders only a router outlet. Unauthenticated
+visitors are sent to `/login`, authenticated users land on `/overview`, and admin-only pages
+redirect non-admins to `/overview`.

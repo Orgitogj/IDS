@@ -80,7 +80,9 @@ def pytest_collection_modifyitems(config, items):
 
     for item in items:
         if "artifacts" in item.keywords and not models_ok:
-            item.add_marker(pytest.mark.skip(reason="artefaktet e modelit mungojne ne models/"))
+            item.add_marker(pytest.mark.skip(reason=(
+                "artefaktet e modelit mungojne ne models/; kopjo nga app/replay/ "
+                f"{ACTIVE_ARTIFACT} dhe label_encoder_cicids2017.joblib")))
         if "dataset" in item.keywords and not dataset_ok:
             item.add_marker(pytest.mark.skip(reason="cicids2017_cleaned.parquet mungon"))
         if "report" in item.keywords and not report_ok:
